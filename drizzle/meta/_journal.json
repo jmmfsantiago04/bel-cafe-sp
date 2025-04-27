@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1745771009740,
+      "tag": "0000_regular_roulette",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1745771320725,
+      "tag": "0001_happy_true_believers",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1745784388900,
+      "tag": "0002_exotic_gateway",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1745785934722,
+      "tag": "0003_yummy_gauntlet",
+      "breakpoints": true
+    }
+  ]
+}
