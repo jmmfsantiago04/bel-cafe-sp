@@ -30,44 +30,47 @@ export default function AdminLayout({
 
     return (
         <SidebarProvider>
-            <div className="min-h-screen bg-[#FDF5E6]">
-                <div className="flex">
-                    <Sidebar>
-                        <SidebarHeader>
-                            <div className="mb-8 px-4">
-                                <h2 className="text-2xl font-bold text-white font-serif">Bel Café</h2>
-                                <p className="text-[#DEB887] text-sm">Painel Administrativo</p>
+            <div className="flex h-screen w-full overflow-hidden bg-[#FDF5E6]">
+                <Sidebar className="border-r border-[#DEB887] bg-[#FDF5E6] w-72 flex-shrink-0">
+                    <SidebarHeader>
+                        <div className="p-6">
+                            <h2 className="text-2xl font-bold text-[#8B4513] font-serif">Bel Café</h2>
+                            <div className="flex items-center space-x-2 mt-2">
+                                <span className="text-[#D2691E]">☕</span>
+                                <p className="text-[#D2691E] text-sm">Painel Administrativo</p>
                             </div>
-                        </SidebarHeader>
-                        <SidebarContent className="bg-[#8B4513]">
-                            <SidebarMenu>
-                                {navigation.map((item) => (
-                                    <SidebarMenuItem key={item.name}>
-                                        <SidebarMenuButton
-                                            asChild
-                                            isActive={pathname === item.href}
-                                            className={cn(
-                                                "w-full",
-                                                pathname === item.href
-                                                    ? "bg-[#654321] text-white"
-                                                    : "text-[#DEB887] hover:bg-[#654321] hover:text-white"
-                                            )}
-                                        >
-                                            <Link href={item.href}>
-                                                {item.name}
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ))}
-                            </SidebarMenu>
-                        </SidebarContent>
-                    </Sidebar>
+                        </div>
+                    </SidebarHeader>
+                    <SidebarContent>
+                        <SidebarMenu className="px-2">
+                            {navigation.map((item) => (
+                                <SidebarMenuItem key={item.name}>
+                                    <SidebarMenuButton
+                                        asChild
+                                        isActive={pathname === item.href}
+                                        className={cn(
+                                            "w-full px-4 py-3 text-sm font-medium rounded-md transition-colors",
+                                            pathname === item.href
+                                                ? "bg-[#8B4513] text-[#FAEBD7]"
+                                                : "text-[#8B4513] hover:bg-[#DEB887] hover:text-[#8B4513]"
+                                        )}
+                                    >
+                                        <Link href={item.href}>
+                                            {item.name}
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarContent>
+                </Sidebar>
 
-                    {/* Main Content */}
-                    <div className="flex-1 p-8">
+                {/* Main Content */}
+                <main className="flex-1 h-full overflow-y-auto bg-[#FDF5E6]">
+                    <div className="h-full p-8">
                         {children}
                     </div>
-                </div>
+                </main>
             </div>
         </SidebarProvider>
     )

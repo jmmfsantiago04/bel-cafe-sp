@@ -77,17 +77,8 @@ export function CategoriesForm({
     }
 
     return (
-        <div className="space-y-6">
-            <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-[#8B4513] font-serif">
-                    {initialData ? "Editar Categoria" : "Nova Categoria"}
-                </h2>
-                <p className="text-[#D2691E] text-sm italic">
-                    {initialData ? "Atualize os dados da categoria" : "Adicione uma nova categoria ao cardápio"}
-                </p>
-            </div>
-
-            <div className="bg-[#FDF5E6] rounded-lg p-6 border border-[#DEB887]">
+        <div className="w-full">
+            <div className="bg-white shadow-md border border-[#DEB887] rounded-lg p-6">
                 {error && (
                     <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md text-red-600">
                         {error}
