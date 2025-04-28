@@ -2,8 +2,10 @@
 
 import { db } from "@/lib/db"
 import { menuItems } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { eq, and } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
+import { drizzle } from "drizzle-orm/neon-http"
+import { categories as categoriesTable } from "@/db/schema"
 
 export type MenuItemFormData = {
     name: string
@@ -16,6 +18,9 @@ export type MenuItemFormData = {
     hasSize: boolean
     mediumSizePrice?: number | null
     largeSizePrice?: number | null
+    isGlutenFree: boolean
+    isVegetarian: boolean
+    isVegan: boolean
 }
 
 export async function getMenuItems() {
@@ -56,6 +61,9 @@ export async function createMenuItem(data: MenuItemFormData) {
             hasSize: data.hasSize,
             mediumSizePrice: data.mediumSizePrice?.toString() || null,
             largeSizePrice: data.largeSizePrice?.toString() || null,
+            isGlutenFree: data.isGlutenFree,
+            isVegetarian: data.isVegetarian,
+            isVegan: data.isVegan,
             discount: '0',
             isDiscounted: false,
         }).returning()
@@ -83,6 +91,9 @@ export async function updateMenuItem(id: number, data: MenuItemFormData) {
                 hasSize: data.hasSize,
                 mediumSizePrice: data.mediumSizePrice?.toString() || null,
                 largeSizePrice: data.largeSizePrice?.toString() || null,
+                isGlutenFree: data.isGlutenFree,
+                isVegetarian: data.isVegetarian,
+                isVegan: data.isVegan,
             })
             .where(eq(menuItems.id, id))
             .returning()
@@ -107,5 +118,37 @@ export async function deleteMenuItem(id: number) {
     } catch (error) {
         console.error("Error deleting menu item:", error)
         return { error: "Falha ao excluir item do cardápio" }
+    }
+}
+
+export async function getMenuData() {
+    try {
+        const db = drizzle(process.env.DATABASE_URL!)
+
+        // Fetch categories
+        const categories = await db
+            .select()
+            .from(categoriesTable)
+            .where(eq(categoriesTable.isActive, true))
+
+        // Fetch menu items for each category
+        const menuItems: Record<number, any[]> = {}
+        for (const category of categories) {
+            const items = await db
+                .select()
+                .from(menuItemsTable)
+                .where(
+                    and(
+                        eq(menuItemsTable.categoryId, category.id),
+                        eq(menuItemsTable.isAvailable, true)
+                    )
+                )
+            menuItems[category.id] = items
+        }
+
+        return { data: { categories, menuItems }, error: null }
+    } catch (error) {
+        console.error("Error fetching menu data:", error)
+        return { data: null, error: "Failed to fetch menu data" }
     }
 } 

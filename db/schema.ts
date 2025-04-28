@@ -23,6 +23,10 @@ export const menuItems = pgTable("menu_items", {
     imageUrl: text(),
     isAvailable: boolean().default(true).notNull(),
     isPopular: boolean().default(false).notNull(),
+    // Dietary preferences
+    isGlutenFree: boolean().default(false).notNull(),
+    isVegetarian: boolean().default(false).notNull(),
+    isVegan: boolean().default(false).notNull(),
     // For items like coffee that might have size options
     hasSize: boolean().default(false).notNull(),
     // Base price for small size, null if item doesn't have sizes

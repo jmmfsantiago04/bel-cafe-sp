@@ -29,6 +29,13 @@
       "when": 1745785934722,
       "tag": "0003_yummy_gauntlet",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1745875475092,
+      "tag": "0004_oval_reavers",
+      "breakpoints": true
     }
   ]
 }

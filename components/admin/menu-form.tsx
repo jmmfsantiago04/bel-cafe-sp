@@ -34,6 +34,9 @@ const formSchema = z.object({
     hasSize: z.boolean(),
     mediumSizePrice: z.coerce.number().nullable(),
     largeSizePrice: z.coerce.number().nullable(),
+    isGlutenFree: z.boolean(),
+    isVegetarian: z.boolean(),
+    isVegan: z.boolean(),
 }).superRefine((data, ctx) => {
     if (data.hasSize) {
         if (!data.mediumSizePrice && !data.largeSizePrice) {
@@ -74,6 +77,9 @@ export function MenuItemForm({ categories }: MenuItemFormProps) {
             hasSize: false,
             mediumSizePrice: null,
             largeSizePrice: null,
+            isGlutenFree: false,
+            isVegetarian: false,
+            isVegan: false,
         },
     });
 
@@ -299,6 +305,71 @@ export function MenuItemForm({ categories }: MenuItemFormProps) {
                                     />
                                 </>
                             )}
+
+                            <div className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="isGlutenFree"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border border-[#DEB887] p-4">
+                                            <div className="space-y-0.5">
+                                                <FormLabel className="text-[#8B4513] font-semibold">Sem Glúten</FormLabel>
+                                                <FormDescription>
+                                                    Marcar se o item não contém glúten
+                                                </FormDescription>
+                                            </div>
+                                            <FormControl>
+                                                <Switch
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="isVegetarian"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border border-[#DEB887] p-4">
+                                            <div className="space-y-0.5">
+                                                <FormLabel className="text-[#8B4513] font-semibold">Vegetariano</FormLabel>
+                                                <FormDescription>
+                                                    Marcar se o item é vegetariano
+                                                </FormDescription>
+                                            </div>
+                                            <FormControl>
+                                                <Switch
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="isVegan"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border border-[#DEB887] p-4">
+                                            <div className="space-y-0.5">
+                                                <FormLabel className="text-[#8B4513] font-semibold">Vegano</FormLabel>
+                                                <FormDescription>
+                                                    Marcar se o item é vegano
+                                                </FormDescription>
+                                            </div>
+                                            <FormControl>
+                                                <Switch
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
 
                             <div className="flex space-x-4">
                                 <FormField

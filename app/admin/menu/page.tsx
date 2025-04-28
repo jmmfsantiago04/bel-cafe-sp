@@ -1,13 +1,23 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import Link from "next/link"
 import { getMenuItems } from "@/app/actions/menu"
 import { DeleteMenuItem } from "@/components/admin/delete-menu-item"
+import { MenuItemForm } from "@/components/admin/menu-form"
+import { Plus } from "lucide-react"
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { getCategories } from "@/app/actions/categories"
 
 export default async function MenuPage() {
-    const { data: menuItems, error } = await getMenuItems();
+    const { data: menuItems, error: menuError } = await getMenuItems();
+    const { data: categories, error: categoriesError } = await getCategories();
 
-    if (error) {
+    if (menuError || categoriesError || !categories || !menuItems) {
         return (
             <div className="h-full flex flex-col">
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6">
@@ -15,15 +25,10 @@ export default async function MenuPage() {
                         <h1 className="text-2xl font-bold text-[#8B4513] font-serif">Cardápio</h1>
                         <p className="text-[#D2691E] text-sm">Gerencie os itens do seu cardápio</p>
                     </div>
-                    <Link href="/admin/menu/new">
-                        <Button className="bg-[#8B4513] hover:bg-[#654321] text-white">
-                            Adicionar Item
-                        </Button>
-                    </Link>
                 </div>
                 <Card className="flex-1 p-6 bg-white shadow-md border border-[#DEB887]">
                     <p className="text-red-600">
-                        {error}
+                        {menuError || categoriesError || "Erro ao carregar dados"}
                     </p>
                 </Card>
             </div>
@@ -37,11 +42,22 @@ export default async function MenuPage() {
                     <h1 className="text-2xl font-bold text-[#8B4513] font-serif">Cardápio</h1>
                     <p className="text-[#D2691E] text-sm">Gerencie os itens do seu cardápio</p>
                 </div>
-                <Link href="/admin/menu/new">
-                    <Button className="bg-[#8B4513] hover:bg-[#654321] text-white">
-                        Adicionar Item
-                    </Button>
-                </Link>
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button className="bg-[#8B4513] hover:bg-[#654321] text-white">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Adicionar Item
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle className="text-center text-2xl font-bold text-[#8B4513] font-serif">
+                                Novo Item do Cardápio
+                            </AlertDialogTitle>
+                        </AlertDialogHeader>
+                        <MenuItemForm categories={categories} />
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
 
             <Card className="flex-1 bg-white shadow-md border border-[#DEB887]">
@@ -55,6 +71,7 @@ export default async function MenuPage() {
                                 <th className="text-left px-6 py-4 text-[#8B4513] font-serif font-semibold">Tamanhos</th>
                                 <th className="text-left px-6 py-4 text-[#8B4513] font-serif font-semibold">Status</th>
                                 <th className="text-left px-6 py-4 text-[#8B4513] font-serif font-semibold">Popular</th>
+                                <th className="text-left px-6 py-4 text-[#8B4513] font-serif font-semibold">Restrições</th>
                                 <th className="text-right px-6 py-4 text-[#8B4513] font-serif font-semibold">Ações</th>
                             </tr>
                         </thead>
@@ -90,6 +107,30 @@ export default async function MenuPage() {
                                             {item.isPopular ? "Popular" : "Normal"}
                                         </span>
                                     </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-wrap gap-1">
+                                            {item.isGlutenFree && (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-50 text-orange-800">
+                                                    🌾 GF
+                                                </span>
+                                            )}
+                                            {item.isVegetarian && (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-800">
+                                                    🥬 Veg
+                                                </span>
+                                            )}
+                                            {item.isVegan && (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-800">
+                                                    🌱 Vgn
+                                                </span>
+                                            )}
+                                            {!item.isGlutenFree && !item.isVegetarian && !item.isVegan && (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-50 text-gray-500">
+                                                    Nenhuma
+                                                </span>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex justify-end gap-2">
                                             <Button
@@ -98,9 +139,9 @@ export default async function MenuPage() {
                                                 className="border-[#DEB887] text-[#8B4513] hover:bg-[#FAEBD7]"
                                                 asChild
                                             >
-                                                <Link href={`/admin/menu/${item.id}`}>
+                                                <a href={`/admin/menu/${item.id}`}>
                                                     Editar
-                                                </Link>
+                                                </a>
                                             </Button>
                                             <DeleteMenuItem id={item.id} name={item.name} />
                                         </div>

@@ -1,17 +1,28 @@
-import { MenuItemForm } from "@/components/admin/menu-form"
-import { getCategories } from "@/app/actions/categories"
+import { Menu } from "@/components/menu/menu";
+import { db } from "@/lib/db";
+import { categories, menuItems } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 
 export default async function MenuPage() {
-    const { data: categories, error } = await getCategories();
+    // Fetch categories
+    const fetchedCategories = await db
+        .select()
+        .from(categories)
+        .where(eq(categories.isActive, true));
 
-    if (error) {
-        return (
-            <div className="min-h-screen bg-gradient-to-b from-[#F5DEB3] to-[#FFEFD5] py-12">
-                <div className="container mx-auto text-center">
-                    <p className="text-red-600">Erro ao carregar categorias: {error}</p>
-                </div>
-            </div>
-        );
+    // Fetch menu items for each category
+    const items: Record<number, any[]> = {};
+    for (const category of fetchedCategories) {
+        const categoryItems = await db
+            .select()
+            .from(menuItems)
+            .where(
+                and(
+                    eq(menuItems.categoryId, category.id),
+                    eq(menuItems.isAvailable, true)
+                )
+            );
+        items[category.id] = categoryItems;
     }
 
     return (
@@ -29,8 +40,8 @@ export default async function MenuPage() {
                     </div>
                 </div>
 
-                {/* Menu Form */}
-                <MenuItemForm categories={categories} />
+                {/* Menu Component */}
+                <Menu initialCategories={fetchedCategories} initialMenuItems={items} />
 
                 {/* Decorative Footer */}
                 <div className="flex items-center justify-center mt-12 space-x-4">
@@ -40,5 +51,5 @@ export default async function MenuPage() {
                 </div>
             </div>
         </main>
-    )
+    );
 } 
