@@ -2,17 +2,18 @@
 
 import { db } from "@/lib/db"
 import { menuItems } from "@/db/schema"
-import { eq, and } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
-import { drizzle } from "drizzle-orm/neon-http"
-import { categories as categoriesTable } from "@/db/schema"
 
 export type MenuItemFormData = {
     name: string
     description?: string | null
-    categoryId: number
     price: number
     imageUrl?: string | null
+    isSalgado: boolean
+    isDoce: boolean
+    isCafeDaManha: boolean
+    isSugarFree: boolean
     isAvailable: boolean
     isPopular: boolean
     hasSize: boolean
@@ -25,11 +26,11 @@ export type MenuItemFormData = {
 
 export async function getMenuItems() {
     try {
-        const result = await db.select().from(menuItems)
-        return { data: result, error: null }
+        const items = await db.select().from(menuItems)
+        return { data: items }
     } catch (error) {
         console.error("Error fetching menu items:", error)
-        return { data: [], error: "Falha ao buscar itens do cardápio" }
+        return { error: "Falha ao buscar itens do cardápio" }
     }
 }
 
@@ -53,9 +54,12 @@ export async function createMenuItem(data: MenuItemFormData) {
         const result = await db.insert(menuItems).values({
             name: data.name,
             description: data.description || null,
-            categoryId: data.categoryId,
             price: data.price.toString(),
             imageUrl: data.imageUrl || null,
+            isSalgado: data.isSalgado,
+            isDoce: data.isDoce,
+            isCafeDaManha: data.isCafeDaManha,
+            isSugarFree: data.isSugarFree,
             isAvailable: data.isAvailable,
             isPopular: data.isPopular,
             hasSize: data.hasSize,
@@ -83,9 +87,12 @@ export async function updateMenuItem(id: number, data: MenuItemFormData) {
             .set({
                 name: data.name,
                 description: data.description || null,
-                categoryId: data.categoryId,
                 price: data.price.toString(),
                 imageUrl: data.imageUrl || null,
+                isSalgado: data.isSalgado,
+                isDoce: data.isDoce,
+                isCafeDaManha: data.isCafeDaManha,
+                isSugarFree: data.isSugarFree,
                 isAvailable: data.isAvailable,
                 isPopular: data.isPopular,
                 hasSize: data.hasSize,
@@ -108,47 +115,37 @@ export async function updateMenuItem(id: number, data: MenuItemFormData) {
 
 export async function deleteMenuItem(id: number) {
     try {
-        const result = await db
-            .delete(menuItems)
-            .where(eq(menuItems.id, id))
-            .returning()
-
+        await db.delete(menuItems).where(eq(menuItems.id, id))
         revalidatePath('/admin/menu')
-        return { data: result[0] }
+        return { success: true }
     } catch (error) {
         console.error("Error deleting menu item:", error)
-        return { error: "Falha ao excluir item do cardápio" }
+        return { error: "Falha ao deletar item do cardápio" }
     }
 }
 
-export async function getMenuData() {
+export async function getSalgados() {
     try {
-        const db = drizzle(process.env.DATABASE_URL!)
-
-        // Fetch categories
-        const categories = await db
+        const items = await db
             .select()
-            .from(categoriesTable)
-            .where(eq(categoriesTable.isActive, true))
-
-        // Fetch menu items for each category
-        const menuItems: Record<number, any[]> = {}
-        for (const category of categories) {
-            const items = await db
-                .select()
-                .from(menuItemsTable)
-                .where(
-                    and(
-                        eq(menuItemsTable.categoryId, category.id),
-                        eq(menuItemsTable.isAvailable, true)
-                    )
-                )
-            menuItems[category.id] = items
-        }
-
-        return { data: { categories, menuItems }, error: null }
+            .from(menuItems)
+            .where(eq(menuItems.isSalgado, true))
+        return { data: items }
     } catch (error) {
-        console.error("Error fetching menu data:", error)
-        return { data: null, error: "Failed to fetch menu data" }
+        console.error("Error fetching salgados:", error)
+        return { error: "Falha ao buscar salgados" }
+    }
+}
+
+export async function getDoces() {
+    try {
+        const items = await db
+            .select()
+            .from(menuItems)
+            .where(eq(menuItems.isDoce, true))
+        return { data: items }
+    } catch (error) {
+        console.error("Error fetching doces:", error)
+        return { error: "Falha ao buscar doces" }
     }
 } 

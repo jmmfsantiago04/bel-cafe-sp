@@ -1,0 +1,1 @@
+ALTER TABLE "menu_items" ADD COLUMN "isSugarFree" boolean DEFAULT false NOT NULL;

@@ -36,6 +36,34 @@
       "when": 1745875475092,
       "tag": "0004_oval_reavers",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1745949251136,
+      "tag": "0005_shiny_solo",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1745968143402,
+      "tag": "0006_loving_hawkeye",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1745968634755,
+      "tag": "0007_lush_sinister_six",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1745968879062,
+      "tag": "0008_lyrical_ares",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "drinks" ADD COLUMN "isAlcoholic" boolean DEFAULT false NOT NULL;

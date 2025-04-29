@@ -3,7 +3,8 @@ import { Card } from "@/components/ui/card"
 import { getMenuItems } from "@/app/actions/menu"
 import { DeleteMenuItem } from "@/components/admin/delete-menu-item"
 import { MenuItemForm } from "@/components/admin/menu-form"
-import { Plus } from "lucide-react"
+import { DrinkForm } from "@/components/menu/drink-form"
+import { Coffee, Plus } from "lucide-react"
 import {
     AlertDialog,
     AlertDialogContent,
@@ -42,22 +43,41 @@ export default async function MenuPage() {
                     <h1 className="text-2xl font-bold text-[#8B4513] font-serif">Cardápio</h1>
                     <p className="text-[#D2691E] text-sm">Gerencie os itens do seu cardápio</p>
                 </div>
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button className="bg-[#8B4513] hover:bg-[#654321] text-white">
-                            <Plus className="w-4 h-4 mr-2" />
-                            Adicionar Item
-                        </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-                        <AlertDialogHeader>
-                            <AlertDialogTitle className="text-center text-2xl font-bold text-[#8B4513] font-serif">
-                                Novo Item do Cardápio
-                            </AlertDialogTitle>
-                        </AlertDialogHeader>
-                        <MenuItemForm categories={categories} />
-                    </AlertDialogContent>
-                </AlertDialog>
+                <div className="flex gap-3">
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button className="bg-[#8B4513] hover:bg-[#654321] text-white">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Adicionar Item
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="text-center text-2xl font-bold text-[#8B4513] font-serif">
+                                    Novo Item do Cardápio
+                                </AlertDialogTitle>
+                            </AlertDialogHeader>
+                            <MenuItemForm categories={categories} />
+                        </AlertDialogContent>
+                    </AlertDialog>
+
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button className="bg-[#8B4513] hover:bg-[#654321] text-white">
+                                <Coffee className="w-4 h-4 mr-2" />
+                                Adicionar Bebida
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="text-center text-2xl font-bold text-[#8B4513] font-serif">
+                                    Nova Bebida
+                                </AlertDialogTitle>
+                            </AlertDialogHeader>
+                            <DrinkForm />
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </div>
             </div>
 
             <Card className="flex-1 bg-white shadow-md border border-[#DEB887]">

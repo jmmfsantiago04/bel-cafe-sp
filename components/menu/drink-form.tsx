@@ -10,20 +10,18 @@ import * as z from "zod"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
-import { createMenuItem, type MenuItemFormData } from "@/app/actions/menu"
-import { useState, useEffect } from "react"
+import { createDrink, type DrinkFormData } from "@/app/actions/drinks"
+import { useState } from "react"
 
 const formSchema = z.object({
     name: z.string().min(1, "Nome é obrigatório"),
     description: z.string().nullable(),
     price: z.coerce.number().min(0, "Preço deve ser maior ou igual a 0"),
     imageUrl: z.string().nullable(),
-    isSalgado: z.boolean(),
-    isDoce: z.boolean(),
-    isCafeDaManha: z.boolean(),
-    isSugarFree: z.boolean(),
+    isHotDrink: z.boolean(),
     isAvailable: z.boolean(),
     isPopular: z.boolean(),
+    isAlcoholic: z.boolean(),
     hasSize: z.boolean(),
     mediumSizePrice: z.coerce.number().nullable(),
     largeSizePrice: z.coerce.number().nullable(),
@@ -40,27 +38,11 @@ const formSchema = z.object({
             });
         }
     }
-    // Ensure at least one category is selected
-    if (!data.isSalgado && !data.isDoce && !data.isCafeDaManha) {
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Selecione pelo menos uma categoria",
-            path: ["isSalgado"],
-        });
-    }
-    // Prevent Salgado and Doce combination
-    if (data.isSalgado && data.isDoce) {
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Um item não pode ser Salgado e Doce ao mesmo tempo",
-            path: ["isDoce"],
-        });
-    }
 });
 
 type FormData = z.infer<typeof formSchema>;
 
-export function MenuItemForm() {
+export function DrinkForm() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -71,13 +53,11 @@ export function MenuItemForm() {
             description: null,
             price: 0,
             imageUrl: null,
-            isSalgado: false,
-            isDoce: false,
-            isCafeDaManha: false,
-            isSugarFree: false,
+            isHotDrink: true,
             isAvailable: true,
             isPopular: false,
-            hasSize: false,
+            isAlcoholic: false,
+            hasSize: true,
             mediumSizePrice: null,
             largeSizePrice: null,
             isGlutenFree: false,
@@ -87,36 +67,24 @@ export function MenuItemForm() {
     });
 
     const hasSize = form.watch("hasSize");
-    const isDoce = form.watch("isDoce");
-    const isSalgado = form.watch("isSalgado");
-
-    // Reset incompatible selections
-    useEffect(() => {
-        if (isDoce && isSalgado) {
-            form.setValue("isSalgado", false);
-        }
-        if (!isDoce) {
-            form.setValue("isSugarFree", false);
-        }
-    }, [isDoce, isSalgado, form]);
 
     async function onSubmit(data: FormData) {
         try {
             setIsLoading(true);
-            const result = await createMenuItem(data as MenuItemFormData);
+            const result = await createDrink(data as DrinkFormData);
 
-            if (result.error) {
+            if ('error' in result) {
                 throw new Error(result.error);
             }
 
             toast.success("Sucesso", {
-                description: "Item adicionado ao cardápio",
+                description: "Bebida adicionada ao cardápio",
             });
             router.push("/admin/menu");
             router.refresh();
         } catch (error) {
             toast.error("Erro", {
-                description: error instanceof Error ? error.message : "Algo deu errado ao criar o item",
+                description: error instanceof Error ? error.message : "Algo deu errado ao criar a bebida",
             });
         } finally {
             setIsLoading(false);
@@ -127,10 +95,10 @@ export function MenuItemForm() {
         <div className="w-full max-w-2xl mx-auto p-6 space-y-8">
             <div className="text-center space-y-4">
                 <h2 className="text-3xl font-bold text-[#8B4513] font-serif">
-                    Novo Item do Cardápio
+                    Nova Bebida
                 </h2>
                 <p className="text-[#D2691E] text-sm italic">
-                    Adicione os sabores do Nordeste ao nosso cardápio
+                    Adicione uma nova bebida ao cardápio
                 </p>
             </div>
 
@@ -143,10 +111,10 @@ export function MenuItemForm() {
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[#8B4513] font-semibold">Nome do Item</FormLabel>
+                                        <FormLabel className="text-[#8B4513] font-semibold">Nome da Bebida</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Ex: Pão de Queijo"
+                                                placeholder="Ex: Café Expresso"
                                                 className="border-[#DEB887] focus:border-[#8B4513]"
                                                 {...field}
                                             />
@@ -164,7 +132,7 @@ export function MenuItemForm() {
                                         <FormLabel className="text-[#8B4513] font-semibold">Descrição</FormLabel>
                                         <FormControl>
                                             <Textarea
-                                                placeholder="Descreva o item..."
+                                                placeholder="Descreva a bebida..."
                                                 className="border-[#DEB887] focus:border-[#8B4513]"
                                                 {...field}
                                                 value={field.value ?? ""}
@@ -215,12 +183,12 @@ export function MenuItemForm() {
                                 )}
                             />
 
-                            <div className="space-y-4">
-                                <FormLabel className="text-[#8B4513] font-semibold block">Categoria</FormLabel>
-                                <div className="space-y-2">
+                            <div className="space-y-2">
+                                <FormLabel className="text-[#8B4513] font-semibold">Tipo de Bebida</FormLabel>
+                                <div className="flex gap-8 items-center">
                                     <FormField
                                         control={form.control}
-                                        name="isSalgado"
+                                        name="isHotDrink"
                                         render={({ field }) => (
                                             <FormItem className="flex items-center space-x-2">
                                                 <FormControl>
@@ -229,83 +197,40 @@ export function MenuItemForm() {
                                                         onCheckedChange={(checked) => {
                                                             field.onChange(checked);
                                                             if (checked) {
-                                                                form.setValue("isDoce", false);
-                                                                form.setValue("isSugarFree", false);
+                                                                form.setValue("isHotDrink", true);
                                                             }
                                                         }}
                                                     />
                                                 </FormControl>
                                                 <FormLabel className="text-[#8B4513] font-medium cursor-pointer">
-                                                    Salgado
+                                                    Bebida Quente
                                                 </FormLabel>
                                             </FormItem>
                                         )}
                                     />
-
                                     <FormField
                                         control={form.control}
-                                        name="isDoce"
+                                        name="isHotDrink"
                                         render={({ field }) => (
                                             <FormItem className="flex items-center space-x-2">
                                                 <FormControl>
                                                     <Checkbox
-                                                        checked={field.value}
+                                                        checked={!field.value}
                                                         onCheckedChange={(checked) => {
-                                                            field.onChange(checked);
+                                                            field.onChange(!checked);
                                                             if (checked) {
-                                                                form.setValue("isSalgado", false);
-                                                            } else {
-                                                                form.setValue("isSugarFree", false);
+                                                                form.setValue("isHotDrink", false);
                                                             }
                                                         }}
                                                     />
                                                 </FormControl>
                                                 <FormLabel className="text-[#8B4513] font-medium cursor-pointer">
-                                                    Doce
-                                                </FormLabel>
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    {isDoce && (
-                                        <FormField
-                                            control={form.control}
-                                            name="isSugarFree"
-                                            render={({ field }) => (
-                                                <FormItem className="flex items-center space-x-2 ml-6">
-                                                    <FormControl>
-                                                        <Checkbox
-                                                            checked={field.value}
-                                                            onCheckedChange={field.onChange}
-                                                        />
-                                                    </FormControl>
-                                                    <FormLabel className="text-[#8B4513] font-medium cursor-pointer">
-                                                        Sem Açúcar
-                                                    </FormLabel>
-                                                </FormItem>
-                                            )}
-                                        />
-                                    )}
-
-                                    <FormField
-                                        control={form.control}
-                                        name="isCafeDaManha"
-                                        render={({ field }) => (
-                                            <FormItem className="flex items-center space-x-2">
-                                                <FormControl>
-                                                    <Checkbox
-                                                        checked={field.value}
-                                                        onCheckedChange={field.onChange}
-                                                    />
-                                                </FormControl>
-                                                <FormLabel className="text-[#8B4513] font-medium cursor-pointer">
-                                                    Café da Manhã
+                                                    Bebida Gelada
                                                 </FormLabel>
                                             </FormItem>
                                         )}
                                     />
                                 </div>
-                                <FormMessage />
                             </div>
 
                             <FormField
@@ -324,7 +249,7 @@ export function MenuItemForm() {
                                                 Possui diferentes tamanhos
                                             </FormLabel>
                                             <FormDescription>
-                                                Marque se este item possui opções de tamanho
+                                                Marque se esta bebida possui opções de tamanho
                                             </FormDescription>
                                         </div>
                                     </FormItem>
@@ -449,6 +374,29 @@ export function MenuItemForm() {
                             <div className="space-y-4">
                                 <FormLabel className="text-[#8B4513] font-semibold block">Status</FormLabel>
                                 <div className="space-y-2">
+                                    <FormField
+                                        control={form.control}
+                                        name="isAlcoholic"
+                                        render={({ field }) => (
+                                            <FormItem className="flex items-center space-x-2">
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={field.onChange}
+                                                    />
+                                                </FormControl>
+                                                <div className="space-y-1 leading-none">
+                                                    <FormLabel className="text-[#8B4513] font-medium cursor-pointer">
+                                                        Bebida Alcoólica (18+)
+                                                    </FormLabel>
+                                                    <FormDescription>
+                                                        Marque se esta bebida contém álcool
+                                                    </FormDescription>
+                                                </div>
+                                            </FormItem>
+                                        )}
+                                    />
+
                                     <FormField
                                         control={form.control}
                                         name="isAvailable"
