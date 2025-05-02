@@ -1,32 +1,22 @@
 import { Menu } from "@/components/menu/menu";
 import { db } from "@/lib/db";
-import { categories, menuItems } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { menuItems } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function MenuPage() {
-    // Fetch categories
-    const fetchedCategories = await db
-        .select()
-        .from(categories)
-        .where(eq(categories.isActive, true));
+    const items = await db.query.menuItems.findMany({
+        where: eq(menuItems.isAvailable, true),
+    });
 
-    // Fetch menu items for each category
-    const items: Record<number, any[]> = {};
-    for (const category of fetchedCategories) {
-        const categoryItems = await db
-            .select()
-            .from(menuItems)
-            .where(
-                and(
-                    eq(menuItems.categoryId, category.id),
-                    eq(menuItems.isAvailable, true)
-                )
-            );
-        items[category.id] = categoryItems;
-    }
+    // Group items by category
+    const groupedItems = {
+        salgados: items.filter(item => item.isSalgado),
+        doces: items.filter(item => item.isDoce),
+        cafeDaManha: items.filter(item => item.isCafeDaManha),
+    };
 
     return (
-        <div className="container mx-auto">
+        <div className="container mx-auto py-8">
             {/* Welcome Message */}
             <div className="text-center mb-12">
                 <h1 className="text-4xl font-bold text-[#8B4513] mb-4 font-serif">
@@ -43,7 +33,7 @@ export default async function MenuPage() {
             </div>
 
             {/* Menu Component */}
-            <Menu initialCategories={fetchedCategories} initialMenuItems={items} />
+            <Menu initialItems={groupedItems} />
 
             {/* Decorative Footer */}
             <div className="flex items-center justify-center mt-12 space-x-4">

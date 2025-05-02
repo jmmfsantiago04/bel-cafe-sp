@@ -3,48 +3,46 @@
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { categories, menuItems } from "@/db/schema";
+import { menuItems } from "@/db/schema";
 import { type InferSelectModel } from "drizzle-orm";
 import { Coffee, UtensilsCrossed } from "lucide-react";
 
-type Category = InferSelectModel<typeof categories>;
 type MenuItem = InferSelectModel<typeof menuItems>;
 
 interface MenuProps {
-    initialCategories: Category[];
-    initialMenuItems: Record<number, MenuItem[]>;
+    initialItems: {
+        salgados: MenuItem[];
+        doces: MenuItem[];
+        cafeDaManha: MenuItem[];
+    };
 }
 
-const formatPrice = (price: string | number | null | undefined) => {
-    if (price === null || price === undefined) return "0,00";
-    const numericPrice = typeof price === "string" ? parseFloat(price) : price;
-    return numericPrice.toFixed(2).replace(".", ",");
+const formatPrice = (price: string) => {
+    return Number(price).toFixed(2);
 };
 
-export function Menu({ initialCategories, initialMenuItems }: MenuProps) {
-    if (initialCategories.length === 0) {
-        return (
-            <div className="w-full space-y-4 p-4">
-                <p className="text-center text-muted-foreground">Nenhuma categoria disponível</p>
-            </div>
-        );
-    }
+const categories = [
+    { id: 'salgados', name: 'Salgados', icon: '🥨' },
+    { id: 'doces', name: 'Doces', icon: '🍰' },
+    { id: 'cafeDaManha', name: 'Café da Manhã', icon: '☕' },
+];
 
+export function Menu({ initialItems }: MenuProps) {
     return (
         <div className="w-full">
-            <Tabs defaultValue={initialCategories[0]?.id.toString()} className="w-full">
+            <Tabs defaultValue="salgados" className="w-full">
                 <div className="relative">
                     <ScrollArea className="w-full pb-4">
                         <TabsList className="w-full h-auto justify-start gap-2 bg-transparent p-0">
-                            {initialCategories.map((category) => (
+                            {categories.map((category) => (
                                 <TabsTrigger
                                     key={category.id}
-                                    value={category.id.toString()}
+                                    value={category.id}
                                     className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white 
                                              bg-[#FAEBD7] text-[#8B4513] rounded-full px-6 py-2 
                                              hover:bg-[#DEB887] transition-colors font-serif"
                                 >
-                                    {category.name}
+                                    {category.icon} {category.name}
                                 </TabsTrigger>
                             ))}
                         </TabsList>
@@ -52,30 +50,21 @@ export function Menu({ initialCategories, initialMenuItems }: MenuProps) {
                     <div className="absolute bottom-0 w-full h-[1px] bg-[#DEB887]" />
                 </div>
 
-                {initialCategories.map((category) => (
+                {categories.map((category) => (
                     <TabsContent
                         key={category.id}
-                        value={category.id.toString()}
+                        value={category.id}
                         className="mt-8"
                     >
-                        {category.description && (
-                            <div className="text-center mb-8">
-                                <p className="text-[#8B4513] italic font-serif">
-                                    {category.description}
-                                </p>
-                            </div>
-                        )}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {initialMenuItems[category.id]?.map((item) => (
+                            {initialItems[category.id as keyof typeof initialItems]?.map((item) => (
                                 <Card key={item.id} className="overflow-hidden border-[#DEB887] bg-white/80 backdrop-blur-sm hover:shadow-lg transition-shadow">
                                     <div className="p-6">
                                         <div className="flex justify-between items-start gap-4">
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2">
-                                                    {item.categoryId === 1 ? (
-                                                        <Coffee className="w-5 h-5 text-[#8B4513]" />
-                                                    ) : (
-                                                        <UtensilsCrossed className="w-5 h-5 text-[#8B4513]" />
+                                                    {category.icon && (
+                                                        <span className="text-[#8B4513]">{category.icon}</span>
                                                     )}
                                                     <h3 className="text-xl font-bold text-[#8B4513] font-serif">{item.name}</h3>
                                                 </div>
@@ -118,13 +107,18 @@ export function Menu({ initialCategories, initialMenuItems }: MenuProps) {
                                                 </p>
                                             )}
                                         </div>
-                                        {item.isPopular && (
-                                            <div className="mt-3 flex items-center gap-1">
+                                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                                            {item.isPopular && (
                                                 <span className="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full font-medium font-serif">
                                                     ⭐ Mais Pedido
                                                 </span>
-                                            </div>
-                                        )}
+                                            )}
+                                            {category.id === 'doces' && item.isSugarFree && (
+                                                <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full font-medium font-serif">
+                                                    🍯 Sem Açúcar
+                                                </span>
+                                            )}
+                                        </div>
                                         {/* Dietary Preferences */}
                                         <div className="mt-3 flex flex-wrap items-center gap-2">
                                             {item.isGlutenFree && (
@@ -146,6 +140,13 @@ export function Menu({ initialCategories, initialMenuItems }: MenuProps) {
                                     </div>
                                 </Card>
                             ))}
+                            {initialItems[category.id as keyof typeof initialItems]?.length === 0 && (
+                                <div className="col-span-full text-center py-8">
+                                    <p className="text-[#8B4513] text-lg font-serif">
+                                        Nenhum item disponível nesta categoria no momento.
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </TabsContent>
                 ))}

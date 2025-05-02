@@ -2,23 +2,12 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { getMenuItems } from "@/app/actions/menu"
 import { DeleteMenuItem } from "@/components/admin/delete-menu-item"
-import { MenuItemForm } from "@/components/admin/menu-form"
-import { DrinkForm } from "@/components/menu/drink-form"
-import { Coffee, Plus } from "lucide-react"
-import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { getCategories } from "@/app/actions/categories"
+import { MenuDialogs } from "@/components/admin/menu-dialogs"
 
 export default async function MenuPage() {
     const { data: menuItems, error: menuError } = await getMenuItems();
-    const { data: categories, error: categoriesError } = await getCategories();
 
-    if (menuError || categoriesError || !categories || !menuItems) {
+    if (menuError || !menuItems) {
         return (
             <div className="h-full flex flex-col">
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6">
@@ -29,7 +18,7 @@ export default async function MenuPage() {
                 </div>
                 <Card className="flex-1 p-6 bg-white shadow-md border border-[#DEB887]">
                     <p className="text-red-600">
-                        {menuError || categoriesError || "Erro ao carregar dados"}
+                        {menuError || "Erro ao carregar dados"}
                     </p>
                 </Card>
             </div>
@@ -43,41 +32,7 @@ export default async function MenuPage() {
                     <h1 className="text-2xl font-bold text-[#8B4513] font-serif">Cardápio</h1>
                     <p className="text-[#D2691E] text-sm">Gerencie os itens do seu cardápio</p>
                 </div>
-                <div className="flex gap-3">
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button className="bg-[#8B4513] hover:bg-[#654321] text-white">
-                                <Plus className="w-4 h-4 mr-2" />
-                                Adicionar Item
-                            </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-                            <AlertDialogHeader>
-                                <AlertDialogTitle className="text-center text-2xl font-bold text-[#8B4513] font-serif">
-                                    Novo Item do Cardápio
-                                </AlertDialogTitle>
-                            </AlertDialogHeader>
-                            <MenuItemForm categories={categories} />
-                        </AlertDialogContent>
-                    </AlertDialog>
-
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button className="bg-[#8B4513] hover:bg-[#654321] text-white">
-                                <Coffee className="w-4 h-4 mr-2" />
-                                Adicionar Bebida
-                            </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-                            <AlertDialogHeader>
-                                <AlertDialogTitle className="text-center text-2xl font-bold text-[#8B4513] font-serif">
-                                    Nova Bebida
-                                </AlertDialogTitle>
-                            </AlertDialogHeader>
-                            <DrinkForm />
-                        </AlertDialogContent>
-                    </AlertDialog>
-                </div>
+                <MenuDialogs />
             </div>
 
             <Card className="flex-1 bg-white shadow-md border border-[#DEB887]">
@@ -99,7 +54,25 @@ export default async function MenuPage() {
                             {menuItems.map((item) => (
                                 <tr key={item.id} className="hover:bg-[#FDF5E6] transition-colors">
                                     <td className="px-6 py-4">{item.name}</td>
-                                    <td className="px-6 py-4">{item.categoryId}</td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-wrap gap-1">
+                                            {item.isSalgado && (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-800">
+                                                    🥨 Salgado
+                                                </span>
+                                            )}
+                                            {item.isDoce && (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-pink-50 text-pink-800">
+                                                    🍰 Doce
+                                                </span>
+                                            )}
+                                            {item.isCafeDaManha && (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-50 text-orange-800">
+                                                    ☕ Café da Manhã
+                                                </span>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="px-6 py-4">R$ {Number(item.price).toFixed(2)}</td>
                                     <td className="px-6 py-4">
                                         {item.hasSize ? (
@@ -170,7 +143,7 @@ export default async function MenuPage() {
                             ))}
                             {menuItems.length === 0 && (
                                 <tr>
-                                    <td colSpan={7} className="px-6 py-8 text-center">
+                                    <td colSpan={8} className="px-6 py-8 text-center">
                                         <div className="space-y-2">
                                             <p className="text-[#8B4513] font-medium">Nenhum item encontrado no cardápio</p>
                                             <p className="text-[#D2691E] text-sm">
