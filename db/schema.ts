@@ -73,4 +73,27 @@ export const drinks = pgTable("drinks", {
     finalPrice: decimal({ precision: 10, scale: 2 }),
     mediumFinalPrice: decimal({ precision: 10, scale: 2 }),
     largeFinalPrice: decimal({ precision: 10, scale: 2 }),
+});
+
+export const reservationSettings = pgTable("reservation_settings", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    maxBreakfast: integer().notNull().default(30),
+    maxLunch: integer().notNull().default(50),
+    maxDinner: integer().notNull().default(40),
+    updatedAt: varchar({ length: 50 }).notNull(),
+});
+
+export const reservations = pgTable("reservations", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    name: varchar({ length: 255 }).notNull(),
+    email: varchar({ length: 255 }).notNull(),
+    phone: varchar({ length: 20 }).notNull(),
+    date: varchar({ length: 50 }).notNull(),
+    time: varchar({ length: 50 }).notNull(),
+    guests: integer().notNull(),
+    mealPeriod: varchar({ length: 20 }).notNull(), // "cafe", "almoco", "jantar"
+    status: varchar({ length: 20 }).default("pending").notNull(), // "pending", "confirmed", "cancelled", "completed", "no_show"
+    notes: text(), // New field for admin notes
+    createdAt: varchar({ length: 50 }).notNull(),
+    updatedAt: varchar({ length: 50 }).notNull(),
 }); 
