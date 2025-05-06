@@ -1,8 +1,9 @@
 import { Card } from "@/components/ui/card"
 import { getAllReservations } from "@/app/actions/reservations"
+import { getCapacity } from "@/app/actions/capacity"
 import { ReservationsTable } from "@/components/admin/reservations-table"
 import { Button } from "@/components/ui/button"
-import { Plus, Settings2 } from "lucide-react"
+import { Plus } from "lucide-react"
 import {
     AlertDialog,
     AlertDialogContent,
@@ -10,12 +11,15 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { AdminBookingForm } from "@/components/admin/admin-booking-form"
+import { AddReservationForm } from "@/components/admin/add-reservation-form"
 import { Suspense } from "react"
-import { ReservationSettings } from "@/components/admin/reservation-settings"
+import { format } from "date-fns"
 
 export default async function ReservationsPage() {
     const { data: reservations, error } = await getAllReservations()
+    const today = format(new Date(), 'yyyy-MM-dd')
+    const capacityResult = await getCapacity(today)
+    const capacityValues = 'error' in capacityResult ? { cafe: 30, almoco: 30, jantar: 30 } : capacityResult
 
     if (error) {
         return <div className="text-red-500">{error}</div>
@@ -29,53 +33,36 @@ export default async function ReservationsPage() {
                     <p className="text-[#D2691E] text-sm">Gerencie as reservas do café</p>
                 </div>
 
-                <div className="flex gap-3">
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button className="bg-[#8B4513] hover:bg-[#654321] text-white transition-colors">
-                                <Settings2 className="w-4 h-4 mr-2" />
-                                Configurar Capacidade
-                            </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                            <AlertDialogHeader>
-                                <AlertDialogTitle className="text-center text-2xl font-bold text-[#8B4513] font-serif">
-                                    Configurações de Capacidade
-                                </AlertDialogTitle>
-                            </AlertDialogHeader>
-                            <Suspense fallback={
-                                <div className="flex items-center justify-center p-8">
-                                    <div className="w-8 h-8 border-4 border-[#DEB887] border-t-[#8B4513] rounded-full animate-spin" />
-                                </div>
-                            }>
-                                <ReservationSettings />
-                            </Suspense>
-                        </AlertDialogContent>
-                    </AlertDialog>
-
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button className="bg-[#8B4513] hover:bg-[#654321] text-white">
-                                <Plus className="w-4 h-4 mr-2" />
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button className="bg-[#8B4513] hover:bg-[#654321] text-white">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Nova Reserva
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="w-[600px] p-0">
+                        <AlertDialogHeader className="p-4 pb-2">
+                            <AlertDialogTitle className="text-center text-xl font-bold text-[#8B4513] font-serif">
                                 Nova Reserva
-                            </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 gap-4">
-                            <AlertDialogHeader className="pb-4 border-b">
-                                <AlertDialogTitle className="text-center text-xl font-bold text-[#8B4513] font-serif">
-                                    Nova Reserva
-                                </AlertDialogTitle>
-                            </AlertDialogHeader>
-                            <Suspense fallback={
-                                <div className="flex items-center justify-center p-8">
-                                    <div className="w-8 h-8 border-4 border-[#DEB887] border-t-[#8B4513] rounded-full animate-spin" />
-                                </div>
-                            }>
-                                <AdminBookingForm />
-                            </Suspense>
-                        </AlertDialogContent>
-                    </AlertDialog>
-                </div>
+                            </AlertDialogTitle>
+                        </AlertDialogHeader>
+                        <Suspense fallback={
+                            <div className="flex items-center justify-center p-8">
+                                <div className="w-8 h-8 border-4 border-[#DEB887] border-t-[#8B4513] rounded-full animate-spin" />
+                            </div>
+                        }>
+                            <AddReservationForm
+                                selectedDate={new Date()}
+                                periodCounts={{
+                                    cafe: 0,
+                                    almoco: 0,
+                                    jantar: 0
+                                }}
+                                capacityValues={capacityValues}
+                            />
+                        </Suspense>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
 
             <ReservationsTable reservations={reservations || []} />

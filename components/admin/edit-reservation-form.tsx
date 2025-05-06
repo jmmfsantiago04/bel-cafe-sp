@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { updateReservation } from "@/app/actions/reservations"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
-import { format } from "date-fns"
+import { format, addMonths } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import {
     Popover,
@@ -274,38 +274,43 @@ export function EditReservationForm({ reservation, onSuccess }: EditReservationF
                                     </FormLabel>
                                     <Popover>
                                         <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant="outline"
-                                                    className={`w-full pl-3 text-left font-normal border-[#DEB887]/50 hover:bg-[#FAEBD7] hover:text-[#8B4513] ${!field.value && "text-muted-foreground"}`}
-                                                >
-                                                    {field.value ? (
-                                                        format(new Date(field.value), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
-                                                    ) : (
-                                                        <span>Selecione uma data</span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
+                                            <div className="flex h-8 w-full rounded-md border border-[#DEB887]/50 bg-white px-3 py-2 text-sm text-[#8B4513] hover:bg-[#FAEBD7] hover:cursor-pointer">
+                                                {field.value ? (
+                                                    format(new Date(field.value), "dd/MM/yyyy", { locale: ptBR })
+                                                ) : (
+                                                    <span className="text-[#8B4513]/60">Selecione uma data</span>
+                                                )}
+                                            </div>
                                         </PopoverTrigger>
                                         <PopoverContent className="w-auto p-0" align="start">
                                             <Calendar
                                                 mode="single"
-                                                selected={selectedDate}
+                                                selected={field.value ? new Date(field.value) : undefined}
                                                 onSelect={(date) => {
-                                                    setSelectedDate(date);
                                                     if (date) {
-                                                        field.onChange(format(date, 'yyyy-MM-dd'));
+                                                        const formattedDate = format(date, 'yyyy-MM-dd');
+                                                        field.onChange(formattedDate);
                                                     }
                                                 }}
                                                 disabled={(date) =>
                                                     date < new Date(new Date().setHours(0, 0, 0, 0))
                                                 }
                                                 initialFocus
+                                                locale={ptBR}
+                                                className="rounded-md border border-[#DEB887]"
+                                                classNames={{
+                                                    day_selected: "bg-[#8B4513] text-white hover:bg-[#654321] hover:text-white focus:bg-[#8B4513] focus:text-white",
+                                                    day_today: "bg-[#FAEBD7] text-[#8B4513]",
+                                                    day: "hover:bg-[#FAEBD7] hover:text-[#8B4513] focus:bg-[#FAEBD7] focus:text-[#8B4513]",
+                                                    caption: "text-[#8B4513]",
+                                                    nav_button_previous: "hover:bg-[#FAEBD7] text-[#8B4513]",
+                                                    nav_button_next: "hover:bg-[#FAEBD7] text-[#8B4513]",
+                                                    head_cell: "text-[#8B4513]"
+                                                }}
                                             />
                                         </PopoverContent>
                                     </Popover>
-                                    <FormMessage />
+                                    <FormMessage className="text-xs" />
                                 </FormItem>
                             )}
                         />

@@ -9,7 +9,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Calendar as CalendarIcon, Clock, Mail, Phone, User, Users, Pencil, Trash2 } from "lucide-react"
+import { Calendar as CalendarIcon, Clock, Mail, Phone, User, Users, Pencil, Trash2, Plus, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -35,17 +35,23 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { Suspense, useState, useMemo, useEffect } from "react"
-import { updateReservationStatus, getAllReservations, deleteReservation } from "@/app/actions/reservations"
+import { updateReservationStatus, getAllReservations, deleteReservation, getReservationCount } from "@/app/actions/reservations"
 import { toast } from "sonner"
 import { EditReservationForm } from "@/components/admin/edit-reservation-form"
 import { Calendar } from "@/components/ui/calendar"
-import { format } from "date-fns"
+import { format, parseISO } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
+import { AddReservationForm } from "@/components/admin/add-reservation-form"
+import { Input } from "@/components/ui/input"
+import { updateCapacity, getCapacity } from "@/app/actions/capacity"
 
 function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString('pt-BR')
+    const date = new Date(dateStr);
+    // Ajusta o fuso horário para considerar UTC
+    date.setHours(date.getHours() + 3); // Ajusta para o fuso horário do Brasil (UTC-3)
+    return date.toLocaleDateString('pt-BR');
 }
 
 function formatTime(timeStr: string) {
@@ -103,6 +109,18 @@ export function ReservationsTable({ reservations: initialReservations }: Reserva
     const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
     const [isFiltering, setIsFiltering] = useState(false);
     const [selectedPeriods, setSelectedPeriods] = useState<string[]>([]);
+    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const [isCapacityDialogOpen, setIsCapacityDialogOpen] = useState(false);
+    const [periodCounts, setPeriodCounts] = useState({
+        cafe: 0,
+        almoco: 0,
+        jantar: 0
+    });
+    const [capacityValues, setCapacityValues] = useState({
+        cafe: 30,
+        almoco: 30,
+        jantar: 30
+    });
 
     // Filter reservations by selected date
     const filteredReservations = useMemo(() => {
@@ -192,10 +210,31 @@ export function ReservationsTable({ reservations: initialReservations }: Reserva
         }
     }
 
+    // Load capacity values when date changes
+    const loadCapacityValues = async (date: Date) => {
+        const formattedDate = format(date, 'yyyy-MM-dd');
+        const result = await getCapacity(formattedDate);
+        if (!('error' in result)) {
+            setCapacityValues({
+                cafe: result.cafe,
+                almoco: result.almoco,
+                jantar: result.jantar
+            });
+        }
+    };
+
+    // Update useEffect to load capacity values when date changes
+    useEffect(() => {
+        loadCapacityValues(selectedDate);
+        updatePeriodCounts(selectedDate);
+    }, [selectedDate]);
+
+    // Update handleDateSelect to also load capacity values
     const handleDateSelect = async (date: Date | undefined) => {
         if (!date) return;
         setIsFiltering(true);
         setSelectedDate(date);
+        await loadCapacityValues(date);
         setSelectedRows([]); // Clear selection when date changes
         setIsFiltering(false);
     };
@@ -210,8 +249,171 @@ export function ReservationsTable({ reservations: initialReservations }: Reserva
         });
     };
 
+    const refreshReservations = async () => {
+        try {
+            const result = await getAllReservations();
+            if (!('error' in result)) {
+                setReservations(result.data);
+            }
+        } catch (error) {
+            toast.error("Erro ao atualizar lista de reservas");
+        }
+    };
+
+    const handleAddSuccess = () => {
+        refreshReservations();
+        setIsAddDialogOpen(false);
+    };
+
+    // Função para atualizar os contadores de cada período
+    const updatePeriodCounts = async (date: Date) => {
+        const formattedDate = format(date, "yyyy-MM-dd");
+        try {
+            const [cafeCount, almocoCount, jantarCount] = await Promise.all([
+                getReservationCount(formattedDate, "cafe"),
+                getReservationCount(formattedDate, "almoco"),
+                getReservationCount(formattedDate, "jantar")
+            ]);
+
+            setPeriodCounts({
+                cafe: 'error' in cafeCount ? 0 : cafeCount.totalGuests || 0,
+                almoco: 'error' in almocoCount ? 0 : almocoCount.totalGuests || 0,
+                jantar: 'error' in jantarCount ? 0 : jantarCount.totalGuests || 0
+            });
+        } catch (error) {
+            console.error("Erro ao buscar contagem de reservas:", error);
+        }
+    };
+
+    const handleCapacityChange = (period: keyof typeof capacityValues, value: number) => {
+        setCapacityValues(prev => ({
+            ...prev,
+            [period]: value
+        }));
+    };
+
+    const handleCapacitySubmit = async () => {
+        try {
+            const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+            const result = await updateCapacity({
+                date: formattedDate,
+                ...capacityValues
+            });
+
+            if ('error' in result) {
+                throw new Error(result.error);
+            }
+
+            toast.success("Capacidade atualizada com sucesso!", {
+                description: "As alterações foram salvas.",
+            });
+
+            // Reload capacity values and counts
+            await loadCapacityValues(selectedDate);
+            updatePeriodCounts(selectedDate);
+            setIsCapacityDialogOpen(false);
+        } catch (error) {
+            toast.error("Erro ao atualizar capacidade", {
+                description: error instanceof Error ? error.message : "Tente novamente mais tarde.",
+            });
+        }
+    };
+
     return (
         <div className="mx-4 md:mx-6 lg:mx-8 my-6">
+            {/* Buttons Container */}
+            <div className="mb-6 flex gap-2">
+                {/* Add Reservation Button */}
+                <AlertDialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                    <AlertDialogTrigger asChild>
+                        <Button className="bg-[#8B4513] hover:bg-[#654321] text-white">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Nova Reserva
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="max-w-3xl">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle className="text-xl font-bold text-[#8B4513] font-serif">
+                                Nova Reserva
+                            </AlertDialogTitle>
+                        </AlertDialogHeader>
+                        <AddReservationForm
+                            onSuccess={handleAddSuccess}
+                            selectedDate={selectedDate}
+                            periodCounts={periodCounts}
+                        />
+                    </AlertDialogContent>
+                </AlertDialog>
+
+                {/* Capacity Settings Button */}
+                <AlertDialog open={isCapacityDialogOpen} onOpenChange={setIsCapacityDialogOpen}>
+                    <AlertDialogTrigger asChild>
+                        <Button variant="outline" className="border-[#8B4513] text-[#8B4513] hover:bg-[#FAEBD7]">
+                            <Settings2 className="w-4 h-4 mr-2" />
+                            Configurar Capacidade
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle className="text-xl font-bold text-[#8B4513] font-serif">
+                                Configurar Capacidade Máxima
+                            </AlertDialogTitle>
+                        </AlertDialogHeader>
+                        <div className="space-y-4 py-4">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-[#8B4513] mb-2">
+                                        Café da Manhã
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min={0}
+                                        value={capacityValues.cafe}
+                                        onChange={(e) => handleCapacityChange('cafe', Number(e.target.value))}
+                                        className="border-[#DEB887] focus:ring-[#8B4513]"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-[#8B4513] mb-2">
+                                        Almoço
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min={0}
+                                        value={capacityValues.almoco}
+                                        onChange={(e) => handleCapacityChange('almoco', Number(e.target.value))}
+                                        className="border-[#DEB887] focus:ring-[#8B4513]"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-[#8B4513] mb-2">
+                                        Jantar
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min={0}
+                                        value={capacityValues.jantar}
+                                        onChange={(e) => handleCapacityChange('jantar', Number(e.target.value))}
+                                        className="border-[#DEB887] focus:ring-[#8B4513]"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel className="border-[#DEB887] text-[#8B4513]">
+                                Cancelar
+                            </AlertDialogCancel>
+                            <Button
+                                onClick={handleCapacitySubmit}
+                                className="bg-[#8B4513] hover:bg-[#654321] text-white"
+                            >
+                                Salvar Alterações
+                            </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            </div>
+
             {/* Date Selector */}
             <div className="mb-6 space-y-4">
                 <div className="flex items-center gap-4">
@@ -227,39 +429,61 @@ export function ReservationsTable({ reservations: initialReservations }: Reserva
                                     className={cn(
                                         "w-full justify-start text-left font-normal",
                                         "border-[#DEB887] hover:bg-[#FAEBD7] hover:text-[#8B4513]",
-                                        "focus:ring-2 focus:ring-[#8B4513] focus:ring-offset-2",
-                                        isFiltering && "opacity-70 cursor-not-allowed"
+                                        "focus:ring-2 focus:ring-[#8B4513] focus:ring-offset-2"
                                     )}
                                     disabled={isFiltering}
-                                    aria-label="Selecionar data"
                                 >
                                     <CalendarIcon className="mr-2 h-4 w-4" />
                                     {format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent
-                                className="w-auto p-0 bg-white shadow-md"
+                                className="w-auto p-0 bg-white"
                                 align="start"
                             >
-                                <div className="bg-white rounded-md border border-[#DEB887] p-3">
-                                    <Calendar
-                                        mode="single"
-                                        selected={selectedDate}
-                                        onSelect={handleDateSelect}
-                                        initialFocus
-                                        disabled={(date) =>
-                                            date > new Date(new Date().setMonth(new Date().getMonth() + 3)) ||
-                                            date < new Date(new Date().setMonth(new Date().getMonth() - 3))
-                                        }
-                                        className="bg-white"
-                                    />
-                                </div>
+                                <Calendar
+                                    mode="single"
+                                    selected={selectedDate}
+                                    onSelect={handleDateSelect}
+                                    disabled={(date) =>
+                                        date < new Date(new Date().setHours(0, 0, 0, 0)) || // Can't select past dates
+                                        date > new Date(new Date().setMonth(new Date().getMonth() + 3)) // Can't select dates more than 3 months in advance
+                                    }
+                                    initialFocus
+                                    locale={ptBR}
+                                    className="rounded-md border border-[#DEB887] bg-white"
+                                    classNames={{
+                                        months: "space-y-4",
+                                        month: "space-y-4",
+                                        caption: "flex justify-center pt-1 relative items-center text-[#8B4513] font-semibold",
+                                        caption_label: "text-sm font-medium",
+                                        nav: "space-x-1 flex items-center",
+                                        nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 hover:bg-[#FAEBD7] text-[#8B4513]",
+                                        nav_button_previous: "absolute left-1",
+                                        nav_button_next: "absolute right-1",
+                                        table: "w-full border-collapse space-y-1",
+                                        head_row: "flex",
+                                        head_cell: "text-[#8B4513] rounded-md w-9 font-normal text-[0.8rem]",
+                                        row: "flex w-full mt-2",
+                                        cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-[#FAEBD7] first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                                        day: cn(
+                                            "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-[#FAEBD7] hover:text-[#8B4513]",
+                                            "rounded-md"
+                                        ),
+                                        day_selected: "bg-[#8B4513] text-white hover:bg-[#654321] hover:text-white focus:bg-[#8B4513] focus:text-white",
+                                        day_today: "bg-[#FAEBD7] text-[#8B4513]",
+                                        day_outside: "text-gray-400 opacity-50",
+                                        day_disabled: "text-gray-400 opacity-50 hover:bg-transparent",
+                                        day_range_middle: "aria-selected:bg-[#FAEBD7] aria-selected:text-[#8B4513]",
+                                        day_hidden: "invisible",
+                                    }}
+                                />
                             </PopoverContent>
                         </Popover>
                     </div>
                 </div>
 
-                {/* Add Period Filters */}
+                {/* Period Filters with Counters */}
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
                         <Clock className="w-5 h-5 text-[#8B4513]" />
@@ -350,6 +574,87 @@ export function ReservationsTable({ reservations: initialReservations }: Reserva
                                 Limpar Filtros
                             </Button>
                         )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Capacity Display Section */}
+            <div className="mb-6 p-6 border border-[#DEB887] rounded-lg bg-[#FAEBD7] shadow-sm">
+                <h3 className="text-xl font-serif font-semibold text-[#8B4513] mb-6">
+                    Capacidade por Período
+                </h3>
+
+                <div className="grid grid-cols-3 gap-6">
+                    {/* Café da Manhã */}
+                    <div className="bg-white p-4 rounded-lg border border-[#DEB887]">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Clock className="w-5 h-5 text-[#8B4513]" />
+                            <h4 className="font-medium text-[#8B4513]">
+                                Café da Manhã
+                            </h4>
+                        </div>
+                        <div className="flex items-end justify-between">
+                            <div>
+                                <p className="text-sm text-[#D2691E]">Ocupação</p>
+                                <p className="text-2xl font-semibold text-[#8B4513]">
+                                    {periodCounts.cafe}/{capacityValues.cafe}
+                                </p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-sm text-[#D2691E]">Disponível</p>
+                                <p className="text-2xl font-semibold text-[#8B4513]">
+                                    {capacityValues.cafe - periodCounts.cafe}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Almoço */}
+                    <div className="bg-white p-4 rounded-lg border border-[#DEB887]">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Clock className="w-5 h-5 text-[#8B4513]" />
+                            <h4 className="font-medium text-[#8B4513]">
+                                Almoço
+                            </h4>
+                        </div>
+                        <div className="flex items-end justify-between">
+                            <div>
+                                <p className="text-sm text-[#D2691E]">Ocupação</p>
+                                <p className="text-2xl font-semibold text-[#8B4513]">
+                                    {periodCounts.almoco}/{capacityValues.almoco}
+                                </p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-sm text-[#D2691E]">Disponível</p>
+                                <p className="text-2xl font-semibold text-[#8B4513]">
+                                    {capacityValues.almoco - periodCounts.almoco}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Jantar */}
+                    <div className="bg-white p-4 rounded-lg border border-[#DEB887]">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Clock className="w-5 h-5 text-[#8B4513]" />
+                            <h4 className="font-medium text-[#8B4513]">
+                                Jantar
+                            </h4>
+                        </div>
+                        <div className="flex items-end justify-between">
+                            <div>
+                                <p className="text-sm text-[#D2691E]">Ocupação</p>
+                                <p className="text-2xl font-semibold text-[#8B4513]">
+                                    {periodCounts.jantar}/{capacityValues.jantar}
+                                </p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-sm text-[#D2691E]">Disponível</p>
+                                <p className="text-2xl font-semibold text-[#8B4513]">
+                                    {capacityValues.jantar - periodCounts.jantar}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -497,9 +802,11 @@ export function ReservationsTable({ reservations: initialReservations }: Reserva
                                                         <Pencil className="h-4 w-4" />
                                                     </Button>
                                                 </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>Editar Reserva</AlertDialogTitle>
+                                                <AlertDialogContent className="p-0">
+                                                    <AlertDialogHeader className="p-4 pb-2">
+                                                        <AlertDialogTitle className="text-xl font-bold text-[#8B4513] font-serif">
+                                                            Editar Reserva
+                                                        </AlertDialogTitle>
                                                     </AlertDialogHeader>
                                                     <EditReservationForm
                                                         reservation={reservation}

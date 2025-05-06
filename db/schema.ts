@@ -1,4 +1,4 @@
-import { integer, pgTable, varchar, decimal, boolean, text } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, decimal, boolean, text, timestamp } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -75,14 +75,6 @@ export const drinks = pgTable("drinks", {
     largeFinalPrice: decimal({ precision: 10, scale: 2 }),
 });
 
-export const reservationSettings = pgTable("reservation_settings", {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    maxBreakfast: integer().notNull().default(30),
-    maxLunch: integer().notNull().default(50),
-    maxDinner: integer().notNull().default(40),
-    updatedAt: varchar({ length: 50 }).notNull(),
-});
-
 export const reservations = pgTable("reservations", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     name: varchar({ length: 255 }).notNull(),
@@ -96,4 +88,13 @@ export const reservations = pgTable("reservations", {
     notes: text(), // New field for admin notes
     createdAt: varchar({ length: 50 }).notNull(),
     updatedAt: varchar({ length: 50 }).notNull(),
-}); 
+});
+
+export const capacity = pgTable('capacity', {
+    date: text('date').primaryKey(),
+    cafe: integer('cafe').notNull().default(30),
+    almoco: integer('almoco').notNull().default(30),
+    jantar: integer('jantar').notNull().default(30),
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow(),
+}) 
