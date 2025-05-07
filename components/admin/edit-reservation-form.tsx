@@ -1,45 +1,66 @@
 'use client'
 
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Textarea } from "@/components/ui/textarea"
+import { DatePicker } from "@/components/ui/date-picker"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
+import { updateReservation } from "@/app/actions/reservations"
+import { format } from "date-fns"
+import { ptBR } from "date-fns/locale"
 import { useState } from "react"
 import { toast } from "sonner"
-import { User, Mail, Phone, Calendar as CalendarIcon, Clock, Users } from "lucide-react"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { updateReservation } from "@/app/actions/reservations"
-import { Textarea } from "@/components/ui/textarea"
-import { Calendar } from "@/components/ui/calendar"
-import { format, addMonths } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
+import * as z from "zod"
+
+// Time slots for each meal period
+const timeSlots = {
+    cafe: ["07:00", "08:00", "09:00", "10:00", "11:00"],
+    almoco: ["12:00", "13:00", "14:00", "15:00"],
+    jantar: ["18:00", "19:00", "20:00", "21:00"]
+}
 
 const formSchema = z.object({
-    name: z.string().min(1, "Nome é obrigatório"),
-    email: z.string().email("Email inválido"),
-    phone: z.string()
-        .min(14, "Telefone inválido")
-        .max(15, "Telefone inválido")
-        .regex(/^\(\d{2}\) \d{5}-\d{4}$/, "Formato inválido. Use: (99) 99999-9999"),
-    date: z.string().min(1, "Data é obrigatória"),
-    time: z.string().min(1, "Horário é obrigatório"),
-    guests: z.coerce.number()
-        .min(1, "Mínimo de 1 pessoa")
-        .max(20, "Máximo de 20 pessoas por reserva"),
+    name: z.string().min(2, {
+        message: "O nome deve ter pelo menos 2 caracteres.",
+    }),
+    email: z.string().email({
+        message: "Digite um email válido.",
+    }),
+    phone: z.string().min(10, {
+        message: "Digite um número de telefone válido.",
+    }),
+    date: z.date({
+        required_error: "Selecione uma data para a reserva.",
+    }),
+    time: z.string({
+        required_error: "Selecione um horário para a reserva.",
+    }),
+    guests: z.number().min(1, {
+        message: "Mínimo de 1 pessoa por reserva.",
+    }).max(20, {
+        message: "Máximo de 20 pessoas por reserva.",
+    }),
     mealPeriod: z.enum(["cafe", "almoco", "jantar"], {
-        required_error: "Selecione o período da refeição",
+        required_error: "Selecione o período da refeição.",
     }),
     notes: z.string().optional(),
-});
-
-type FormData = z.infer<typeof formSchema>;
+})
 
 interface EditReservationFormProps {
     reservation: {
@@ -54,27 +75,57 @@ interface EditReservationFormProps {
         notes?: string;
     };
     onSuccess?: () => void;
+    periodCounts: {
+        cafe: number
+        almoco: number
+        jantar: number
+    }
+    capacityValues: {
+        cafe: number
+        almoco: number
+        jantar: number
+    }
+    onDateChange?: (date: Date) => void;
 }
 
-export function EditReservationForm({ reservation, onSuccess }: EditReservationFormProps) {
-    const [isLoading, setIsLoading] = useState(false);
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-        reservation.date ? new Date(reservation.date) : undefined
-    );
+export function EditReservationForm({
+    reservation,
+    onSuccess,
+    periodCounts,
+    capacityValues,
+    onDateChange
+}: EditReservationFormProps) {
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [date, setDate] = useState<Date>(() => {
+        const date = new Date(reservation.date + 'T12:00:00');
+        return date;
+    });
 
-    const form = useForm<FormData>({
+    // Função para verificar se há vagas disponíveis
+    const checkAvailability = (period: string, guests: number) => {
+        const currentCount = periodCounts[period as keyof typeof periodCounts];
+        const maxCapacity = capacityValues[period as keyof typeof capacityValues];
+        const available = maxCapacity - currentCount;
+        // Add current reservation's guests to available if it's the same period
+        if (period === reservation.mealPeriod) {
+            return (available + reservation.guests) >= guests;
+        }
+        return available >= guests;
+    };
+
+    const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: reservation.name,
             email: reservation.email,
             phone: reservation.phone,
-            date: reservation.date,
+            date: new Date(reservation.date + 'T12:00:00'),
             time: reservation.time,
             guests: reservation.guests,
             mealPeriod: reservation.mealPeriod as "cafe" | "almoco" | "jantar",
             notes: reservation.notes,
         },
-    });
+    })
 
     // Format phone number as user types
     const formatPhoneNumber = (value: string) => {
@@ -89,248 +140,94 @@ export function EditReservationForm({ reservation, onSuccess }: EditReservationF
         form.setValue("phone", formatted);
     };
 
-    const getTimeOptions = (period: string) => {
-        switch (period) {
-            case "cafe":
-                return { min: "08:00", max: "11:00" };
-            case "almoco":
-                return { min: "11:30", max: "15:00" };
-            case "jantar":
-                return { min: "18:00", max: "22:00" };
-            default:
-                return { min: "08:00", max: "20:00" };
-        }
-    };
-
-    const mealPeriod = form.watch("mealPeriod");
-    const timeOptions = getTimeOptions(mealPeriod);
-
-    async function onSubmit(data: FormData) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
-            setIsLoading(true);
-            const result = await updateReservation(reservation.id, data);
-
-            if ('error' in result) {
-                throw new Error(result.error);
+            // Verificar disponibilidade antes de enviar
+            if (!checkAvailability(values.mealPeriod, values.guests)) {
+                const currentCount = periodCounts[values.mealPeriod as keyof typeof periodCounts];
+                const maxCapacity = capacityValues[values.mealPeriod as keyof typeof capacityValues];
+                const available = maxCapacity - currentCount;
+                const extraAvailable = values.mealPeriod === reservation.mealPeriod ? reservation.guests : 0;
+                throw new Error(`Não há vagas suficientes para ${values.guests} pessoas neste período. Vagas disponíveis: ${available + extraAvailable}`);
             }
 
-            toast.success("Reserva Atualizada!", {
-                description: "As alterações foram salvas com sucesso.",
-            });
-            onSuccess?.();
+            setIsSubmitting(true)
+
+            // Format the date to match the expected format in the database
+            const date = new Date(values.date.getTime() + values.date.getTimezoneOffset() * 60000);
+            const formattedDate = format(date, "yyyy-MM-dd")
+
+            const result = await updateReservation(reservation.id, {
+                ...values,
+                date: formattedDate,
+            })
+
+            if ('error' in result) {
+                throw new Error(result.error)
+            }
+
+            toast.success("Reserva atualizada com sucesso!", {
+                description: "As alterações foram salvas.",
+            })
+
+            onSuccess?.()
         } catch (error) {
-            toast.error("Erro ao Atualizar", {
-                description: error instanceof Error ? error.message : "Não foi possível atualizar a reserva. Por favor, tente novamente.",
-            });
+            toast.error("Erro ao atualizar reserva", {
+                description: error instanceof Error ? error.message : "Tente novamente mais tarde.",
+            })
         } finally {
-            setIsLoading(false);
+            setIsSubmitting(false)
         }
     }
-
-    const today = new Date().toISOString().split('T')[0];
 
     return (
         <div className="w-full p-4">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    {/* Personal Information */}
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Name Field */}
                         <FormField
                             control={form.control}
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-[#8B4513] flex items-center gap-2">
-                                        <User className="w-4 h-4" />
-                                        Nome Completo
-                                    </FormLabel>
+                                    <FormLabel>Nome</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            placeholder="Digite o nome"
-                                            className="border-[#DEB887]/50 focus:border-[#8B4513] bg-white rounded-lg"
-                                            {...field}
-                                        />
+                                        <Input placeholder="Nome do cliente" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-[#8B4513] flex items-center gap-2">
-                                            <Mail className="w-4 h-4" />
-                                            Email
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="email"
-                                                placeholder="email@exemplo.com"
-                                                className="border-[#DEB887]/50 focus:border-[#8B4513] bg-white rounded-lg"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="phone"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-[#8B4513] flex items-center gap-2">
-                                            <Phone className="w-4 h-4" />
-                                            Telefone
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="(99) 99999-9999"
-                                                className="border-[#DEB887]/50 focus:border-[#8B4513] bg-white rounded-lg"
-                                                {...field}
-                                                onChange={handlePhoneChange}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Meal Period Selection */}
-                    <div className="space-y-4">
+                        {/* Email Field */}
                         <FormField
                             control={form.control}
-                            name="mealPeriod"
-                            render={({ field }) => (
-                                <FormItem className="space-y-3">
-                                    <FormLabel className="text-[#8B4513] font-semibold">Período da Refeição</FormLabel>
-                                    <FormControl>
-                                        <RadioGroup
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                            className="flex flex-col sm:flex-row gap-6"
-                                        >
-                                            <FormItem className="flex items-start space-x-2">
-                                                <FormControl>
-                                                    <RadioGroupItem value="cafe" className="mt-1" />
-                                                </FormControl>
-                                                <FormLabel className="font-normal cursor-pointer">
-                                                    <div className="flex items-center gap-2">
-                                                        <span>☕</span>
-                                                        <span>Café da Manhã</span>
-                                                    </div>
-                                                    <span className="block text-sm text-[#8B4513]/70">8h - 11h</span>
-                                                </FormLabel>
-                                            </FormItem>
-                                            <FormItem className="flex items-start space-x-2">
-                                                <FormControl>
-                                                    <RadioGroupItem value="almoco" className="mt-1" />
-                                                </FormControl>
-                                                <FormLabel className="font-normal cursor-pointer">
-                                                    <div className="flex items-center gap-2">
-                                                        <span>🍽️</span>
-                                                        <span>Almoço</span>
-                                                    </div>
-                                                    <span className="block text-sm text-[#8B4513]/70">11:30h - 15h</span>
-                                                </FormLabel>
-                                            </FormItem>
-                                            <FormItem className="flex items-start space-x-2">
-                                                <FormControl>
-                                                    <RadioGroupItem value="jantar" className="mt-1" />
-                                                </FormControl>
-                                                <FormLabel className="font-normal cursor-pointer">
-                                                    <div className="flex items-center gap-2">
-                                                        <span>🌙</span>
-                                                        <span>Jantar</span>
-                                                    </div>
-                                                    <span className="block text-sm text-[#8B4513]/70">18h - 22h</span>
-                                                </FormLabel>
-                                            </FormItem>
-                                        </RadioGroup>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-
-                    {/* Reservation Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <FormField
-                            control={form.control}
-                            name="date"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel className="text-[#8B4513] flex items-center gap-2">
-                                        <CalendarIcon className="w-4 h-4" />
-                                        Data
-                                    </FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <div className="flex h-8 w-full rounded-md border border-[#DEB887]/50 bg-white px-3 py-2 text-sm text-[#8B4513] hover:bg-[#FAEBD7] hover:cursor-pointer">
-                                                {field.value ? (
-                                                    format(new Date(field.value), "dd/MM/yyyy", { locale: ptBR })
-                                                ) : (
-                                                    <span className="text-[#8B4513]/60">Selecione uma data</span>
-                                                )}
-                                            </div>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value ? new Date(field.value) : undefined}
-                                                onSelect={(date) => {
-                                                    if (date) {
-                                                        const formattedDate = format(date, 'yyyy-MM-dd');
-                                                        field.onChange(formattedDate);
-                                                    }
-                                                }}
-                                                disabled={(date) =>
-                                                    date < new Date(new Date().setHours(0, 0, 0, 0))
-                                                }
-                                                initialFocus
-                                                locale={ptBR}
-                                                className="rounded-md border border-[#DEB887]"
-                                                classNames={{
-                                                    day_selected: "bg-[#8B4513] text-white hover:bg-[#654321] hover:text-white focus:bg-[#8B4513] focus:text-white",
-                                                    day_today: "bg-[#FAEBD7] text-[#8B4513]",
-                                                    day: "hover:bg-[#FAEBD7] hover:text-[#8B4513] focus:bg-[#FAEBD7] focus:text-[#8B4513]",
-                                                    caption: "text-[#8B4513]",
-                                                    nav_button_previous: "hover:bg-[#FAEBD7] text-[#8B4513]",
-                                                    nav_button_next: "hover:bg-[#FAEBD7] text-[#8B4513]",
-                                                    head_cell: "text-[#8B4513]"
-                                                }}
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage className="text-xs" />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="time"
+                            name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-[#8B4513] flex items-center gap-2">
-                                        <Clock className="w-4 h-4" />
-                                        Horário
-                                    </FormLabel>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input type="email" placeholder="email@exemplo.com" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Phone Field */}
+                        <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Telefone</FormLabel>
                                     <FormControl>
                                         <Input
-                                            type="time"
-                                            min={timeOptions.min}
-                                            max={timeOptions.max}
-                                            className="border-[#DEB887]/50 focus:border-[#8B4513] bg-white rounded-lg"
+                                            placeholder="(00) 00000-0000"
                                             {...field}
+                                            onChange={handlePhoneChange}
+                                            maxLength={15}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -338,45 +235,139 @@ export function EditReservationForm({ reservation, onSuccess }: EditReservationF
                             )}
                         />
 
+                        {/* Number of Guests Field */}
                         <FormField
                             control={form.control}
                             name="guests"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-[#8B4513] flex items-center gap-2">
-                                        <Users className="w-4 h-4" />
-                                        Pessoas
-                                    </FormLabel>
+                                    <FormLabel>Número de Pessoas</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
-                                            min="1"
-                                            max="20"
-                                            className="border-[#DEB887]/50 focus:border-[#8B4513] bg-white rounded-lg"
+                                            min={1}
+                                            max={20}
                                             {...field}
+                                            value={field.value || 1}
+                                            onChange={(e) => {
+                                                const value = parseInt(e.target.value);
+                                                field.onChange(isNaN(value) ? 1 : value);
+                                            }}
                                         />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+
+                        {/* Date Field */}
+                        <FormField
+                            control={form.control}
+                            name="date"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Data</FormLabel>
+                                    <FormControl>
+                                        <DatePicker
+                                            date={field.value}
+                                            setDate={(date) => {
+                                                field.onChange(date);
+                                                onDateChange?.(date);
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Meal Period Field */}
+                        <FormField
+                            control={form.control}
+                            name="mealPeriod"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Período</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Selecione o período" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem
+                                                value="cafe"
+                                                disabled={periodCounts.cafe >= capacityValues.cafe && field.value !== "cafe"}
+                                            >
+                                                Café da Manhã ({capacityValues.cafe - periodCounts.cafe + (field.value === "cafe" ? reservation.guests : 0)} vagas)
+                                            </SelectItem>
+                                            <SelectItem
+                                                value="almoco"
+                                                disabled={periodCounts.almoco >= capacityValues.almoco && field.value !== "almoco"}
+                                            >
+                                                Almoço ({capacityValues.almoco - periodCounts.almoco + (field.value === "almoco" ? reservation.guests : 0)} vagas)
+                                            </SelectItem>
+                                            <SelectItem
+                                                value="jantar"
+                                                disabled={periodCounts.jantar >= capacityValues.jantar && field.value !== "jantar"}
+                                            >
+                                                Jantar ({capacityValues.jantar - periodCounts.jantar + (field.value === "jantar" ? reservation.guests : 0)} vagas)
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                    {field.value && (
+                                        <p className="text-sm text-[#8B4513] mt-1">
+                                            Vagas disponíveis: {
+                                                capacityValues[field.value as keyof typeof capacityValues] -
+                                                periodCounts[field.value as keyof typeof periodCounts] +
+                                                (field.value === reservation.mealPeriod ? reservation.guests : 0)
+                                            }
+                                        </p>
+                                    )}
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Time Field */}
+                        <FormField
+                            control={form.control}
+                            name="time"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Horário</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Selecione o horário" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {form.watch("mealPeriod") && timeSlots[form.watch("mealPeriod") as keyof typeof timeSlots].map((time) => (
+                                                <SelectItem key={time} value={time}>
+                                                    {time}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
 
-                    {/* Notes */}
+                    {/* Notes Field */}
                     <FormField
                         control={form.control}
                         name="notes"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="text-[#8B4513] flex items-center gap-2">
-                                    Observações
-                                </FormLabel>
+                                <FormLabel>Observações</FormLabel>
                                 <FormControl>
                                     <Textarea
-                                        placeholder="Adicione observações sobre a reserva..."
-                                        className="border-[#DEB887]/50 focus:border-[#8B4513] bg-white rounded-lg"
+                                        placeholder="Adicione observações sobre a reserva (opcional)"
+                                        className="resize-none"
                                         {...field}
-                                        value={field.value ?? ""}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -384,22 +375,11 @@ export function EditReservationForm({ reservation, onSuccess }: EditReservationF
                         )}
                     />
 
-                    <Button
-                        type="submit"
-                        className="w-full bg-[#8B4513] hover:bg-[#654321] text-white font-bold py-3"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <div className="flex items-center justify-center gap-2">
-                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                <span>Salvando...</span>
-                            </div>
-                        ) : (
-                            "Salvar Alterações"
-                        )}
+                    <Button type="submit" className="w-full" disabled={isSubmitting}>
+                        {isSubmitting ? "Atualizando reserva..." : "Atualizar Reserva"}
                     </Button>
                 </form>
             </Form>
         </div>
-    );
+    )
 } 

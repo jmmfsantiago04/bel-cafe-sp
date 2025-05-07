@@ -4,7 +4,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { MenuItemForm } from "./menu-form";
 import { Plus } from "lucide-react";

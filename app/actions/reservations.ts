@@ -30,7 +30,7 @@ export async function getReservationCount(date: string, mealPeriod: string) {
                 and(
                     eq(reservations.date, date),
                     eq(reservations.mealPeriod, mealPeriod),
-                    eq(reservations.status, 'pending')
+                    sql`${reservations.status} IN ('pending', 'confirmed')`
                 )
             );
 

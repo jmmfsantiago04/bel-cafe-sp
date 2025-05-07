@@ -1,6 +1,5 @@
 'use client'
 
-import { Card } from "@/components/ui/card"
 import {
     Table,
     TableBody,
@@ -9,7 +8,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Calendar as CalendarIcon, Clock, Mail, Phone, User, Users, Pencil, Trash2, Plus, Settings2 } from "lucide-react"
+import { Calendar as CalendarIcon, Clock, Pencil, Trash2, Plus, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -39,19 +38,16 @@ import { updateReservationStatus, getAllReservations, deleteReservation, getRese
 import { toast } from "sonner"
 import { EditReservationForm } from "@/components/admin/edit-reservation-form"
 import { Calendar } from "@/components/ui/calendar"
-import { format, parseISO } from "date-fns"
+import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
 import { AddReservationForm } from "@/components/admin/add-reservation-form"
 import { Input } from "@/components/ui/input"
 import { updateCapacity, getCapacity } from "@/app/actions/capacity"
 
 function formatDate(dateStr: string) {
-    const date = new Date(dateStr);
-    // Ajusta o fuso horário para considerar UTC
-    date.setHours(date.getHours() + 3); // Ajusta para o fuso horário do Brasil (UTC-3)
-    return date.toLocaleDateString('pt-BR');
+    const date = new Date(dateStr + 'T12:00:00');
+    return format(date, 'dd/MM/yyyy', { locale: ptBR });
 }
 
 function formatTime(timeStr: string) {
@@ -260,8 +256,9 @@ export function ReservationsTable({ reservations: initialReservations }: Reserva
         }
     };
 
-    const handleAddSuccess = () => {
-        refreshReservations();
+    const handleAddSuccess = async () => {
+        await refreshReservations();
+        await updatePeriodCounts(selectedDate);
         setIsAddDialogOpen(false);
     };
 
@@ -341,6 +338,7 @@ export function ReservationsTable({ reservations: initialReservations }: Reserva
                             onSuccess={handleAddSuccess}
                             selectedDate={selectedDate}
                             periodCounts={periodCounts}
+                            capacityValues={capacityValues}
                         />
                     </AlertDialogContent>
                 </AlertDialog>
@@ -810,9 +808,19 @@ export function ReservationsTable({ reservations: initialReservations }: Reserva
                                                     </AlertDialogHeader>
                                                     <EditReservationForm
                                                         reservation={reservation}
-                                                        onSuccess={() => {
+                                                        onSuccess={async () => {
                                                             // Refresh reservations after edit
+                                                            await refreshReservations();
+                                                            await updatePeriodCounts(selectedDate);
                                                             window.location.reload();
+                                                        }}
+                                                        periodCounts={periodCounts}
+                                                        capacityValues={capacityValues}
+                                                        onDateChange={async (date) => {
+                                                            // Update period counts and capacity values for the new date
+                                                            const formattedDate = format(date, 'yyyy-MM-dd');
+                                                            await loadCapacityValues(date);
+                                                            await updatePeriodCounts(date);
                                                         }}
                                                     />
                                                 </AlertDialogContent>

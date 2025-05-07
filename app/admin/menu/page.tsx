@@ -157,6 +157,8 @@ export default async function MenuPage() {
                     </table>
                 </div>
             </Card>
+
         </div>
+
     )
 } 

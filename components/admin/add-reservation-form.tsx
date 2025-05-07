@@ -6,12 +6,8 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { Calendar as CalendarIcon, Clock } from "lucide-react"
 import { createReservationByAdmin } from "@/app/actions/reservations"
-
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
 import {
     Form,
     FormControl,
@@ -28,13 +24,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
+import { DatePicker } from "@/components/ui/date-picker"
 
 // Time slots for each meal period
 const timeSlots = {
@@ -274,68 +266,10 @@ export function AddReservationForm({
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
                                 <FormLabel>Data</FormLabel>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <FormControl>
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-full pl-3 text-left font-normal",
-                                                    !date && "text-muted-foreground",
-                                                    "border-[#DEB887] hover:bg-[#FAEBD7] hover:text-[#8B4513]",
-                                                    "focus:ring-2 focus:ring-[#8B4513] focus:ring-offset-2",
-                                                    "bg-white"
-                                                )}
-                                            >
-                                                {date ? (
-                                                    format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
-                                                ) : (
-                                                    <span>Selecione uma data</span>
-                                                )}
-                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                            </Button>
-                                        </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
-                                        <Calendar
-                                            mode="single"
-                                            selected={date}
-                                            onSelect={handleDateChange}
-                                            disabled={(date) =>
-                                                date < new Date(new Date().setHours(0, 0, 0, 0)) || // Can't select past dates
-                                                date > new Date(new Date().setMonth(new Date().getMonth() + 3)) // Can't select dates more than 3 months in advance
-                                            }
-                                            initialFocus
-                                            locale={ptBR}
-                                            className="rounded-md border border-[#DEB887] bg-white"
-                                            classNames={{
-                                                months: "space-y-4",
-                                                month: "space-y-4",
-                                                caption: "flex justify-center pt-1 relative items-center text-[#8B4513] font-semibold",
-                                                caption_label: "text-sm font-medium",
-                                                nav: "space-x-1 flex items-center",
-                                                nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 hover:bg-[#FAEBD7] text-[#8B4513]",
-                                                nav_button_previous: "absolute left-1",
-                                                nav_button_next: "absolute right-1",
-                                                table: "w-full border-collapse space-y-1",
-                                                head_row: "flex",
-                                                head_cell: "text-[#8B4513] rounded-md w-9 font-normal text-[0.8rem]",
-                                                row: "flex w-full mt-2",
-                                                cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-[#FAEBD7] first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                                                day: cn(
-                                                    "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-[#FAEBD7] hover:text-[#8B4513]",
-                                                    "rounded-md"
-                                                ),
-                                                day_selected: "bg-[#8B4513] text-white hover:bg-[#654321] hover:text-white focus:bg-[#8B4513] focus:text-white",
-                                                day_today: "bg-[#FAEBD7] text-[#8B4513]",
-                                                day_outside: "text-gray-400 opacity-50",
-                                                day_disabled: "text-gray-400 opacity-50 hover:bg-transparent",
-                                                day_range_middle: "aria-selected:bg-[#FAEBD7] aria-selected:text-[#8B4513]",
-                                                day_hidden: "invisible",
-                                            }}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
+                                <DatePicker
+                                    date={date}
+                                    setDate={handleDateChange}
+                                />
                                 <FormMessage />
                             </FormItem>
                         )}
