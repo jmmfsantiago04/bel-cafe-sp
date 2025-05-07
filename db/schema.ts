@@ -7,13 +7,6 @@ export const usersTable = pgTable("users", {
     email: varchar({ length: 255 }).notNull().unique(),
 });
 
-export const categories = pgTable("categories", {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    name: varchar({ length: 50 }).notNull(),
-    description: text(),
-    isActive: boolean().default(true).notNull(),
-});
-
 export const menuItems = pgTable("menu_items", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     name: varchar({ length: 100 }).notNull(),
@@ -24,6 +17,9 @@ export const menuItems = pgTable("menu_items", {
     isSalgado: boolean().default(false).notNull(),
     isDoce: boolean().default(false).notNull(),
     isCafeDaManha: boolean().default(false).notNull(),
+    isAlmoco: boolean().default(false).notNull(),
+    isJantar: boolean().default(false).notNull(),
+    isSobremesa: boolean().default(false).notNull(),
     isSugarFree: boolean().default(false).notNull(), // For sugar-free sweet items
     isAvailable: boolean().default(true).notNull(),
     isPopular: boolean().default(false).notNull(),

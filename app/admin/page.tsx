@@ -1,9 +1,19 @@
 import { Card } from "@/components/ui/card"
 import { db } from "@/lib/db"
-import { menuItems, categories, reservations } from "@/db/schema"
+import { menuItems, reservations } from "@/db/schema"
 import { count } from "drizzle-orm"
 import { and, eq } from "drizzle-orm"
 import { format } from "date-fns"
+import {
+    Coffee,
+    UtensilsCrossed,
+    Moon,
+    Calendar,
+    Users,
+    ShoppingBag,
+    Star,
+    Tag
+} from "lucide-react"
 
 export default async function AdminDashboard() {
     const today = format(new Date(), 'yyyy-MM-dd');
@@ -11,7 +21,6 @@ export default async function AdminDashboard() {
     // Fetch all stats in parallel using Promise.all
     const [
         totalItems,
-        activeCategories,
         popularItems,
         discountedItems,
         totalReservations,
@@ -20,7 +29,6 @@ export default async function AdminDashboard() {
         dinnerReservations,
     ] = await Promise.all([
         db.select({ value: count() }).from(menuItems).then(result => result[0]),
-        db.select({ value: count() }).from(categories).where(eq(categories.isActive, true)).then(result => result[0]),
         db.select({ value: count() }).from(menuItems).where(eq(menuItems.isPopular, true)).then(result => result[0]),
         db.select({ value: count() }).from(menuItems).where(eq(menuItems.isDiscounted, true)).then(result => result[0]),
         // Reservation counts
@@ -31,73 +39,117 @@ export default async function AdminDashboard() {
     ]).catch(error => {
         console.error('Error fetching dashboard data:', error)
         return [
-            { value: 0 }, { value: 0 }, { value: 0 }, { value: 0 },
+            { value: 0 }, { value: 0 }, { value: 0 },
             { value: 0 }, { value: 0 }, { value: 0 }, { value: 0 }
         ]
     })
 
     return (
-        <div className="h-full flex flex-col p-6 md:p-8 lg:p-10">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-8">
-                <div>
-                    <h1 className="text-2xl font-bold text-[#8B4513] font-serif">Dashboard</h1>
-                    <p className="text-[#D2691E] text-sm">Visão geral do seu negócio</p>
+        <div className="container mx-auto py-10">
+            <div className="flex flex-col space-y-6">
+                {/* Header */}
+                <div className="flex flex-col space-y-2">
+                    <h1 className="text-3xl font-bold text-[#8B4513]">Dashboard</h1>
+                    <p className="text-[#D2691E]">Visão geral do seu negócio</p>
                 </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <Card className="p-6 bg-white shadow-md border border-[#DEB887]">
-                    <h3 className="text-lg font-semibold text-[#8B4513]">Total de Itens</h3>
-                    <p className="text-3xl font-bold mt-2 text-[#8B4513]">{totalItems.value}</p>
-                    <p className="text-sm text-[#D2691E] mt-1">Itens no cardápio</p>
-                </Card>
+                {/* Menu Stats Section */}
+                <div className="space-y-4">
+                    <h2 className="text-xl font-semibold text-[#8B4513]">Cardápio</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <Card className="p-6 bg-white shadow-md border border-[#DEB887] hover:shadow-lg transition-shadow">
+                            <div className="flex items-center space-x-4">
+                                <div className="p-3 bg-[#FDF5E6] rounded-full">
+                                    <ShoppingBag className="h-6 w-6 text-[#8B4513]" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-[#D2691E]">Total de Itens</p>
+                                    <p className="text-2xl font-bold text-[#8B4513]">{totalItems.value}</p>
+                                </div>
+                            </div>
+                        </Card>
 
-                <Card className="p-6 bg-white shadow-md border border-[#DEB887]">
-                    <h3 className="text-lg font-semibold text-[#8B4513]">Categorias</h3>
-                    <p className="text-3xl font-bold mt-2 text-[#8B4513]">{activeCategories.value}</p>
-                    <p className="text-sm text-[#D2691E] mt-1">Categorias ativas</p>
-                </Card>
+                        <Card className="p-6 bg-white shadow-md border border-[#DEB887] hover:shadow-lg transition-shadow">
+                            <div className="flex items-center space-x-4">
+                                <div className="p-3 bg-[#FDF5E6] rounded-full">
+                                    <Star className="h-6 w-6 text-[#8B4513]" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-[#D2691E]">Itens Populares</p>
+                                    <p className="text-2xl font-bold text-[#8B4513]">{popularItems.value}</p>
+                                </div>
+                            </div>
+                        </Card>
 
-                <Card className="p-6 bg-white shadow-md border border-[#DEB887]">
-                    <h3 className="text-lg font-semibold text-[#8B4513]">Itens Populares</h3>
-                    <p className="text-3xl font-bold mt-2 text-[#8B4513]">{popularItems.value}</p>
-                    <p className="text-sm text-[#D2691E] mt-1">Marcados como populares</p>
-                </Card>
+                        <Card className="p-6 bg-white shadow-md border border-[#DEB887] hover:shadow-lg transition-shadow">
+                            <div className="flex items-center space-x-4">
+                                <div className="p-3 bg-[#FDF5E6] rounded-full">
+                                    <Tag className="h-6 w-6 text-[#8B4513]" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-[#D2691E]">Em Promoção</p>
+                                    <p className="text-2xl font-bold text-[#8B4513]">{discountedItems.value}</p>
+                                </div>
+                            </div>
+                        </Card>
 
-                <Card className="p-6 bg-white shadow-md border border-[#DEB887]">
-                    <h3 className="text-lg font-semibold text-[#8B4513]">Itens com Desconto</h3>
-                    <p className="text-3xl font-bold mt-2 text-[#8B4513]">{discountedItems.value}</p>
-                    <p className="text-sm text-[#D2691E] mt-1">Com desconto ativo</p>
-                </Card>
-            </div>
+                        <Card className="p-6 bg-white shadow-md border border-[#DEB887] hover:shadow-lg transition-shadow">
+                            <div className="flex items-center space-x-4">
+                                <div className="p-3 bg-[#FDF5E6] rounded-full">
+                                    <Calendar className="h-6 w-6 text-[#8B4513]" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-[#D2691E]">Reservas Hoje</p>
+                                    <p className="text-2xl font-bold text-[#8B4513]">{totalReservations.value}</p>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
+                </div>
 
-            {/* Reservations Section */}
-            <div className="mb-6">
-                <h2 className="text-xl font-semibold text-[#8B4513] mb-6 font-serif">Reservas de Hoje</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <Card className="p-6 bg-white shadow-md border border-[#DEB887]">
-                        <h3 className="text-lg font-semibold text-[#8B4513]">Total de Reservas</h3>
-                        <p className="text-3xl font-bold mt-2 text-[#8B4513]">{totalReservations.value}</p>
-                        <p className="text-sm text-[#D2691E] mt-1">Reservas para hoje</p>
-                    </Card>
+                {/* Reservations Stats Section */}
+                <div className="space-y-4">
+                    <h2 className="text-xl font-semibold text-[#8B4513]">Reservas por Período</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Card className="p-6 bg-white shadow-md border border-[#DEB887] hover:shadow-lg transition-shadow">
+                            <div className="flex items-center space-x-4">
+                                <div className="p-3 bg-[#FDF5E6] rounded-full">
+                                    <Coffee className="h-6 w-6 text-[#8B4513]" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-[#D2691E]">Café da Manhã</p>
+                                    <p className="text-2xl font-bold text-[#8B4513]">{breakfastReservations.value}</p>
+                                    <p className="text-xs text-[#D2691E]">8h às 11h</p>
+                                </div>
+                            </div>
+                        </Card>
 
-                    <Card className="p-6 bg-white shadow-md border border-[#DEB887]">
-                        <h3 className="text-lg font-semibold text-[#8B4513]">Café da Manhã</h3>
-                        <p className="text-3xl font-bold mt-2 text-[#8B4513]">{breakfastReservations.value}</p>
-                        <p className="text-sm text-[#D2691E] mt-1">8h às 11h</p>
-                    </Card>
+                        <Card className="p-6 bg-white shadow-md border border-[#DEB887] hover:shadow-lg transition-shadow">
+                            <div className="flex items-center space-x-4">
+                                <div className="p-3 bg-[#FDF5E6] rounded-full">
+                                    <UtensilsCrossed className="h-6 w-6 text-[#8B4513]" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-[#D2691E]">Almoço</p>
+                                    <p className="text-2xl font-bold text-[#8B4513]">{lunchReservations.value}</p>
+                                    <p className="text-xs text-[#D2691E]">11:30h às 15h</p>
+                                </div>
+                            </div>
+                        </Card>
 
-                    <Card className="p-6 bg-white shadow-md border border-[#DEB887]">
-                        <h3 className="text-lg font-semibold text-[#8B4513]">Almoço</h3>
-                        <p className="text-3xl font-bold mt-2 text-[#8B4513]">{lunchReservations.value}</p>
-                        <p className="text-sm text-[#D2691E] mt-1">11:30h às 15h</p>
-                    </Card>
-
-                    <Card className="p-6 bg-white shadow-md border border-[#DEB887]">
-                        <h3 className="text-lg font-semibold text-[#8B4513]">Jantar</h3>
-                        <p className="text-3xl font-bold mt-2 text-[#8B4513]">{dinnerReservations.value}</p>
-                        <p className="text-sm text-[#D2691E] mt-1">18h às 22h</p>
-                    </Card>
+                        <Card className="p-6 bg-white shadow-md border border-[#DEB887] hover:shadow-lg transition-shadow">
+                            <div className="flex items-center space-x-4">
+                                <div className="p-3 bg-[#FDF5E6] rounded-full">
+                                    <Moon className="h-6 w-6 text-[#8B4513]" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-[#D2691E]">Jantar</p>
+                                    <p className="text-2xl font-bold text-[#8B4513]">{dinnerReservations.value}</p>
+                                    <p className="text-xs text-[#D2691E]">18h às 22h</p>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
                 </div>
             </div>
         </div>

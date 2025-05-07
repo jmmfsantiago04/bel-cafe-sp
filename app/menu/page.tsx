@@ -1,46 +1,68 @@
-import { Menu } from "@/components/menu/menu";
-import { db } from "@/lib/db";
-import { menuItems } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { db } from "@/lib/db"
+import { menuItems } from "@/db/schema"
+import { eq } from "drizzle-orm"
+import { MenuCard } from "@/components/menu/menu-card"
 
 export default async function MenuPage() {
-    const items = await db.query.menuItems.findMany({
-        where: eq(menuItems.isAvailable, true),
-    });
-
-    // Group items by category
-    const groupedItems = {
-        salgados: items.filter(item => item.isSalgado),
-        doces: items.filter(item => item.isDoce),
-        cafeDaManha: items.filter(item => item.isCafeDaManha),
-    };
+    const [almoco, jantar, sobremesas] = await Promise.all([
+        db.query.menuItems.findMany({
+            where: eq(menuItems.isAlmoco, true),
+        }),
+        db.query.menuItems.findMany({
+            where: eq(menuItems.isJantar, true),
+        }),
+        db.query.menuItems.findMany({
+            where: eq(menuItems.isSobremesa, true),
+        }),
+    ])
 
     return (
-        <div className="container mx-auto py-8">
-            {/* Welcome Message */}
-            <div className="text-center mb-12">
-                <h1 className="text-4xl font-bold text-[#8B4513] mb-4 font-serif">
-                    Bem-vindo ao Bel Café
-                </h1>
-                <p className="text-[#D2691E] text-lg">
-                    Explore nosso cardápio e descubra nossas deliciosas opções
-                </p>
-                <div className="flex items-center justify-center space-x-4 mt-4">
-                    <div className="h-[2px] w-24 bg-[#DEB887]" />
-                    <span className="text-[#D2691E] font-serif">☕</span>
-                    <div className="h-[2px] w-24 bg-[#DEB887]" />
+        <div className="min-h-screen bg-[#8B2500] py-10">
+            <div className="container mx-auto px-4">
+                <div className="text-center mb-12">
+                    <h1 className="text-4xl font-bold text-[#F5E6D3] font-serif mb-2">É de Chão</h1>
+                    <p className="text-[#FFB800] italic">Comida de Afeto</p>
                 </div>
-            </div>
 
-            {/* Menu Component */}
-            <Menu initialItems={groupedItems} />
+                {/* Almoço Section */}
+                <section className="mb-16">
+                    <div className="flex items-center mb-8">
+                        <h2 className="text-2xl font-semibold text-[#F5E6D3]">Almoço</h2>
+                        <div className="flex-1 h-px bg-[#F5E6D3]/20 ml-4" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {almoco.map((item) => (
+                            <MenuCard key={item.id} item={item} />
+                        ))}
+                    </div>
+                </section>
 
-            {/* Decorative Footer */}
-            <div className="flex items-center justify-center mt-12 space-x-4">
-                <div className="h-[2px] w-24 bg-[#DEB887]" />
-                <span className="text-[#D2691E] font-serif">♦</span>
-                <div className="h-[2px] w-24 bg-[#DEB887]" />
+                {/* Jantar Section */}
+                <section className="mb-16">
+                    <div className="flex items-center mb-8">
+                        <h2 className="text-2xl font-semibold text-[#F5E6D3]">Jantar</h2>
+                        <div className="flex-1 h-px bg-[#F5E6D3]/20 ml-4" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {jantar.map((item) => (
+                            <MenuCard key={item.id} item={item} />
+                        ))}
+                    </div>
+                </section>
+
+                {/* Sobremesas Section */}
+                <section className="mb-16">
+                    <div className="flex items-center mb-8">
+                        <h2 className="text-2xl font-semibold text-[#F5E6D3]">Sobremesas</h2>
+                        <div className="flex-1 h-px bg-[#F5E6D3]/20 ml-4" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {sobremesas.map((item) => (
+                            <MenuCard key={item.id} item={item} />
+                        ))}
+                    </div>
+                </section>
             </div>
         </div>
-    );
+    )
 } 

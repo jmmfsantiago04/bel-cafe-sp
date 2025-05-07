@@ -1,54 +1,61 @@
 'use client'
 
+import { useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+import { createMenuItem, type MenuItemFormData } from "@/app/actions/menu"
 import { Button } from "@/components/ui/button"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+    FormDescription,
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
-import { createDrink, type DrinkFormData } from "@/app/actions/drinks"
-import { useState } from "react"
+import { toast } from "sonner"
 
 const formSchema = z.object({
-    name: z.string().min(1, "Nome é obrigatório"),
-    description: z.string().nullable(),
-    price: z.coerce.number().min(0, "Preço deve ser maior ou igual a 0"),
-    imageUrl: z.string().nullable(),
-    isHotDrink: z.boolean(),
+    name: z.string().min(2, {
+        message: "O nome deve ter pelo menos 2 caracteres.",
+    }),
+    description: z.string().optional().nullable(),
+    price: z.number().min(0, {
+        message: "O preço deve ser maior que zero.",
+    }),
+    imageUrl: z.string().url({
+        message: "Digite uma URL válida para a imagem.",
+    }).optional().nullable(),
+    isSalgado: z.boolean(),
+    isDoce: z.boolean(),
+    isCafeDaManha: z.boolean(),
+    isAlmoco: z.boolean(),
+    isJantar: z.boolean(),
+    isSobremesa: z.boolean(),
+    isSugarFree: z.boolean(),
     isAvailable: z.boolean(),
     isPopular: z.boolean(),
-    isAlcoholic: z.boolean(),
     hasSize: z.boolean(),
-    mediumSizePrice: z.coerce.number().nullable(),
-    largeSizePrice: z.coerce.number().nullable(),
+    mediumSizePrice: z.number().min(0).optional().nullable(),
+    largeSizePrice: z.number().min(0).optional().nullable(),
     isGlutenFree: z.boolean(),
     isVegetarian: z.boolean(),
     isVegan: z.boolean(),
-}).superRefine((data, ctx) => {
-    if (data.hasSize) {
-        if (!data.mediumSizePrice && !data.largeSizePrice) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: "Pelo menos um tamanho deve ter preço quando o item tem opções de tamanho",
-                path: ["mediumSizePrice"],
-            });
-        }
-    }
-});
+}) satisfies z.ZodType<MenuItemFormData>
 
-type FormData = z.infer<typeof formSchema>;
+type FormData = z.infer<typeof formSchema>
 
-export function DrinkForm({
+export function AddMenuItemForm({
     onSuccess,
 }: {
     onSuccess?: () => void
 }) {
-    const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
@@ -57,42 +64,48 @@ export function DrinkForm({
             description: null,
             price: 0,
             imageUrl: null,
-            isHotDrink: true,
+            isSalgado: false,
+            isDoce: false,
+            isCafeDaManha: false,
+            isAlmoco: false,
+            isJantar: false,
+            isSobremesa: false,
+            isSugarFree: false,
             isAvailable: true,
             isPopular: false,
-            isAlcoholic: false,
-            hasSize: true,
+            hasSize: false,
             mediumSizePrice: null,
             largeSizePrice: null,
             isGlutenFree: false,
             isVegetarian: false,
             isVegan: false,
         },
-    });
+    })
 
-    const hasSize = form.watch("hasSize");
+    const hasSize = form.watch("hasSize")
 
-    async function onSubmit(data: FormData) {
+    async function onSubmit(values: FormData) {
         try {
-            setIsLoading(true);
-            const result = await createDrink(data as DrinkFormData);
+            setIsSubmitting(true)
+
+            const result = await createMenuItem(values)
 
             if ('error' in result) {
-                throw new Error(result.error);
+                throw new Error(result.error)
             }
 
-            toast.success("Sucesso", {
-                description: "Bebida adicionada ao cardápio",
-            });
-            form.reset();
-            onSuccess?.();
-            router.refresh();
+            toast.success("Item adicionado com sucesso!", {
+                description: "O item foi adicionado ao cardápio.",
+            })
+
+            form.reset()
+            onSuccess?.()
         } catch (error) {
-            toast.error("Erro", {
-                description: error instanceof Error ? error.message : "Algo deu errado ao criar a bebida",
-            });
+            toast.error("Erro ao adicionar item", {
+                description: error instanceof Error ? error.message : "Tente novamente mais tarde.",
+            })
         } finally {
-            setIsLoading(false);
+            setIsSubmitting(false)
         }
     }
 
@@ -107,10 +120,10 @@ export function DrinkForm({
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-[#F5E6D3]">Nome da Bebida</FormLabel>
+                                    <FormLabel className="text-[#F5E6D3]">Nome</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder="Ex: Café Expresso"
+                                            placeholder="Nome do item"
                                             {...field}
                                             className="bg-[#2D4F56] border-[#F5E6D3]/20 text-[#F5E6D3] placeholder:text-[#F5E6D3]/50"
                                         />
@@ -128,7 +141,7 @@ export function DrinkForm({
                                     <FormLabel className="text-[#F5E6D3]">Descrição</FormLabel>
                                     <FormControl>
                                         <Textarea
-                                            placeholder="Descreva a bebida..."
+                                            placeholder="Descrição do item"
                                             className="resize-none bg-[#2D4F56] border-[#F5E6D3]/20 text-[#F5E6D3] placeholder:text-[#F5E6D3]/50"
                                             {...field}
                                             value={field.value || ""}
@@ -144,7 +157,7 @@ export function DrinkForm({
                             name="price"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-[#F5E6D3]">Preço Base (R$)</FormLabel>
+                                    <FormLabel className="text-[#F5E6D3]">Preço</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
@@ -153,7 +166,7 @@ export function DrinkForm({
                                             placeholder="0.00"
                                             className="bg-[#2D4F56] border-[#F5E6D3]/20 text-[#F5E6D3] placeholder:text-[#F5E6D3]/50"
                                             {...field}
-                                            onChange={(e) => field.onChange(Number(e.target.value))}
+                                            onChange={(e) => field.onChange(parseFloat(e.target.value))}
                                         />
                                     </FormControl>
                                     <FormMessage className="text-[#FFB800]" />
@@ -169,7 +182,7 @@ export function DrinkForm({
                                     <FormLabel className="text-[#F5E6D3]">URL da Imagem</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder="https://..."
+                                            placeholder="https://exemplo.com/imagem.jpg"
                                             className="bg-[#2D4F56] border-[#F5E6D3]/20 text-[#F5E6D3] placeholder:text-[#F5E6D3]/50"
                                             {...field}
                                             value={field.value || ""}
@@ -181,13 +194,13 @@ export function DrinkForm({
                         />
                     </div>
 
-                    {/* Drink Type and Size Options */}
+                    {/* Categories */}
                     <div className="space-y-6">
                         <div className="space-y-4">
-                            <h3 className="text-lg font-medium text-[#FFB800]">Tipo de Bebida</h3>
+                            <h3 className="text-lg font-medium text-[#FFB800]">Categorias</h3>
                             <FormField
                                 control={form.control}
-                                name="isHotDrink"
+                                name="isCafeDaManha"
                                 render={({ field }) => (
                                     <FormItem className="flex items-center space-x-2">
                                         <FormControl>
@@ -197,14 +210,13 @@ export function DrinkForm({
                                                 className="border-[#F5E6D3] data-[state=checked]:bg-[#E67E22] data-[state=checked]:border-[#E67E22]"
                                             />
                                         </FormControl>
-                                        <FormLabel className="text-[#F5E6D3]">Bebida Quente</FormLabel>
+                                        <FormLabel className="text-[#F5E6D3]">Café da Manhã</FormLabel>
                                     </FormItem>
                                 )}
                             />
-
                             <FormField
                                 control={form.control}
-                                name="hasSize"
+                                name="isAlmoco"
                                 render={({ field }) => (
                                     <FormItem className="flex items-center space-x-2">
                                         <FormControl>
@@ -214,70 +226,74 @@ export function DrinkForm({
                                                 className="border-[#F5E6D3] data-[state=checked]:bg-[#E67E22] data-[state=checked]:border-[#E67E22]"
                                             />
                                         </FormControl>
-                                        <div className="space-y-1 leading-none">
-                                            <FormLabel className="text-[#F5E6D3]">Possui diferentes tamanhos</FormLabel>
-                                        </div>
+                                        <FormLabel className="text-[#F5E6D3]">Almoço</FormLabel>
                                     </FormItem>
                                 )}
                             />
-
-                            {hasSize && (
-                                <div className="space-y-4 mt-4">
-                                    <FormField
-                                        control={form.control}
-                                        name="mediumSizePrice"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel className="text-[#F5E6D3]">Preço Tamanho Médio</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="number"
-                                                        step="0.01"
-                                                        min="0"
-                                                        placeholder="0.00"
-                                                        className="bg-[#2D4F56] border-[#F5E6D3]/20 text-[#F5E6D3] placeholder:text-[#F5E6D3]/50"
-                                                        {...field}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                e.target.value ? Number(e.target.value) : null
-                                                            )
-                                                        }
-                                                        value={field.value ?? ""}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage className="text-[#FFB800]" />
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    <FormField
-                                        control={form.control}
-                                        name="largeSizePrice"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel className="text-[#F5E6D3]">Preço Tamanho Grande</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="number"
-                                                        step="0.01"
-                                                        min="0"
-                                                        placeholder="0.00"
-                                                        className="bg-[#2D4F56] border-[#F5E6D3]/20 text-[#F5E6D3] placeholder:text-[#F5E6D3]/50"
-                                                        {...field}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                e.target.value ? Number(e.target.value) : null
-                                                            )
-                                                        }
-                                                        value={field.value ?? ""}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage className="text-[#FFB800]" />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                            )}
+                            <FormField
+                                control={form.control}
+                                name="isJantar"
+                                render={({ field }) => (
+                                    <FormItem className="flex items-center space-x-2">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                className="border-[#F5E6D3] data-[state=checked]:bg-[#E67E22] data-[state=checked]:border-[#E67E22]"
+                                            />
+                                        </FormControl>
+                                        <FormLabel className="text-[#F5E6D3]">Jantar</FormLabel>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="isSobremesa"
+                                render={({ field }) => (
+                                    <FormItem className="flex items-center space-x-2">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                className="border-[#F5E6D3] data-[state=checked]:bg-[#E67E22] data-[state=checked]:border-[#E67E22]"
+                                            />
+                                        </FormControl>
+                                        <FormLabel className="text-[#F5E6D3]">Sobremesa</FormLabel>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="isSalgado"
+                                render={({ field }) => (
+                                    <FormItem className="flex items-center space-x-2">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                className="border-[#F5E6D3] data-[state=checked]:bg-[#E67E22] data-[state=checked]:border-[#E67E22]"
+                                            />
+                                        </FormControl>
+                                        <FormLabel className="text-[#F5E6D3]">Salgado</FormLabel>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="isDoce"
+                                render={({ field }) => (
+                                    <FormItem className="flex items-center space-x-2">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                className="border-[#F5E6D3] data-[state=checked]:bg-[#E67E22] data-[state=checked]:border-[#E67E22]"
+                                            />
+                                        </FormControl>
+                                        <FormLabel className="text-[#F5E6D3]">Doce</FormLabel>
+                                    </FormItem>
+                                )}
+                            />
                         </div>
                     </div>
 
@@ -298,6 +314,22 @@ export function DrinkForm({
                                             />
                                         </FormControl>
                                         <FormLabel className="text-[#F5E6D3]">Sem Glúten</FormLabel>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="isSugarFree"
+                                render={({ field }) => (
+                                    <FormItem className="flex items-center space-x-2">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                className="border-[#F5E6D3] data-[state=checked]:bg-[#E67E22] data-[state=checked]:border-[#E67E22]"
+                                            />
+                                        </FormControl>
+                                        <FormLabel className="text-[#F5E6D3]">Sem Açúcar</FormLabel>
                                     </FormItem>
                                 )}
                             />
@@ -339,29 +371,7 @@ export function DrinkForm({
                     {/* Additional Options */}
                     <div className="space-y-6">
                         <div className="space-y-4">
-                            <h3 className="text-lg font-medium text-[#FFB800]">Status</h3>
-                            <FormField
-                                control={form.control}
-                                name="isAlcoholic"
-                                render={({ field }) => (
-                                    <FormItem className="flex items-center space-x-2">
-                                        <FormControl>
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                                className="border-[#F5E6D3] data-[state=checked]:bg-[#E67E22] data-[state=checked]:border-[#E67E22]"
-                                            />
-                                        </FormControl>
-                                        <div className="space-y-1 leading-none">
-                                            <FormLabel className="text-[#F5E6D3]">Bebida Alcoólica (18+)</FormLabel>
-                                            <FormDescription className="text-[#F5E6D3]/60">
-                                                Marque se esta bebida contém álcool
-                                            </FormDescription>
-                                        </div>
-                                    </FormItem>
-                                )}
-                            />
-
+                            <h3 className="text-lg font-medium text-[#FFB800]">Opções Adicionais</h3>
                             <FormField
                                 control={form.control}
                                 name="isAvailable"
@@ -374,11 +384,10 @@ export function DrinkForm({
                                                 className="border-[#F5E6D3] data-[state=checked]:bg-[#E67E22] data-[state=checked]:border-[#E67E22]"
                                             />
                                         </FormControl>
-                                        <FormLabel className="text-[#F5E6D3]">Disponível no Cardápio</FormLabel>
+                                        <FormLabel className="text-[#F5E6D3]">Disponível</FormLabel>
                                     </FormItem>
                                 )}
                             />
-
                             <FormField
                                 control={form.control}
                                 name="isPopular"
@@ -391,20 +400,86 @@ export function DrinkForm({
                                                 className="border-[#F5E6D3] data-[state=checked]:bg-[#E67E22] data-[state=checked]:border-[#E67E22]"
                                             />
                                         </FormControl>
-                                        <FormLabel className="text-[#F5E6D3]">Marcar como Popular</FormLabel>
+                                        <FormLabel className="text-[#F5E6D3]">Popular</FormLabel>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="hasSize"
+                                render={({ field }) => (
+                                    <FormItem className="flex items-center space-x-2">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                className="border-[#F5E6D3] data-[state=checked]:bg-[#E67E22] data-[state=checked]:border-[#E67E22]"
+                                            />
+                                        </FormControl>
+                                        <FormLabel className="text-[#F5E6D3]">Tem Tamanhos</FormLabel>
                                     </FormItem>
                                 )}
                             />
                         </div>
+
+                        {/* Size Options */}
+                        {hasSize && (
+                            <div className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="mediumSizePrice"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-[#F5E6D3]">Preço Tamanho Médio</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    step="0.01"
+                                                    min="0"
+                                                    placeholder="0.00"
+                                                    className="bg-[#2D4F56] border-[#F5E6D3]/20 text-[#F5E6D3] placeholder:text-[#F5E6D3]/50"
+                                                    {...field}
+                                                    value={field.value || ""}
+                                                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                                />
+                                            </FormControl>
+                                            <FormMessage className="text-[#FFB800]" />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="largeSizePrice"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-[#F5E6D3]">Preço Tamanho Grande</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    step="0.01"
+                                                    min="0"
+                                                    placeholder="0.00"
+                                                    className="bg-[#2D4F56] border-[#F5E6D3]/20 text-[#F5E6D3] placeholder:text-[#F5E6D3]/50"
+                                                    {...field}
+                                                    value={field.value || ""}
+                                                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                                />
+                                            </FormControl>
+                                            <FormMessage className="text-[#FFB800]" />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 <Button
                     type="submit"
-                    className="w-full bg-[#E67E22] hover:bg-[#D35400] text-[#F5E6D3]"
-                    disabled={isLoading}
+                    className="w-full bg-[#2D4F56] hover:bg-[#1D3F46] text-[#F5E6D3]"
+                    disabled={isSubmitting}
                 >
-                    {isLoading ? "Adicionando bebida..." : "Adicionar Bebida"}
+                    {isSubmitting ? "Adicionando item..." : "Adicionar Item"}
                 </Button>
             </form>
         </Form>

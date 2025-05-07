@@ -25,7 +25,6 @@ export default function AdminLayout({
         { name: 'Dashboard', href: '/admin' },
         { name: 'Cardápio', href: '/admin/menu' },
         { name: 'Reservas', href: '/admin/reservations' },
-        { name: 'Categorias', href: '/admin/categories' },
         { name: 'Configurações', href: '/admin/settings' },
     ]
 
