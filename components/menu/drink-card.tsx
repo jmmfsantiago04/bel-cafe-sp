@@ -2,32 +2,34 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { type InferModel } from "drizzle-orm"
-import { menuItems } from "@/db/schema"
-import { Leaf, Wheat, Carrot, ImageOff } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-type MenuItem = InferModel<typeof menuItems>
-
-interface MenuCardProps {
+interface DrinkCardProps {
     item: {
         id: number
         name: string
         description: string | null
         price: string
         imageUrl: string | null
+        isHotDrink: boolean
         isAvailable: boolean
         isPopular: boolean
-        isDoce: boolean
+        isAlcoholic: boolean
+        hasSize: boolean
+        mediumSizePrice: string | null
+        largeSizePrice: string | null
         isGlutenFree: boolean
         isVegetarian: boolean
         isVegan: boolean
         discount: string
         isDiscounted: boolean
         finalPrice: string | null
+        mediumFinalPrice: string | null
+        largeFinalPrice: string | null
     }
 }
 
-export function MenuCard({ item }: MenuCardProps) {
+export function DrinkCard({ item }: DrinkCardProps) {
     const formatPrice = (price: string | null) => {
         if (!price) return null;
         return new Intl.NumberFormat('pt-BR', {
@@ -84,6 +86,11 @@ export function MenuCard({ item }: MenuCardProps) {
                                 Popular
                             </Badge>
                         )}
+                        {item.isAlcoholic && (
+                            <Badge variant="outline" className="bg-[#C84C28]/10 text-[#C84C28] border-[#C84C28]">
+                                18+
+                            </Badge>
+                        )}
                     </div>
                 </div>
                 {item.description && (
@@ -113,10 +120,38 @@ export function MenuCard({ item }: MenuCardProps) {
                         )}
                     </div>
 
-                    {/* Price */}
-                    <div>
-                        <p className="text-sm text-[#8B4513]/80">Preço</p>
-                        {renderPrice(item.price, item.finalPrice)}
+                    {/* Prices */}
+                    <div className={cn(
+                        "grid gap-2",
+                        item.hasSize ? "grid-cols-3" : "grid-cols-1"
+                    )}>
+                        {!item.hasSize && (
+                            <div>
+                                <p className="text-sm text-[#8B4513]/80">Preço</p>
+                                {renderPrice(item.price, item.finalPrice)}
+                            </div>
+                        )}
+
+                        {item.hasSize && (
+                            <>
+                                <div>
+                                    <p className="text-sm text-[#8B4513]/80">Pequeno</p>
+                                    {renderPrice(item.price, item.finalPrice)}
+                                </div>
+                                {item.mediumSizePrice && (
+                                    <div>
+                                        <p className="text-sm text-[#8B4513]/80">Médio</p>
+                                        {renderPrice(item.mediumSizePrice, item.mediumFinalPrice)}
+                                    </div>
+                                )}
+                                {item.largeSizePrice && (
+                                    <div>
+                                        <p className="text-sm text-[#8B4513]/80">Grande</p>
+                                        {renderPrice(item.largeSizePrice, item.largeFinalPrice)}
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
                 </div>
             </CardContent>

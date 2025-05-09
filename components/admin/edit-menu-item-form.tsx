@@ -4,7 +4,7 @@ import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { createMenuItem, type MenuItemFormData } from "@/app/actions/menu"
+import { updateMenuItem, type MenuItemFormData } from "@/app/actions/menu"
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -13,7 +13,6 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-    FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -50,35 +49,60 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>
 
-export function AddMenuItemForm({
+interface EditMenuItemFormProps {
+    menuItem: {
+        id: number;
+        name: string;
+        description: string | null;
+        price: number;
+        imageUrl: string | null;
+        isSalgado: boolean;
+        isDoce: boolean;
+        isCafeDaManha: boolean;
+        isAlmoco: boolean;
+        isJantar: boolean;
+        isSobremesa: boolean;
+        isSugarFree: boolean;
+        isAvailable: boolean;
+        isPopular: boolean;
+        hasSize: boolean;
+        mediumSizePrice: number | null;
+        largeSizePrice: number | null;
+        isGlutenFree: boolean;
+        isVegetarian: boolean;
+        isVegan: boolean;
+    };
+    onSuccess?: () => void;
+}
+
+export function EditMenuItemForm({
+    menuItem,
     onSuccess,
-}: {
-    onSuccess?: () => void
-}) {
+}: EditMenuItemFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
-            description: null,
-            price: 0,
-            imageUrl: null,
-            isSalgado: false,
-            isDoce: false,
-            isCafeDaManha: false,
-            isAlmoco: false,
-            isJantar: false,
-            isSobremesa: false,
-            isSugarFree: false,
-            isAvailable: true,
-            isPopular: false,
-            hasSize: false,
-            mediumSizePrice: null,
-            largeSizePrice: null,
-            isGlutenFree: false,
-            isVegetarian: false,
-            isVegan: false,
+            name: menuItem.name,
+            description: menuItem.description,
+            price: menuItem.price,
+            imageUrl: menuItem.imageUrl,
+            isSalgado: menuItem.isSalgado,
+            isDoce: menuItem.isDoce,
+            isCafeDaManha: menuItem.isCafeDaManha,
+            isAlmoco: menuItem.isAlmoco,
+            isJantar: menuItem.isJantar,
+            isSobremesa: menuItem.isSobremesa,
+            isSugarFree: menuItem.isSugarFree,
+            isAvailable: menuItem.isAvailable,
+            isPopular: menuItem.isPopular,
+            hasSize: menuItem.hasSize,
+            mediumSizePrice: menuItem.mediumSizePrice,
+            largeSizePrice: menuItem.largeSizePrice,
+            isGlutenFree: menuItem.isGlutenFree,
+            isVegetarian: menuItem.isVegetarian,
+            isVegan: menuItem.isVegan,
         },
     })
 
@@ -88,20 +112,19 @@ export function AddMenuItemForm({
         try {
             setIsSubmitting(true)
 
-            const result = await createMenuItem(values)
+            const result = await updateMenuItem(menuItem.id, values)
 
             if ('error' in result) {
                 throw new Error(result.error)
             }
 
-            toast.success("Item adicionado com sucesso!", {
-                description: "O item foi adicionado ao cardápio.",
+            toast.success("Item atualizado com sucesso!", {
+                description: "As alterações foram salvas.",
             })
 
-            form.reset()
             onSuccess?.()
         } catch (error) {
-            toast.error("Erro ao adicionar item", {
+            toast.error("Erro ao atualizar item", {
                 description: error instanceof Error ? error.message : "Tente novamente mais tarde.",
             })
         } finally {
@@ -483,7 +506,7 @@ export function AddMenuItemForm({
                     className="w-full bg-[#8B4513] hover:bg-[#4A2512] text-white font-semibold shadow-md transition-colors mt-6"
                     disabled={isSubmitting}
                 >
-                    {isSubmitting ? "Adicionando item..." : "Adicionar Item"}
+                    {isSubmitting ? "Atualizando item..." : "Atualizar Item"}
                 </Button>
             </form>
         </Form>

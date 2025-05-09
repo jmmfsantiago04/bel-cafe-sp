@@ -1,31 +1,31 @@
 import { db } from "@/lib/db";
-import { drinks } from "@/db/schema";
+import { menuItems } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
-import { DrinkCard } from "@/components/menu/drink-card";
+import { MenuCard } from "@/components/menu/menu-card";
 
-export default async function BebidasFrias() {
-    const items = await db.query.drinks.findMany({
+export default async function Jantar() {
+    const items = await db.query.menuItems.findMany({
         where: and(
-            eq(drinks.isHotDrink, false),
-            eq(drinks.isAvailable, true)
+            eq(menuItems.isJantar, true),
+            eq(menuItems.isAvailable, true)
         ),
     });
 
     return (
         <main className="min-h-screen bg-gradient-to-br from-[#F5E6D3] via-[#F5E6D3] to-[#F4861F]/10">
             {/* Hero Banner */}
-            <section className="relative h-[50vh] min-h-[400px] bg-[url('/bebidas-frias-banner.jpg')] bg-cover bg-center">
+            <section className="relative h-[50vh] min-h-[400px] bg-[url('/restaurant-banner.jpg')] bg-cover bg-center">
                 <div className="absolute inset-0 bg-gradient-to-b from-[#C84C28]/95 to-[#F4861F]" />
 
                 <header className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 z-10">
                     <div className="bg-[#F5E6D3]/10 p-12 rounded-3xl backdrop-blur-md border-2 border-[#FFB800] max-w-3xl mx-auto shadow-2xl">
-                        <h1 className="text-7xl font-bold text-white font-serif mb-6 drop-shadow-lg">Bebidas Geladas</h1>
+                        <h1 className="text-7xl font-bold text-white font-serif mb-6 drop-shadow-lg">Jantar</h1>
                         <div className="flex items-center justify-center gap-4 mb-3">
                             <div className="h-0.5 w-24 bg-gradient-to-r from-transparent via-[#FFB800] to-transparent" />
-                            <span className="text-[#FFB800] text-4xl filter drop-shadow-lg">🧊</span>
+                            <span className="text-[#FFB800] text-4xl filter drop-shadow-lg">🌙</span>
                             <div className="h-0.5 w-24 bg-gradient-to-r from-transparent via-[#FFB800] to-transparent" />
                         </div>
-                        <p className="text-white italic text-2xl font-medium tracking-wide drop-shadow-lg">Refrescantes & Deliciosas</p>
+                        <p className="text-white italic text-2xl font-medium tracking-wide drop-shadow-lg">Das 18:00 às 22:00</p>
                     </div>
                 </header>
 
@@ -44,17 +44,9 @@ export default async function BebidasFrias() {
                 {/* Menu Items Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {items.map((item) => (
-                        <DrinkCard key={item.id} item={item} />
+                        <MenuCard key={item.id} item={item} />
                     ))}
                 </div>
-
-                {items.length === 0 && (
-                    <div className="text-center py-12">
-                        <p className="text-[#2B4C5C] text-lg font-medium">
-                            Nenhuma bebida gelada disponível no momento.
-                        </p>
-                    </div>
-                )}
             </section>
         </main>
     );

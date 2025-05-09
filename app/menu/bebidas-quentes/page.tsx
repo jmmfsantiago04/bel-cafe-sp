@@ -1,125 +1,61 @@
-import { getHotDrinks } from "@/app/actions/drinks";
+import { db } from "@/lib/db";
+import { drinks } from "@/db/schema";
+import { and, eq } from "drizzle-orm";
+import { DrinkCard } from "@/components/menu/drink-card";
 
-export default async function HotDrinksPage() {
-    const hotDrinks = await getHotDrinks();
-
-    if ('error' in hotDrinks) {
-        return (
-            <div className="text-center">
-                <h1 className="text-2xl font-bold text-[#8B4513] mb-4">Bebidas Quentes</h1>
-                <p className="text-red-600">{hotDrinks.error}</p>
-            </div>
-        );
-    }
+export default async function BebidasQuentes() {
+    const items = await db.query.drinks.findMany({
+        where: and(
+            eq(drinks.isHotDrink, true),
+            eq(drinks.isAvailable, true)
+        ),
+    });
 
     return (
-        <div className="container mx-auto">
-            {/* Header */}
-            <div className="text-center mb-12">
-                <h1 className="text-4xl font-bold text-[#8B4513] mb-4 font-serif">
-                    Bebidas Quentes
-                </h1>
-                <p className="text-[#D2691E] text-lg">
-                    Descubra nossa seleção de bebidas quentes
-                </p>
-                <div className="flex items-center justify-center space-x-4 mt-4">
-                    <div className="h-[2px] w-24 bg-[#DEB887]" />
-                    <span className="text-[#D2691E] font-serif">☕</span>
-                    <div className="h-[2px] w-24 bg-[#DEB887]" />
-                </div>
-            </div>
+        <main className="min-h-screen bg-gradient-to-br from-[#F5E6D3] via-[#F5E6D3] to-[#F4861F]/10">
+            {/* Hero Banner */}
+            <section className="relative h-[50vh] min-h-[400px] bg-[url('/bebidas-quentes-banner.jpg')] bg-cover bg-center">
+                <div className="absolute inset-0 bg-gradient-to-b from-[#C84C28]/95 to-[#F4861F]" />
 
-            {/* Drinks Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {hotDrinks.map((drink) => (
-                    <div
-                        key={drink.id}
-                        className="bg-white rounded-lg shadow-md border border-[#DEB887] overflow-hidden hover:shadow-lg transition-shadow"
-                    >
-                        {drink.imageUrl && (
-                            <div className="relative h-48 w-full">
-                                <img
-                                    src={drink.imageUrl}
-                                    alt={drink.name}
-                                    className="object-cover w-full h-full"
-                                />
-                            </div>
-                        )}
-                        <div className="p-6">
-                            <div className="flex justify-between items-start mb-2">
-                                <h3 className="text-xl font-bold text-[#8B4513]">{drink.name}</h3>
-                                <div className="flex gap-2">
-                                    {drink.isAlcoholic && (
-                                        <span className="bg-red-600 text-white text-xs px-2 py-1 rounded-full font-semibold border border-red-700 shadow-sm">
-                                            🍷 18+
-                                        </span>
-                                    )}
-                                    {drink.isPopular && (
-                                        <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
-                                            Popular
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                            {drink.description && (
-                                <p className="text-[#D2691E] mb-4">{drink.description}</p>
-                            )}
-                            <div className="space-y-2">
-                                {drink.hasSize ? (
-                                    <div className="space-y-1">
-                                        {drink.mediumSizePrice && (
-                                            <p className="text-[#8B4513]">
-                                                Médio: R$ {Number(drink.mediumSizePrice).toFixed(2)}
-                                            </p>
-                                        )}
-                                        {drink.largeSizePrice && (
-                                            <p className="text-[#8B4513]">
-                                                Grande: R$ {Number(drink.largeSizePrice).toFixed(2)}
-                                            </p>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <p className="text-[#8B4513]">
-                                        R$ {Number(drink.price).toFixed(2)}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="mt-4 flex flex-wrap gap-2">
-                                {drink.isGlutenFree && (
-                                    <span className="bg-orange-50 text-orange-800 text-xs px-2 py-1 rounded-full">
-                                        🌾 Sem Glúten
-                                    </span>
-                                )}
-                                {drink.isVegetarian && (
-                                    <span className="bg-green-50 text-green-800 text-xs px-2 py-1 rounded-full">
-                                        🥬 Vegetariano
-                                    </span>
-                                )}
-                                {drink.isVegan && (
-                                    <span className="bg-emerald-50 text-emerald-800 text-xs px-2 py-1 rounded-full">
-                                        🌱 Vegano
-                                    </span>
-                                )}
-                            </div>
+                <header className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 z-10">
+                    <div className="bg-[#F5E6D3]/10 p-12 rounded-3xl backdrop-blur-md border-2 border-[#FFB800] max-w-3xl mx-auto shadow-2xl">
+                        <h1 className="text-7xl font-bold text-white font-serif mb-6 drop-shadow-lg">Bebidas Quentes</h1>
+                        <div className="flex items-center justify-center gap-4 mb-3">
+                            <div className="h-0.5 w-24 bg-gradient-to-r from-transparent via-[#FFB800] to-transparent" />
+                            <span className="text-[#FFB800] text-4xl filter drop-shadow-lg">☕</span>
+                            <div className="h-0.5 w-24 bg-gradient-to-r from-transparent via-[#FFB800] to-transparent" />
                         </div>
+                        <p className="text-white italic text-2xl font-medium tracking-wide drop-shadow-lg">Aconchegantes & Aromáticas</p>
                     </div>
-                ))}
-            </div>
+                </header>
 
-            {hotDrinks.length === 0 && (
-                <div className="text-center py-12">
-                    <p className="text-[#8B4513] text-lg">
-                        Nenhuma bebida quente disponível no momento.
-                    </p>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 1440 320"
+                    className="absolute bottom-0 left-0 right-0 w-full h-[12vw] min-h-[100px] fill-[#F5E6D3]"
+                    preserveAspectRatio="none"
+                    style={{ filter: 'drop-shadow(0 -1px 2px rgba(0,0,0,0.1))' }}
+                >
+                    <path d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" />
+                </svg>
+            </section>
+
+            <section className="container mx-auto px-4 py-16">
+                {/* Menu Items Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {items.map((item) => (
+                        <DrinkCard key={item.id} item={item} />
+                    ))}
                 </div>
-            )}
 
-            {/* Decorative Footer */}
-            <div className="flex items-center justify-center mt-12 space-x-4">
-                <div className="h-[2px] w-24 bg-[#DEB887]" />
-                <span className="text-[#D2691E] font-serif">♨️</span>
-                <div className="h-[2px] w-24 bg-[#DEB887]" />
-            </div>
-        </div>
+                {items.length === 0 && (
+                    <div className="text-center py-12">
+                        <p className="text-[#2B4C5C] text-lg font-medium">
+                            Nenhuma bebida quente disponível no momento.
+                        </p>
+                    </div>
+                )}
+            </section>
+        </main>
     );
 } 

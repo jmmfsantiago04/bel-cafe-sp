@@ -25,6 +25,7 @@ export default function AdminLayout({
         { name: 'Dashboard', href: '/admin' },
         { name: 'Cardápio', href: '/admin/menu' },
         { name: 'Reservas', href: '/admin/reservations' },
+        { name: 'Descontos', href: '/admin/discounts' },
         { name: 'Configurações', href: '/admin/settings' },
     ]
 
@@ -66,7 +67,7 @@ export default function AdminLayout({
                 </Sidebar>
 
                 {/* Main Content */}
-                <main className="flex-1 h-full overflow-y-auto bg-[#FDF5E6]">
+                <main className="flex-1 h-full p-8 overflow-y-auto bg-[#FDF5E6]">
                     <div className="h-full p-8">
                         {children}
                     </div>

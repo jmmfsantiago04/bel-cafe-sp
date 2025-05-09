@@ -1,4 +1,5 @@
-import { integer, pgTable, varchar, decimal, boolean, text, timestamp } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm"
+import { decimal, integer, pgTable, serial, text, timestamp, boolean, varchar } from "drizzle-orm/pg-core"
 
 export const usersTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -41,6 +42,8 @@ export const menuItems = pgTable("menu_items", {
     finalPrice: decimal({ precision: 10, scale: 2 }), // Calculated final price after discount
     mediumFinalPrice: decimal({ precision: 10, scale: 2 }), // For medium size if applicable
     largeFinalPrice: decimal({ precision: 10, scale: 2 }), // For large size if applicable
+    createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export const drinks = pgTable("drinks", {
@@ -69,6 +72,8 @@ export const drinks = pgTable("drinks", {
     finalPrice: decimal({ precision: 10, scale: 2 }),
     mediumFinalPrice: decimal({ precision: 10, scale: 2 }),
     largeFinalPrice: decimal({ precision: 10, scale: 2 }),
+    createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
 export const reservations = pgTable("reservations", {
