@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { Toaster } from "sonner"
 import {
     Sidebar,
     SidebarContent,
@@ -73,6 +74,7 @@ export default function AdminLayout({
                     </div>
                 </main>
             </div>
+            <Toaster richColors closeButton position="top-right" />
         </SidebarProvider>
     )
 } 

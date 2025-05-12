@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db"
 import { menuItems, drinks } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { eq, and } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 export type DiscountFormData = {
@@ -18,6 +18,93 @@ function calculateDiscountedPrice(originalPrice: string | null, discountPercenta
     const price = parseFloat(originalPrice);
     const discountAmount = (price * discountPercentage) / 100;
     return (price - discountAmount).toFixed(2);
+}
+
+export async function applyDiscountByCategory(category: string, discount: number, startDate?: Date, endDate?: Date) {
+    try {
+        // Validar desconto
+        if (discount < 0 || discount > 100) {
+            throw new Error("Desconto deve estar entre 0 e 100%");
+        }
+
+        // Validar datas
+        if (startDate && endDate && startDate > endDate) {
+            throw new Error("Data inicial deve ser anterior à data final");
+        }
+
+        if (category === "bebidas-quentes" || category === "bebidas-frias") {
+            const isHot = category === "bebidas-quentes";
+            const items = await db
+                .select()
+                .from(drinks)
+                .where(eq(drinks.isHotDrink, isHot));
+
+            // Atualizar todos os itens da categoria
+            for (const item of items) {
+                const finalPrice = calculateDiscountedPrice(item.price, discount);
+                const mediumFinalPrice = calculateDiscountedPrice(item.mediumSizePrice, discount);
+                const largeFinalPrice = calculateDiscountedPrice(item.largeSizePrice, discount);
+
+                await db.update(drinks)
+                    .set({
+                        discount: discount.toString(),
+                        discountStartDate: startDate?.toISOString() || null,
+                        discountEndDate: endDate?.toISOString() || null,
+                        isDiscounted: true,
+                        finalPrice,
+                        mediumFinalPrice,
+                        largeFinalPrice,
+                    })
+                    .where(eq(drinks.id, item.id));
+            }
+        } else {
+            const categoryField = {
+                "cafe-manha": menuItems.isCafeDaManha,
+                "almoco": menuItems.isAlmoco,
+                "jantar": menuItems.isJantar,
+                "salgados": menuItems.isSalgado,
+                "doces": menuItems.isDoce,
+                "sobremesas": menuItems.isSobremesa,
+            }[category];
+
+            if (!categoryField) {
+                throw new Error("Categoria inválida");
+            }
+
+            const items = await db
+                .select()
+                .from(menuItems)
+                .where(eq(categoryField, true));
+
+            // Atualizar todos os itens da categoria
+            for (const item of items) {
+                const finalPrice = calculateDiscountedPrice(item.price, discount);
+                const mediumFinalPrice = calculateDiscountedPrice(item.mediumSizePrice, discount);
+                const largeFinalPrice = calculateDiscountedPrice(item.largeSizePrice, discount);
+
+                await db.update(menuItems)
+                    .set({
+                        discount: discount.toString(),
+                        discountStartDate: startDate?.toISOString() || null,
+                        discountEndDate: endDate?.toISOString() || null,
+                        isDiscounted: true,
+                        finalPrice,
+                        mediumFinalPrice,
+                        largeFinalPrice,
+                    })
+                    .where(eq(menuItems.id, item.id));
+            }
+        }
+
+        revalidatePath('/menu');
+        revalidatePath('/admin/menu');
+        revalidatePath('/admin/discounts');
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error applying category discount:", error);
+        return { error: error instanceof Error ? error.message : "Falha ao aplicar desconto por categoria" };
+    }
 }
 
 export async function applyDiscount(data: DiscountFormData) {
@@ -91,8 +178,6 @@ export async function removeDiscount(itemType: "menu" | "drink", itemId: number)
         if (!currentItem.length) {
             throw new Error("Item não encontrado");
         }
-
-        const item = currentItem[0];
 
         await db.update(table)
             .set({
