@@ -14,33 +14,36 @@ const businessHours = [
         days: "Domingo",
         hours: "9:00 - 18:00"
     }
-]
+] as const;
 
 export function BusinessHoursCard() {
     return (
-        <Card className="p-6 border-[#DEB887] bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
-            <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-[#FDF5E6] rounded-lg">
-                    <Clock className="w-6 h-6 text-[#8B4513]" />
-                </div>
-                <h3 className="text-xl font-bold text-[#8B4513] font-serif">
+        <Card className="p-4 sm:p-6 border-[#DEB887] bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
+            <header className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <span className="p-1.5 sm:p-2 bg-[#FDF5E6] rounded-lg" aria-hidden="true">
+                    <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-[#8B4513]" />
+                </span>
+                <h2 className="text-lg sm:text-xl font-bold text-[#8B4513] font-serif">
                     Horário de Funcionamento
-                </h3>
-            </div>
-            <div className="space-y-3 text-[#8B4513]">
-                {businessHours.map((schedule, index) => (
-                    <p
+                </h2>
+            </header>
+
+            <ul className="space-y-2 sm:space-y-3 text-[#8B4513]">
+                {businessHours.map((schedule) => (
+                    <li
                         key={schedule.days}
-                        className={`flex justify-between items-center py-2 ${index !== businessHours.length - 1 ? 'border-b border-[#DEB887]/30' : ''
+                        className={`flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 ${schedule.days !== businessHours[businessHours.length - 1].days ? 'border-b border-[#DEB887]/30' : ''
                             }`}
                     >
-                        <span className="font-medium">{schedule.days}</span>
-                        <span className="bg-[#FDF5E6] px-3 py-1 rounded-full text-sm">
-                            {schedule.hours}
+                        <span className="font-medium text-sm sm:text-base mb-1 sm:mb-0">
+                            {schedule.days}
                         </span>
-                    </p>
+                        <time className="bg-[#FDF5E6] px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm w-fit">
+                            {schedule.hours}
+                        </time>
+                    </li>
                 ))}
-            </div>
+            </ul>
         </Card>
-    )
+    );
 } 
