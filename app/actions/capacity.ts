@@ -1,30 +1,38 @@
 'use server'
 
 import { db } from "@/lib/db"
-import { eq } from "drizzle-orm"
 import { capacity } from "@/db/schema"
-
-export async function getCapacity(date: string) {
-    try {
-        const result = await db.select().from(capacity).where(eq(capacity.date, date));
-        return result[0] || { date, cafe: 30, almoco: 30, jantar: 30 };
-    } catch (error) {
-        return { error: 'Erro ao buscar capacidade' };
-    }
-}
+import { eq } from "drizzle-orm"
 
 export async function updateCapacity(data: { date: string, cafe: number, almoco: number, jantar: number }) {
     try {
-        const result = await db
-            .insert(capacity)
-            .values(data)
-            .onConflictDoUpdate({
-                target: capacity.date,
-                set: { ...data, updatedAt: new Date() }
-            })
-            .returning();
-        return { success: true, data: result[0] };
+        const existingCapacity = await db.query.capacity.findFirst({
+            where: eq(capacity.date, data.date)
+        });
+
+        if (existingCapacity) {
+            await db.update(capacity)
+                .set({
+                    cafe: data.cafe,
+                    almoco: data.almoco,
+                    jantar: data.jantar,
+                    updatedAt: new Date()
+                })
+                .where(eq(capacity.date, data.date));
+        } else {
+            await db.insert(capacity).values({
+                date: data.date,
+                cafe: data.cafe,
+                almoco: data.almoco,
+                jantar: data.jantar,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+        }
+
+        return { success: true };
     } catch (error) {
-        return { error: 'Erro ao atualizar capacidade' };
+        console.error('Error updating capacity:', error);
+        return { error: 'Failed to update capacity' };
     }
 } 

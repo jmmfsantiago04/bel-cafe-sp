@@ -1,6 +1,4 @@
 import { Card } from "@/components/ui/card"
-import { getAllReservations } from "@/app/actions/reservations"
-import { getCapacity } from "@/app/actions/capacity"
 import { ReservationsTable } from "@/components/admin/reservations-table"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
@@ -13,18 +11,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import { AddReservationForm } from "@/components/admin/add-reservation-form"
 import { Suspense } from "react"
-import { format } from "date-fns"
 
-export default async function ReservationsPage() {
-    const { data: reservations, error } = await getAllReservations()
-    const today = format(new Date(), 'yyyy-MM-dd')
-    const capacityResult = await getCapacity(today)
-    const capacityValues = 'error' in capacityResult ? { cafe: 30, almoco: 30, jantar: 30 } : capacityResult
-
-    if (error) {
-        return <div className="text-red-500">{error}</div>
-    }
-
+export default function ReservationsPage() {
     return (
         <div className="h-full flex flex-col">
             <div className="flex items-center justify-between mb-6">
@@ -58,14 +46,18 @@ export default async function ReservationsPage() {
                                     almoco: 0,
                                     jantar: 0
                                 }}
-                                capacityValues={capacityValues}
+                                capacityValues={{
+                                    cafe: 30,
+                                    almoco: 30,
+                                    jantar: 30
+                                }}
                             />
                         </Suspense>
                     </AlertDialogContent>
                 </AlertDialog>
             </div>
 
-            <ReservationsTable reservations={reservations || []} />
+            <ReservationsTable />
         </div>
     )
 }

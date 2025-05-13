@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db"
 import { menuItems, drinks } from "@/db/schema"
-import { eq, and } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 export type DiscountFormData = {
@@ -199,16 +199,5 @@ export async function removeDiscount(itemType: "menu" | "drink", itemId: number)
     } catch (error) {
         console.error("Error removing discount:", error);
         return { error: error instanceof Error ? error.message : "Falha ao remover desconto" };
-    }
-}
-
-export async function getActiveDiscounts() {
-    try {
-        const menuDiscounts = await db.select().from(menuItems).where(eq(menuItems.isDiscounted, true));
-        const drinkDiscounts = await db.select().from(drinks).where(eq(drinks.isDiscounted, true));
-        return { menu: menuDiscounts, drinks: drinkDiscounts };
-    } catch (error) {
-        console.error("Error fetching discounts:", error);
-        return { error: error instanceof Error ? error.message : "Falha ao buscar descontos" };
     }
 } 

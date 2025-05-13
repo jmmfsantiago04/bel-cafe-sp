@@ -43,7 +43,10 @@ import { ptBR } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 import { AddReservationForm } from "@/components/admin/add-reservation-form"
 import { Input } from "@/components/ui/input"
-import { updateCapacity, getCapacity } from "@/app/actions/capacity"
+import { updateCapacity } from "@/app/actions/capacity"
+import { db } from "@/lib/db"
+import { capacity } from "@/db/schema"
+import { eq } from "drizzle-orm"
 
 function formatDate(dateStr: string) {
     const date = new Date(dateStr + 'T12:00:00');
@@ -93,13 +96,9 @@ type Reservation = {
     status: string
 }
 
-interface ReservationsTableProps {
-    reservations: Reservation[]
-}
-
-export function ReservationsTable({ reservations: initialReservations }: ReservationsTableProps) {
+export function ReservationsTable() {
     const [selectedRows, setSelectedRows] = useState<number[]>([]);
-    const [reservations, setReservations] = useState(initialReservations);
+    const [reservations, setReservations] = useState<Reservation[]>([]);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [isUpdating, setIsUpdating] = useState<number | null>(null);
     const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
@@ -117,6 +116,17 @@ export function ReservationsTable({ reservations: initialReservations }: Reserva
         almoco: 30,
         jantar: 30
     });
+
+    // Fetch initial data
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            const result = await getAllReservations();
+            if (!('error' in result)) {
+                setReservations(result.data);
+            }
+        };
+        fetchInitialData();
+    }, []);
 
     // Filter reservations by selected date
     const filteredReservations = useMemo(() => {
@@ -209,12 +219,23 @@ export function ReservationsTable({ reservations: initialReservations }: Reserva
     // Load capacity values when date changes
     const loadCapacityValues = async (date: Date) => {
         const formattedDate = format(date, 'yyyy-MM-dd');
-        const result = await getCapacity(formattedDate);
-        if (!('error' in result)) {
+        try {
+            const result = await db.query.capacity.findFirst({
+                where: eq(capacity.date, formattedDate)
+            });
+
             setCapacityValues({
-                cafe: result.cafe,
-                almoco: result.almoco,
-                jantar: result.jantar
+                cafe: result?.cafe ?? 30,
+                almoco: result?.almoco ?? 30,
+                jantar: result?.jantar ?? 30
+            });
+        } catch (error) {
+            console.error('Error loading capacity:', error);
+            // Set default values if there's an error
+            setCapacityValues({
+                cafe: 30,
+                almoco: 30,
+                jantar: 30
             });
         }
     };

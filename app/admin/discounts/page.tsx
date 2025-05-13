@@ -1,10 +1,26 @@
 import { DiscountForm } from "@/components/admin/discount-form"
-import { getActiveDiscounts } from "@/app/actions/discounts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { DiscountItem } from "@/components/admin/discount-item"
+import { db } from "@/lib/db"
+import { menuItems, drinks } from "@/db/schema"
+import { eq } from "drizzle-orm"
 
 export default async function DiscountsPage() {
-    const discounts = await getActiveDiscounts();
+    // Fetch all items and drinks
+    const [allMenuItems, allDrinks] = await Promise.all([
+        db.query.menuItems.findMany(),
+        db.query.drinks.findMany()
+    ]);
+
+    // Fetch active discounts
+    const [menuDiscounts, drinkDiscounts] = await Promise.all([
+        db.query.menuItems.findMany({
+            where: eq(menuItems.isDiscounted, true)
+        }),
+        db.query.drinks.findMany({
+            where: eq(drinks.isDiscounted, true)
+        })
+    ])
 
     return (
         <div className="space-y-6">
@@ -25,7 +41,10 @@ export default async function DiscountsPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <DiscountForm />
+                        <DiscountForm
+                            menuItems={allMenuItems}
+                            drinks={allDrinks}
+                        />
                     </CardContent>
                 </Card>
 
@@ -33,60 +52,33 @@ export default async function DiscountsPage() {
                 <Card className="bg-white shadow-md">
                     <CardHeader>
                         <CardTitle className="text-[#4A2512]">Descontos Ativos</CardTitle>
-                        <CardDescription className="text-[#8B4513]/80">
-                            Visualize e gerencie os descontos ativos
-                        </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {!('error' in discounts) ? (
-                            <div className="space-y-4">
-                                {/* Descontos do Menu */}
-                                {discounts.menu.length > 0 && (
-                                    <div>
-                                        <h3 className="font-semibold text-[#4A2512] mb-2">Itens do Cardápio</h3>
-                                        <div className="space-y-2">
-                                            {discounts.menu.map((item) => (
-                                                <DiscountItem
-                                                    key={item.id}
-                                                    id={item.id}
-                                                    name={item.name}
-                                                    discount={item.discount}
-                                                    type="menu"
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Descontos de Bebidas */}
-                                {discounts.drinks.length > 0 && (
-                                    <div>
-                                        <h3 className="font-semibold text-[#4A2512] mb-2">Bebidas</h3>
-                                        <div className="space-y-2">
-                                            {discounts.drinks.map((drink) => (
-                                                <DiscountItem
-                                                    key={drink.id}
-                                                    id={drink.id}
-                                                    name={drink.name}
-                                                    discount={drink.discount}
-                                                    type="drink"
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {discounts.menu.length === 0 && discounts.drinks.length === 0 && (
-                                    <p className="text-center text-[#8B4513]/80 py-4">
-                                        Nenhum desconto ativo no momento
-                                    </p>
-                                )}
-                            </div>
-                        ) : (
-                            <p className="text-center text-red-600 py-4">
-                                Erro ao carregar descontos: {discounts.error}
-                            </p>
-                        )}
+                        <div className="space-y-4">
+                            {menuDiscounts.map((item) => (
+                                <DiscountItem
+                                    key={item.id}
+                                    id={item.id}
+                                    name={item.name}
+                                    discount={item.discount}
+                                    type="menu"
+                                />
+                            ))}
+                            {drinkDiscounts.map((item) => (
+                                <DiscountItem
+                                    key={item.id}
+                                    id={item.id}
+                                    name={item.name}
+                                    discount={item.discount}
+                                    type="drink"
+                                />
+                            ))}
+                            {menuDiscounts.length === 0 && drinkDiscounts.length === 0 && (
+                                <p className="text-center text-[#8B4513]/80 py-4">
+                                    Nenhum desconto ativo no momento
+                                </p>
+                            )}
+                        </div>
                     </CardContent>
                 </Card>
             </div>

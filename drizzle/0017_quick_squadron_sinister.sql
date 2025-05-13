@@ -1,0 +1,1 @@
+ALTER TABLE "business_hours" ADD COLUMN "isGeneralHours" boolean DEFAULT false NOT NULL;

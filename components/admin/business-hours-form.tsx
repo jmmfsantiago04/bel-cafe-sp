@@ -15,7 +15,7 @@ import * as z from "zod"
 
 const formSchema = z.object({
     id: z.number().optional(),
-    period: z.enum(["cafe", "almoco", "jantar"]),
+    period: z.enum(["cafe", "almoco", "jantar", "geral"]),
     weekdays: z.string().min(1, "Informe os dias da semana"),
     openTime: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "Formato inválido. Use HH:MM"),
     closeTime: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "Formato inválido. Use HH:MM"),
@@ -99,6 +99,7 @@ export function BusinessHoursForm({ initialData }: BusinessHoursFormProps) {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
+                                            <SelectItem value="geral">Horário Geral</SelectItem>
                                             <SelectItem value="cafe">Café da Manhã</SelectItem>
                                             <SelectItem value="almoco">Almoço</SelectItem>
                                             <SelectItem value="jantar">Jantar</SelectItem>

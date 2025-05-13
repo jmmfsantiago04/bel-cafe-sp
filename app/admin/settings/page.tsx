@@ -5,12 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog"
 import { BusinessHoursForm } from "@/components/admin/business-hours-form"
 import { BusinessHoursTable } from "@/components/admin/business-hours-table"
-import { getBusinessHours } from "@/app/actions/business-hours"
 
-export default async function SettingsPage() {
-    const result = await getBusinessHours()
-    const hours = Array.isArray(result) ? result : []
-
+export default function SettingsPage() {
     return (
         <div className="flex-1 space-y-4 p-8 pt-6">
             <div className="flex items-center justify-between space-y-2">
@@ -107,7 +103,7 @@ export default async function SettingsPage() {
                             </Dialog>
                         </CardHeader>
                         <CardContent>
-                            <BusinessHoursTable hours={hours} />
+                            <BusinessHoursTable />
                         </CardContent>
                     </Card>
                 </TabsContent>

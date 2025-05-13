@@ -14,18 +14,41 @@ import { Clock, Pencil } from "lucide-react"
 import { BusinessHoursForm } from "./business-hours-form"
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog"
 import { BusinessHoursFormData } from "@/app/actions/business-hours"
+import { db } from "@/lib/db"
+import { businessHours } from "@/db/schema"
+import { useEffect, useState } from "react"
 
-const periodLabels = {
+const periodLabels: Record<BusinessHoursFormData['period'], string> = {
+    geral: "Horário Geral",
     cafe: "Café da Manhã",
     almoco: "Almoço",
     jantar: "Jantar"
 }
 
-interface BusinessHoursTableProps {
-    hours: BusinessHoursFormData[]
-}
+export function BusinessHoursTable() {
+    const [hours, setHours] = useState<BusinessHoursFormData[]>([])
 
-export function BusinessHoursTable({ hours }: BusinessHoursTableProps) {
+    useEffect(() => {
+        const fetchHours = async () => {
+            const data = await db.query.businessHours.findMany()
+            setHours(data as BusinessHoursFormData[])
+        }
+        fetchHours()
+    }, [])
+
+    // Ordem definida dos períodos
+    const periodOrder = {
+        geral: 0,
+        cafe: 1,
+        almoco: 2,
+        jantar: 3
+    }
+
+    // Ordenar para que o horário geral apareça primeiro, seguido pela ordem definida
+    const sortedHours = [...hours].sort((a, b) => {
+        return periodOrder[a.period] - periodOrder[b.period]
+    })
+
     return (
         <div className="rounded-md border border-[#DEB887]">
             <Table>
@@ -39,8 +62,11 @@ export function BusinessHoursTable({ hours }: BusinessHoursTableProps) {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {hours.map((hour) => (
-                        <TableRow key={hour.id}>
+                    {sortedHours.map((hour) => (
+                        <TableRow
+                            key={hour.id}
+                            className={hour.period === 'geral' ? 'bg-[#FDF5E6]/50' : ''}
+                        >
                             <TableCell className="font-medium text-[#4A2512]">
                                 {periodLabels[hour.period]}
                             </TableCell>

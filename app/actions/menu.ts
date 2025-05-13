@@ -27,31 +27,6 @@ export type MenuItemFormData = {
     isVegan: boolean
 }
 
-export async function getMenuItems() {
-    try {
-        const items = await db.select().from(menuItems)
-        return { data: items }
-    } catch (error) {
-        console.error("Error fetching menu items:", error)
-        return { error: "Falha ao buscar itens do cardápio" }
-    }
-}
-
-export async function getMenuItemById(id: number) {
-    try {
-        const result = await db
-            .select()
-            .from(menuItems)
-            .where(eq(menuItems.id, id))
-            .limit(1)
-
-        return { data: result[0] }
-    } catch (error) {
-        console.error("Error fetching menu item:", error)
-        return { error: "Falha ao buscar item do cardápio" }
-    }
-}
-
 export async function createMenuItem(data: MenuItemFormData) {
     try {
         const result = await db.insert(menuItems).values({

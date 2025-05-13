@@ -102,11 +102,12 @@ export const capacity = pgTable('capacity', {
 
 export const businessHours = pgTable("business_hours", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    period: varchar({ length: 20 }).notNull(), // "cafe", "almoco", "jantar"
+    period: varchar({ length: 20 }).notNull(), // "cafe", "almoco", "jantar", "geral"
     weekdays: varchar({ length: 50 }).notNull(), // "Segunda a Domingo", "Segunda a Sábado", etc.
     openTime: varchar({ length: 5 }).notNull(), // "07:00"
     closeTime: varchar({ length: 5 }).notNull(), // "11:00"
     isActive: boolean().default(true).notNull(),
+    isGeneralHours: boolean().default(false).notNull(), // Indicates if this is the general business hours
     createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
     updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 }); 

@@ -5,7 +5,8 @@ import { ReservationRulesCard } from "../../components/reservas/ReservationRules
 import { ContactCard } from "../../components/reservas/ContactCard"
 import { DecorativeFooter } from "../../components/reservas/DecorativeFooter"
 
-export default function BookingPage() {
+export default function
+    BookingPage() {
     return (
         <div className="min-h-screen bg-[#FDF5E6] py-12 relative overflow-hidden">
             {/* Decorative Background Elements */}
