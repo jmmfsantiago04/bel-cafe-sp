@@ -12,19 +12,24 @@ const navigation = [
         icon: Home
     },
     {
-        name: "Menu",
+        name: "Cardápio",
         href: "/admin/menu",
         icon: Menu
     },
     {
-        name: "Reservas",
-        href: "/admin/reservations",
-        icon: Users
+        name: "Categorias",
+        href: "/admin/categories",
+        icon: Building2
     },
     {
         name: "Horários",
         href: "/admin/hours",
         icon: Clock
+    },
+    {
+        name: "Reservas",
+        href: "/admin/reservations",
+        icon: Users
     },
     {
         name: "Configurações",
@@ -62,13 +67,6 @@ export function AdminSidebar() {
                         </Link>
                     )
                 })}
-            </div>
-
-            <div className="mt-auto p-6">
-                <div className="rounded-lg bg-[#8B4513] px-3 py-2 text-sm text-white">
-                    <p className="font-medium">Sistema Administrativo</p>
-                    <p className="text-white/80">v1.0.0</p>
-                </div>
             </div>
         </div>
     )

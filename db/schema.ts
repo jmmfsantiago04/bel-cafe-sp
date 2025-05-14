@@ -118,4 +118,16 @@ export const storeStatus = pgTable("store_status", {
     reason: varchar({ length: 255 }), // Optional reason for closure
     reopenDate: varchar({ length: 50 }), // Optional date when store will reopen
     updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+export const menuCategories = pgTable("menu_categories", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    name: varchar({ length: 100 }).notNull(),
+    slug: varchar({ length: 100 }).notNull().unique(),
+    type: varchar({ length: 20 }).notNull(), // "menu" ou "drink"
+    flag: varchar({ length: 50 }).notNull(), // Campo que referencia o booleano na tabela (ex: "isCafeDaManha", "isHotDrink")
+    isActive: boolean().default(true).notNull(),
+    displayOrder: integer().default(0).notNull(),
+    createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 }); 
