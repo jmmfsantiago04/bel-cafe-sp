@@ -110,4 +110,12 @@ export const businessHours = pgTable("business_hours", {
     isGeneralHours: boolean().default(false).notNull(), // Indicates if this is the general business hours
     createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
     updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+export const storeStatus = pgTable("store_status", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    isOpen: boolean().default(true).notNull(),
+    reason: varchar({ length: 255 }), // Optional reason for closure
+    reopenDate: varchar({ length: 50 }), // Optional date when store will reopen
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 }); 

@@ -127,6 +127,13 @@
       "when": 1747100719636,
       "tag": "0017_quick_squadron_sinister",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1747176458426,
+      "tag": "0018_cuddly_jubilee",
+      "breakpoints": true
     }
   ]
 }

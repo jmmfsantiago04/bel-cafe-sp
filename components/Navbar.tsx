@@ -6,6 +6,7 @@ import {
     SheetTrigger,
     SheetTitle,
 } from "@/components/ui/sheet"
+import { StoreStatus } from "@/components/StoreStatus"
 
 interface SubMenuItem {
     title: string;
@@ -68,7 +69,7 @@ export function Navbar() {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:block">
+                    <div className="hidden md:flex md:items-center md:space-x-6">
                         <ul className="flex items-center space-x-6">
                             {menuItems.map((item) => (
                                 <li key={item.title}>
@@ -109,58 +110,67 @@ export function Navbar() {
                                 </li>
                             ))}
                         </ul>
+                        {/* Store Status for Desktop */}
+                        <div className="border-l border-[#DEB887]/20 pl-6">
+                            <StoreStatus />
+                        </div>
                     </div>
 
                     {/* Mobile Navigation */}
-                    <Sheet>
-                        <SheetTrigger
-                            className="md:hidden text-[#F5DEB3] hover:text-[#DEB887]"
-                            aria-label="Abrir menu"
-                        >
-                            <Menu className="h-6 w-6" aria-hidden="true" />
-                        </SheetTrigger>
-                        <SheetContent side="right" className="bg-[#8B4513] border-[#654321] p-0">
-                            <header className="p-4 border-b border-[#654321]">
-                                <SheetTitle className="text-[#F5DEB3] text-xl font-bold">
-                                    É de Chão - Menu
-                                </SheetTitle>
-                            </header>
-                            <nav className="flex-1 overflow-y-auto py-4" aria-label="Menu mobile">
-                                <ul>
-                                    {menuItems.map((item) => (
-                                        <li key={item.title} className="px-4">
-                                            {item.submenu ? (
-                                                <div className="mb-4">
-                                                    <h2 className="text-[#F5DEB3] font-semibold mb-2">
+                    <div className="flex items-center space-x-4 md:hidden">
+                        {/* Store Status for Mobile */}
+                        <StoreStatus />
+
+                        <Sheet>
+                            <SheetTrigger
+                                className="text-[#F5DEB3] hover:text-[#DEB887]"
+                                aria-label="Abrir menu"
+                            >
+                                <Menu className="h-6 w-6" aria-hidden="true" />
+                            </SheetTrigger>
+                            <SheetContent side="right" className="bg-[#8B4513] border-[#654321] p-0">
+                                <header className="p-4 border-b border-[#654321]">
+                                    <SheetTitle className="text-[#F5DEB3] text-xl font-bold">
+                                        É de Chão - Menu
+                                    </SheetTitle>
+                                </header>
+                                <nav className="flex-1 overflow-y-auto py-4" aria-label="Menu mobile">
+                                    <ul>
+                                        {menuItems.map((item) => (
+                                            <li key={item.title} className="px-4">
+                                                {item.submenu ? (
+                                                    <div className="mb-4">
+                                                        <h2 className="text-[#F5DEB3] font-semibold mb-2">
+                                                            {item.title}
+                                                        </h2>
+                                                        <ul className="pl-4 space-y-2">
+                                                            {item.submenu.map((subItem) => (
+                                                                <li key={subItem.href}>
+                                                                    <Link
+                                                                        href={subItem.href}
+                                                                        className="block text-[#F5DEB3] hover:text-[#DEB887] transition-colors"
+                                                                    >
+                                                                        {subItem.title}
+                                                                    </Link>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                ) : (
+                                                    <Link
+                                                        href={item.href!}
+                                                        className="block text-[#F5DEB3] hover:text-[#DEB887] transition-colors py-2"
+                                                    >
                                                         {item.title}
-                                                    </h2>
-                                                    <ul className="pl-4 space-y-2">
-                                                        {item.submenu.map((subItem) => (
-                                                            <li key={subItem.href}>
-                                                                <Link
-                                                                    href={subItem.href}
-                                                                    className="block text-[#F5DEB3] hover:text-[#DEB887] transition-colors"
-                                                                >
-                                                                    {subItem.title}
-                                                                </Link>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            ) : (
-                                                <Link
-                                                    href={item.href!}
-                                                    className="block text-[#F5DEB3] hover:text-[#DEB887] transition-colors py-2"
-                                                >
-                                                    {item.title}
-                                                </Link>
-                                            )}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </nav>
-                        </SheetContent>
-                    </Sheet>
+                                                    </Link>
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
+                            </SheetContent>
+                        </Sheet>
+                    </div>
                 </div>
             </div>
         </nav>

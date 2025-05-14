@@ -14,9 +14,7 @@ import { Clock, Pencil } from "lucide-react"
 import { BusinessHoursForm } from "./business-hours-form"
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog"
 import { BusinessHoursFormData } from "@/app/actions/business-hours"
-import { db } from "@/lib/db"
-import { businessHours } from "@/db/schema"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 const periodLabels: Record<BusinessHoursFormData['period'], string> = {
     geral: "Horário Geral",
@@ -25,16 +23,12 @@ const periodLabels: Record<BusinessHoursFormData['period'], string> = {
     jantar: "Jantar"
 }
 
-export function BusinessHoursTable() {
-    const [hours, setHours] = useState<BusinessHoursFormData[]>([])
+interface BusinessHoursTableProps {
+    initialHours: BusinessHoursFormData[]
+}
 
-    useEffect(() => {
-        const fetchHours = async () => {
-            const data = await db.query.businessHours.findMany()
-            setHours(data as BusinessHoursFormData[])
-        }
-        fetchHours()
-    }, [])
+export function BusinessHoursTable({ initialHours }: BusinessHoursTableProps) {
+    const [hours, setHours] = useState<BusinessHoursFormData[]>(initialHours)
 
     // Ordem definida dos períodos
     const periodOrder = {
