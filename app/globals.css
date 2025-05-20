@@ -116,7 +116,63 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Form Components */
+@layer components {
+  .form-input {
+    @apply bg-[#FFF8F0] border-[#8B4513] text-[#4A2512] placeholder:text-[#8B4513]/60 focus-visible:ring-[#8B4513] focus-visible:ring-offset-2;
+  }
+
+  .form-label {
+    @apply text-[#4A2512] font-semibold;
+  }
+
+  .form-checkbox {
+    @apply border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513];
+  }
+
+  .form-checkbox-label {
+    @apply text-[#4A2512] font-medium cursor-pointer;
+  }
+
+  .form-section-title {
+    @apply text-lg font-semibold text-[#4A2512] mb-2;
+  }
+
+  .form-error-message {
+    @apply text-red-700;
+  }
+
+  .form-submit-button {
+    @apply w-full bg-[#8B4513] hover:bg-[#4A2512] text-white font-semibold shadow-md transition-colors mt-6;
+  }
+
+  .form-grid-container {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  }
+
+  .form-section-grid {
+    @apply grid grid-cols-2 gap-2;
+  }
+
+  .form-checkbox-container {
+    @apply flex items-center space-x-2;
+  }
+
+  .form-section {
+    @apply space-y-4;
+  }
+
+  .form-description {
+    @apply text-[#8B4513]/80 text-xs;
+  }
+
+  .form-textarea {
+    @apply resize-none bg-[#FFF8F0] border-[#8B4513] text-[#4A2512] placeholder:text-[#8B4513]/60 focus-visible:ring-[#8B4513] focus-visible:ring-offset-2 h-20;
   }
 }

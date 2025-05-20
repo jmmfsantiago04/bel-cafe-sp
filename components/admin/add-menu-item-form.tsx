@@ -112,23 +112,23 @@ export function AddMenuItemForm({
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 p-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="form-grid-container">
                     {/* Basic Information */}
-                    <div className="space-y-4">
+                    <div className="form-section">
                         <FormField
                             control={form.control}
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-[#4A2512] font-semibold">Nome</FormLabel>
+                                    <FormLabel className="form-label">Nome</FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder="Nome do item"
                                             {...field}
-                                            className="bg-[#FFF8F0] border-[#8B4513] text-[#4A2512] placeholder:text-[#8B4513]/60 focus-visible:ring-[#8B4513] focus-visible:ring-offset-2"
+                                            className="form-input"
                                         />
                                     </FormControl>
-                                    <FormMessage className="text-red-700" />
+                                    <FormMessage className="form-error-message" />
                                 </FormItem>
                             )}
                         />
@@ -138,39 +138,39 @@ export function AddMenuItemForm({
                             name="description"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-[#4A2512] font-semibold">Descrição</FormLabel>
+                                    <FormLabel className="form-label">Descrição</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="Descrição do item"
-                                            className="resize-none bg-[#FFF8F0] border-[#8B4513] text-[#4A2512] placeholder:text-[#8B4513]/60 focus-visible:ring-[#8B4513] focus-visible:ring-offset-2 h-20"
+                                            className="form-textarea"
                                             {...field}
                                             value={field.value || ""}
                                         />
                                     </FormControl>
-                                    <FormMessage className="text-red-700" />
+                                    <FormMessage className="form-error-message" />
                                 </FormItem>
                             )}
                         />
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="form-section-grid">
                             <FormField
                                 control={form.control}
                                 name="price"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[#4A2512] font-semibold">Preço</FormLabel>
+                                        <FormLabel className="form-label">Preço</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
                                                 step="0.01"
                                                 min="0"
                                                 placeholder="0.00"
-                                                className="bg-[#FFF8F0] border-[#8B4513] text-[#4A2512] placeholder:text-[#8B4513]/60 focus-visible:ring-[#8B4513] focus-visible:ring-offset-2"
+                                                className="form-input"
                                                 {...field}
                                                 onChange={(e) => field.onChange(parseFloat(e.target.value))}
                                             />
                                         </FormControl>
-                                        <FormMessage className="text-red-700" />
+                                        <FormMessage className="form-error-message" />
                                     </FormItem>
                                 )}
                             />
@@ -180,16 +180,16 @@ export function AddMenuItemForm({
                                 name="imageUrl"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[#4A2512] font-semibold">URL da Imagem</FormLabel>
+                                        <FormLabel className="form-label">URL da Imagem</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="https://..."
-                                                className="bg-[#FFF8F0] border-[#8B4513] text-[#4A2512] placeholder:text-[#8B4513]/60 focus-visible:ring-[#8B4513] focus-visible:ring-offset-2"
+                                                className="form-input"
                                                 {...field}
                                                 value={field.value || ""}
                                             />
                                         </FormControl>
-                                        <FormMessage className="text-red-700" />
+                                        <FormMessage className="form-error-message" />
                                     </FormItem>
                                 )}
                             />
@@ -197,23 +197,23 @@ export function AddMenuItemForm({
                     </div>
 
                     {/* Categories */}
-                    <div className="space-y-4">
+                    <div className="form-section">
                         <div>
-                            <h3 className="text-lg font-semibold text-[#4A2512] mb-2">Categorias</h3>
-                            <div className="grid grid-cols-2 gap-2">
+                            <h3 className="form-section-title">Categorias</h3>
+                            <div className="form-section-grid">
                                 <FormField
                                     control={form.control}
                                     name="isCafeDaManha"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Café da Manhã</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Café da Manhã</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -221,15 +221,15 @@ export function AddMenuItemForm({
                                     control={form.control}
                                     name="isAlmoco"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Almoço</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Almoço</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -237,15 +237,15 @@ export function AddMenuItemForm({
                                     control={form.control}
                                     name="isJantar"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Jantar</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Jantar</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -253,15 +253,15 @@ export function AddMenuItemForm({
                                     control={form.control}
                                     name="isSobremesa"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Sobremesa</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Sobremesa</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -269,15 +269,15 @@ export function AddMenuItemForm({
                                     control={form.control}
                                     name="isSalgado"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Salgado</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Salgado</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -285,15 +285,15 @@ export function AddMenuItemForm({
                                     control={form.control}
                                     name="isDoce"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Doce</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Doce</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -302,21 +302,21 @@ export function AddMenuItemForm({
 
                         {/* Dietary Information */}
                         <div>
-                            <h3 className="text-lg font-semibold text-[#4A2512] mb-2">Informações Nutricionais</h3>
-                            <div className="grid grid-cols-2 gap-2">
+                            <h3 className="form-section-title">Informações Nutricionais</h3>
+                            <div className="form-section-grid">
                                 <FormField
                                     control={form.control}
                                     name="isGlutenFree"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Sem Glúten</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Sem Glúten</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -324,15 +324,15 @@ export function AddMenuItemForm({
                                     control={form.control}
                                     name="isSugarFree"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Sem Açúcar</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Sem Açúcar</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -340,15 +340,15 @@ export function AddMenuItemForm({
                                     control={form.control}
                                     name="isVegetarian"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Vegetariano</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Vegetariano</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -356,15 +356,15 @@ export function AddMenuItemForm({
                                     control={form.control}
                                     name="isVegan"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Vegano</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Vegano</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -373,21 +373,21 @@ export function AddMenuItemForm({
 
                         {/* Additional Options */}
                         <div>
-                            <h3 className="text-lg font-semibold text-[#4A2512] mb-2">Opções Adicionais</h3>
-                            <div className="grid grid-cols-2 gap-2">
+                            <h3 className="form-section-title">Opções Adicionais</h3>
+                            <div className="form-section-grid">
                                 <FormField
                                     control={form.control}
                                     name="isAvailable"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Disponível</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Disponível</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -395,15 +395,15 @@ export function AddMenuItemForm({
                                     control={form.control}
                                     name="isPopular"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Popular</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Popular</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -411,15 +411,15 @@ export function AddMenuItemForm({
                                     control={form.control}
                                     name="hasSize"
                                     render={({ field }) => (
-                                        <FormItem className="flex items-center space-x-2">
+                                        <FormItem className="form-checkbox-container">
                                             <FormControl>
                                                 <Checkbox
                                                     checked={field.value}
                                                     onCheckedChange={field.onChange}
-                                                    className="border-[#8B4513] data-[state=checked]:bg-[#8B4513] data-[state=checked]:border-[#8B4513]"
+                                                    className="form-checkbox"
                                                 />
                                             </FormControl>
-                                            <FormLabel className="text-[#4A2512] font-medium cursor-pointer">Tem Tamanhos</FormLabel>
+                                            <FormLabel className="form-checkbox-label">Tem Tamanhos</FormLabel>
                                         </FormItem>
                                     )}
                                 />
@@ -434,20 +434,20 @@ export function AddMenuItemForm({
                                     name="mediumSizePrice"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="text-[#4A2512] font-semibold">Preço Tamanho Médio</FormLabel>
+                                            <FormLabel className="form-label">Preço Tamanho Médio</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
                                                     step="0.01"
                                                     min="0"
                                                     placeholder="0.00"
-                                                    className="bg-[#FFF8F0] border-[#8B4513] text-[#4A2512] placeholder:text-[#8B4513]/60 focus-visible:ring-[#8B4513] focus-visible:ring-offset-2"
+                                                    className="form-input"
                                                     {...field}
                                                     value={field.value || ""}
                                                     onChange={(e) => field.onChange(parseFloat(e.target.value))}
                                                 />
                                             </FormControl>
-                                            <FormMessage className="text-red-700" />
+                                            <FormMessage className="form-error-message" />
                                         </FormItem>
                                     )}
                                 />
@@ -456,20 +456,20 @@ export function AddMenuItemForm({
                                     name="largeSizePrice"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="text-[#4A2512] font-semibold">Preço Tamanho Grande</FormLabel>
+                                            <FormLabel className="form-label">Preço Tamanho Grande</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
                                                     step="0.01"
                                                     min="0"
                                                     placeholder="0.00"
-                                                    className="bg-[#FFF8F0] border-[#8B4513] text-[#4A2512] placeholder:text-[#8B4513]/60 focus-visible:ring-[#8B4513] focus-visible:ring-offset-2"
+                                                    className="form-input"
                                                     {...field}
                                                     value={field.value || ""}
                                                     onChange={(e) => field.onChange(parseFloat(e.target.value))}
                                                 />
                                             </FormControl>
-                                            <FormMessage className="text-red-700" />
+                                            <FormMessage className="form-error-message" />
                                         </FormItem>
                                     )}
                                 />
@@ -480,7 +480,7 @@ export function AddMenuItemForm({
 
                 <Button
                     type="submit"
-                    className="w-full bg-[#8B4513] hover:bg-[#4A2512] text-white font-semibold shadow-md transition-colors mt-6"
+                    className="form-submit-button"
                     disabled={isSubmitting}
                 >
                     {isSubmitting ? "Adicionando item..." : "Adicionar Item"}

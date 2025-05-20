@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card"
+
 import { ReservationsTable } from "@/components/admin/reservations-table"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"

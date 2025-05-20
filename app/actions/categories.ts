@@ -19,7 +19,7 @@ const defaultCategories = [
     {
         name: "Café da Manhã",
         slug: "cafe-manha",
-        type: "menu",
+        type: "menu" as const,
         flag: "isCafeDaManha",
         isActive: true,
         displayOrder: 0,
@@ -27,7 +27,7 @@ const defaultCategories = [
     {
         name: "Almoço",
         slug: "almoco",
-        type: "menu",
+        type: "menu" as const,
         flag: "isAlmoco",
         isActive: true,
         displayOrder: 1,
@@ -35,7 +35,7 @@ const defaultCategories = [
     {
         name: "Jantar",
         slug: "jantar",
-        type: "menu",
+        type: "menu" as const,
         flag: "isJantar",
         isActive: true,
         displayOrder: 2,
@@ -43,7 +43,7 @@ const defaultCategories = [
     {
         name: "Salgados",
         slug: "salgados",
-        type: "menu",
+        type: "menu" as const,
         flag: "isSalgado",
         isActive: true,
         displayOrder: 3,
@@ -51,7 +51,7 @@ const defaultCategories = [
     {
         name: "Doces",
         slug: "doces",
-        type: "menu",
+        type: "menu" as const,
         flag: "isDoce",
         isActive: true,
         displayOrder: 4,
@@ -59,7 +59,7 @@ const defaultCategories = [
     {
         name: "Sobremesas",
         slug: "sobremesas",
-        type: "menu",
+        type: "menu" as const,
         flag: "isSobremesa",
         isActive: true,
         displayOrder: 5,
@@ -67,7 +67,7 @@ const defaultCategories = [
     {
         name: "Bebidas Quentes",
         slug: "bebidas-quentes",
-        type: "drink",
+        type: "drink" as const,
         flag: "isHotDrink",
         isActive: true,
         displayOrder: 6,
@@ -75,12 +75,12 @@ const defaultCategories = [
     {
         name: "Bebidas Frias",
         slug: "bebidas-frias",
-        type: "drink",
-        flag: "isHotDrink",
+        type: "drink" as const,
+        flag: "isColdDrink",
         isActive: true,
         displayOrder: 7,
     },
-] as const
+]
 
 export async function initializeCategories() {
     try {
@@ -107,6 +107,46 @@ export async function getCategories() {
     }
 }
 
+function updateMenuItemsAvailability(flag: string, isActive: boolean) {
+    switch (flag) {
+        case "isCafeDaManha":
+            return db.update(menuItems)
+                .set({ isAvailable: isActive })
+                .where(eq(menuItems.isCafeDaManha, true))
+        case "isAlmoco":
+            return db.update(menuItems)
+                .set({ isAvailable: isActive })
+                .where(eq(menuItems.isAlmoco, true))
+        case "isJantar":
+            return db.update(menuItems)
+                .set({ isAvailable: isActive })
+                .where(eq(menuItems.isJantar, true))
+        case "isSalgado":
+            return db.update(menuItems)
+                .set({ isAvailable: isActive })
+                .where(eq(menuItems.isSalgado, true))
+        case "isDoce":
+            return db.update(menuItems)
+                .set({ isAvailable: isActive })
+                .where(eq(menuItems.isDoce, true))
+        case "isSobremesa":
+            return db.update(menuItems)
+                .set({ isAvailable: isActive })
+                .where(eq(menuItems.isSobremesa, true))
+        default:
+            return Promise.resolve()
+    }
+}
+
+function updateDrinksAvailability(flag: string, isActive: boolean) {
+    if (flag === "isHotDrink") {
+        return db.update(drinks)
+            .set({ isAvailable: isActive })
+            .where(eq(drinks.isHotDrink, true))
+    }
+    return Promise.resolve()
+}
+
 export async function updateCategory(data: MenuCategoryFormData) {
     try {
         if (data.id) {
@@ -131,13 +171,9 @@ export async function updateCategory(data: MenuCategoryFormData) {
             // Update item availability if isActive changed
             if (currentCategory && currentCategory.isActive !== data.isActive) {
                 if (data.type === "menu") {
-                    await db.update(menuItems)
-                        .set({ isAvailable: data.isActive })
-                        .where(eq(menuItems[data.flag as keyof typeof menuItems], true))
-                } else {
-                    await db.update(drinks)
-                        .set({ isAvailable: data.isActive })
-                        .where(eq(drinks[data.flag as keyof typeof drinks], true))
+                    await updateMenuItemsAvailability(data.flag, data.isActive)
+                } else if (data.type === "drink") {
+                    await updateDrinksAvailability(data.flag, data.isActive)
                 }
             }
         } else {
@@ -174,13 +210,9 @@ export async function deleteCategory(id: number) {
 
         // Disable all items in this category
         if (category.type === "menu") {
-            await db.update(menuItems)
-                .set({ isAvailable: false })
-                .where(eq(menuItems[category.flag as keyof typeof menuItems], true))
-        } else {
-            await db.update(drinks)
-                .set({ isAvailable: false })
-                .where(eq(drinks[category.flag as keyof typeof drinks], true))
+            await updateMenuItemsAvailability(category.flag, false)
+        } else if (category.type === "drink") {
+            await updateDrinksAvailability(category.flag, false)
         }
 
         // Delete the category

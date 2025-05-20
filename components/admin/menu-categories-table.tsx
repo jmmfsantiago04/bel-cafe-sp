@@ -15,7 +15,6 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { useToast } from "@/components/ui/use-toast"
 import { useMenuCategories, type MenuCategory } from "@/components/menu/menu-categories-context"
 
 const formSchema = z.object({
@@ -35,7 +34,6 @@ interface MenuCategoriesTableProps {
 }
 
 export function MenuCategoriesTable({ initialCategories }: MenuCategoriesTableProps) {
-    const { toast } = useToast()
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const { categories, setCategories, updateCategory: updateContextCategory, deleteCategory: deleteContextCategory } = useMenuCategories()
     const [selectedCategory, setSelectedCategory] = useState<MenuCategory | null>(null)
@@ -58,15 +56,23 @@ export function MenuCategoriesTable({ initialCategories }: MenuCategoriesTablePr
 
     async function onSubmit(values: FormData) {
         try {
-            if (selectedCategory) {
-                await updateCategory({ ...values, id: selectedCategory.id })
-                toast.success("Categoria atualizada com sucesso!")
+            const result = await updateCategory(values)
+            if (result.success) {
+                if (selectedCategory) {
+                    toast.success("Categoria atualizada com sucesso!")
+                    updateContextCategory({ ...selectedCategory, ...values })
+                } else {
+                    toast.success("Categoria criada com sucesso!")
+                    const updatedCategories = await getCategories()
+                    if (updatedCategories.success && updatedCategories.data) {
+                        setCategories(updatedCategories.data)
+                    }
+                }
+                setIsDialogOpen(false)
+                form.reset()
             } else {
-                await updateCategory(values)
-                toast.success("Categoria criada com sucesso!")
+                toast.error("Erro ao salvar categoria")
             }
-            setIsDialogOpen(false)
-            form.reset()
         } catch (error) {
             console.error(error)
             toast.error("Erro ao salvar categoria")
@@ -189,6 +195,20 @@ export function MenuCategoriesTable({ initialCategories }: MenuCategoriesTablePr
                                                     <SelectItem value="drink">Bebida</SelectItem>
                                                 </SelectContent>
                                             </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="flag"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Flag</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Ex: isCafeDaManha" {...field} />
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
