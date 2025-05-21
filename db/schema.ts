@@ -130,4 +130,18 @@ export const menuCategories = pgTable("menu_categories", {
     displayOrder: integer().default(0).notNull(),
     createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
     updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+export const blogPosts = pgTable("blog_posts", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    title: varchar({ length: 255 }).notNull(),
+    content: text().notNull(),
+    imageUrl: text(),
+    category: varchar({ length: 50 }).notNull(), // "curiosidades", "receitas", "historia"
+    slug: varchar({ length: 255 }).notNull().unique(),
+    author: varchar({ length: 100 }).notNull(),
+    isPublished: boolean().default(false).notNull(),
+    publishedAt: timestamp('published_at'),
+    createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 }); 

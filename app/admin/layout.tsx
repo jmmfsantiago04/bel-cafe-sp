@@ -26,6 +26,7 @@ export default function AdminLayout({
     const navigation = [
         { name: 'Dashboard', href: '/admin' },
         { name: 'Cardápio', href: '/admin/menu' },
+        { name: 'Blog', href: '/admin/blog' },
         { name: 'Reservas', href: '/admin/reservations' },
         { name: 'Descontos', href: '/admin/discounts' },
         { name: 'Configurações', href: '/admin/settings' },
