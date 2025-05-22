@@ -100,6 +100,7 @@ export async function getCategories() {
         const categories = await db.query.menuCategories.findMany({
             orderBy: (categories, { asc }) => [asc(categories.displayOrder)],
         })
+
         return { success: true, data: categories }
     } catch (error) {
         console.error("Error fetching categories:", error)

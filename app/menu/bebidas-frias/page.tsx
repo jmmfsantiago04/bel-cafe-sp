@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { drinks } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
-import { DrinkCard } from "@/components/menu/drink-card";
+import { DrinkCard } from "@/app/menu/components/drink-card";
 
 export default async function BebidasFrias() {
     const items = await db.query.drinks.findMany({

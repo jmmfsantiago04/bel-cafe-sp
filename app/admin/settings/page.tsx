@@ -1,5 +1,5 @@
-import { StoreStatusForm } from "@/components/admin/store-status-form"
-import { StoreStatus } from "@/components/admin/StoreStatus"
+import { StoreStatusForm } from "@/app/admin/settings/components/store-status-form"
+import { StoreStatus } from "@/app/admin/settings/components/StoreStatus"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default async function SettingsPage() {

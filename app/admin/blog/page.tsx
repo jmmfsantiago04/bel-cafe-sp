@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import { AddBlogPostForm } from "@/components/admin/add-blog-post-form"
-import { EditBlogPostForm } from "@/components/admin/edit-blog-post-form"
-import { BlogPostTable } from "@/components/admin/blog-post-table"
+import { AddBlogPostForm } from "@/app/admin/blog/components/add-blog-post-form"
+import { EditBlogPostForm } from "@/app/admin/blog/components/edit-blog-post-form"
+import { BlogPostTable } from "@/app/admin/blog/components/blog-post-table"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,

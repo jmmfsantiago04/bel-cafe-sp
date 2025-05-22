@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react"
+
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -10,12 +10,12 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { AddMenuItemForm } from "@/components/admin/add-menu-item-form"
-import { DrinkForm } from "@/components/admin/drink-form"
-import { EditMenuItemForm } from "@/components/admin/edit-menu-item-form"
-import { EditDrinkForm } from "@/components/admin/edit-drink-form"
+import { AddMenuItemForm } from "@/app/admin/menu/components/add-menu-item-form"
+import { DrinkForm } from "@/app/admin/menu/components/drink-form"
+import { EditMenuItemForm } from "@/app/admin/menu/components/edit-menu-item-form"
+import { EditDrinkForm } from "@/app/admin/menu/components/edit-drink-form"
 import { Plus } from "lucide-react"
-import { MenuItemsTable, type MenuItem } from "../../../components/admin/menu-items-table"
+import { MenuItemsTable, type MenuItem } from "@/app/admin/menu/components/menu-items-table"
 import { toast } from "sonner"
 import { deleteDrink, updateDrink } from "@/app/actions/drinks"
 import { deleteMenuItem, updateMenuItem } from "@/app/actions/menu"

@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { menuItems } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
-import { MenuCard } from "@/components/menu/menu-card";
+import { MenuCard } from "@/app/menu/components/menu-card";
 
 export default async function Jantar() {
     const items = await db.query.menuItems.findMany({

@@ -3,20 +3,19 @@
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Coffee, Soup, IceCream2, Sandwich, Candy, Cake, ChefHat, UtensilsCrossed, Utensils } from "lucide-react"
-import { useMenuCategories } from "./menu-categories-context"
+import { Coffee, UtensilsCrossed, Utensils, Beer, Sandwich, Cookie, Cake, ChefHat, IceCream, Candy } from "lucide-react"
+import { useMenuCategories } from "../../admin/categories/components/menu-categories-context"
 
-// Mapa de ícones para cada tipo de categoria
+// Mapa de ícones para cada tipo de categoria baseado na flag
 const categoryIcons = {
-    'cafe-manha': Coffee,
-    'almoco': UtensilsCrossed,
-    'jantar': Utensils,
-    'bebidas-quentes': Soup,
-    'bebidas-frias': IceCream2,
-    'salgados': Sandwich,
-    'doces': Candy,
-    'sobremesas': Cake,
-    'specials': ChefHat,
+    'isCafeDaManha': Coffee,
+    'isAlmoco': UtensilsCrossed,
+    'isJantar': Utensils,
+    'isBebidasQuentes': Coffee,
+    'isBebidasFrias': Beer,
+    'isSalgado': Sandwich,
+    'isDoce': Candy,
+    'isSobremesa': IceCream, // Outras opções: IceCream, Cookie, Candy
 } as const
 
 export function SidebarMenu() {
@@ -48,7 +47,7 @@ export function SidebarMenu() {
 
             <nav className="flex-1 px-4 py-3 sm:py-4">
                 {activeCategories.map((category) => {
-                    const Icon = categoryIcons[category.slug as keyof typeof categoryIcons] || ChefHat
+                    const Icon = categoryIcons[category.flag as keyof typeof categoryIcons] || ChefHat
                     const isActive = pathname === `/menu/${category.slug}`
 
                     return (

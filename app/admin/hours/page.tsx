@@ -1,14 +1,21 @@
 import { db } from "@/lib/db"
 import { businessHours } from "@/db/schema"
-import { BusinessHoursTable } from "@/components/admin/business-hours-table"
-import { BusinessHoursForm } from "@/components/admin/business-hours-form"
+import { BusinessHoursTable } from "@/app/admin/hours/components/business-hours-table"
+import { BusinessHoursForm } from "@/app/admin/hours/components/business-hours-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Plus } from "lucide-react"
+import { BusinessHoursFormData } from "@/app/actions/business-hours"
 
 export default async function BusinessHoursPage() {
-    const hours = await db.query.businessHours.findMany()
+    const result = await db.query.businessHours.findMany()
+
+    // Type cast the period to match BusinessHoursFormData
+    const hours = result.map(hour => ({
+        ...hour,
+        period: hour.period as "cafe" | "almoco" | "jantar" | "geral"
+    })) satisfies BusinessHoursFormData[]
 
     return (
         <div className="container mx-auto py-6 space-y-8">

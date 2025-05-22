@@ -1,7 +1,7 @@
 import { getCategories } from "@/app/actions/categories"
-import { MenuCategoriesTable } from "@/components/admin/menu-categories-table"
-import { MenuCategoriesProvider } from "@/components/menu/menu-categories-context"
-import type { MenuCategory } from "@/components/menu/menu-categories-context"
+import { MenuCategoriesTable } from "@/app/admin/categories/components/menu-categories-table"
+import { MenuCategoriesProvider } from "@/app/admin/categories/components/menu-categories-context"
+import type { MenuCategory } from "@/app/admin/categories/components/menu-categories-context"
 
 export default async function CategoriesPage() {
     const { data = [] } = await getCategories()

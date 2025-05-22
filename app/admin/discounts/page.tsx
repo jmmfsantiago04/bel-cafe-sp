@@ -1,6 +1,6 @@
-import { DiscountForm } from "@/components/admin/discount-form"
+import { DiscountForm } from "@/app/admin/discounts/components/discount-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { DiscountItem } from "@/components/admin/discount-item"
+import { DiscountItem } from "@/app/admin/discounts/components/discount-item"
 import { db } from "@/lib/db"
 import { menuItems, drinks } from "@/db/schema"
 import { eq } from "drizzle-orm"

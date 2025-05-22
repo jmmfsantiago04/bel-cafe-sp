@@ -1,5 +1,5 @@
 
-import { ReservationsTable } from "@/components/admin/reservations-table"
+import { ReservationsTable } from "@/app/admin/reservations/components/reservations-table"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import {
@@ -9,7 +9,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { AddReservationForm } from "@/components/admin/add-reservation-form"
+import { AddReservationForm } from "@/app/admin/reservations/components/add-reservation-form"
 import { Suspense } from "react"
 
 export default function ReservationsPage() {

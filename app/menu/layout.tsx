@@ -2,7 +2,7 @@
 
 import { SidebarProvider, Sidebar, SidebarTrigger } from "@/components/ui/sidebar"
 import { MenuIcon } from "lucide-react"
-import { SidebarMenu } from "@/components/menu/sidebar-menu"
+import { SidebarMenu } from "@/app/menu/components/sidebar-menu"
 
 export default function MenuLayout({
     children,

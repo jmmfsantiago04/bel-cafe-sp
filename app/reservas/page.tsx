@@ -1,9 +1,9 @@
-import { PageHeader } from "../../components/reservas/PageHeader"
-import { WhatsAppCard } from "../../components/reservas/WhatsAppCard"
-import { BusinessHoursCard } from "../../components/reservas/BusinessHoursCard"
-import { ReservationRulesCard } from "../../components/reservas/ReservationRulesCard"
-import { ContactCard } from "../../components/reservas/ContactCard"
-import { DecorativeFooter } from "../../components/reservas/DecorativeFooter"
+import { PageHeader } from "./components/PageHeader"
+import { WhatsAppCard } from "./components/WhatsAppCard"
+import { BusinessHoursCard } from "./components/BusinessHoursCard"
+import { ReservationRulesCard } from "./components/ReservationRulesCard"
+import { ContactCard } from "./components/ContactCard"
+import { DecorativeFooter } from "./components/DecorativeFooter"
 
 export default function
     BookingPage() {
