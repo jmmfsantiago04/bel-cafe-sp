@@ -144,4 +144,15 @@ export const blogPosts = pgTable("blog_posts", {
     publishedAt: timestamp('published_at'),
     createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
     updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+export const faqs = pgTable("faqs", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    question: varchar({ length: 255 }).notNull(),
+    answer: text().notNull(),
+    category: varchar({ length: 50 }).notNull(), // "common", "services", "other"
+    isActive: boolean().default(true).notNull(),
+    displayOrder: integer().default(0).notNull(),
+    createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 }); 

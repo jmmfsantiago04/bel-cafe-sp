@@ -13,8 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { getAllBlogPosts } from "@/app/actions/blog"
-import { type BlogPostResponse } from "@/app/actions/blog/types"
+import { getAllBlogPosts, type BlogPostResponse } from "@/app/actions/blog"
 
 export default function AdminBlogPage() {
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)

@@ -1,11 +1,60 @@
 'use server'
 
+import { z } from "zod"
 import { db } from "@/lib/db"
 import { blogPosts } from "@/db/schema"
 import { eq, desc } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
-import { BlogPostFormData, slugify } from "./blog/types"
 
+// Schema and Types
+export const blogPostFormSchema = z.object({
+    title: z.string().min(2, {
+        message: "O título deve ter pelo menos 2 caracteres.",
+    }),
+    content: z.string().min(10, {
+        message: "O conteúdo deve ter pelo menos 10 caracteres.",
+    }),
+    imageUrl: z.string().url({
+        message: "Digite uma URL válida para a imagem.",
+    }).nullable(),
+    category: z.enum(["curiosidades", "receitas", "historia"], {
+        required_error: "Selecione uma categoria.",
+    }),
+    author: z.string().min(2, {
+        message: "O nome do autor deve ter pelo menos 2 caracteres.",
+    }),
+    isPublished: z.boolean(),
+})
+
+export type BlogPostFormData = z.infer<typeof blogPostFormSchema>
+
+// Type for blog post responses from the server
+export type BlogPostResponse = {
+    id: number
+    title: string
+    content: string
+    imageUrl: string | null
+    category: "curiosidades" | "receitas" | "historia"
+    slug: string
+    author: string
+    isPublished: boolean
+    publishedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+}
+
+// Helper function for generating URL-friendly slugs
+function slugify(text: string): string {
+    return text
+        .normalize('NFKD')
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '')
+        .replace(/--+/g, '-')
+}
+
+// Server Actions
 export async function createBlogPost(data: BlogPostFormData) {
     try {
         const slug = slugify(data.title)
