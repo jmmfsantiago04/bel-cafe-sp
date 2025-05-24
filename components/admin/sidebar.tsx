@@ -42,6 +42,11 @@ const navigation = [
         icon: HelpCircle
     },
     {
+        name: "Sobre Nós",
+        href: "/admin/sobre-nos",
+        icon: Building2
+    },
+    {
         name: "Configurações",
         href: "/admin/settings",
         icon: Settings

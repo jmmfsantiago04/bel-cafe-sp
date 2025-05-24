@@ -47,7 +47,7 @@ const menuItems: MenuItem[] = [
     },
     {
         title: "Sobre Nós",
-        href: "/sobre",
+        href: "/sobre-nos",
     },
     {
         title: "Dúvidas",

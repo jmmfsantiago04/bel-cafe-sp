@@ -155,4 +155,16 @@ export const faqs = pgTable("faqs", {
     displayOrder: integer().default(0).notNull(),
     createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
     updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+});
+
+export const aboutContent = pgTable("about_content", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    section: varchar({ length: 50 }).notNull(), // "story", "team", "contact"
+    title: varchar({ length: 255 }).notNull(),
+    content: text().notNull(),
+    imageUrl: text(),
+    displayOrder: integer().default(0).notNull(),
+    isActive: boolean().default(true).notNull(),
+    createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+    updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 }); 
