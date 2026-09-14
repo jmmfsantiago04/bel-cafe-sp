@@ -1,6 +1,6 @@
 'use client'
 
-import { BlogPostResponse } from "@/app/actions/blog/types"
+import { BlogPostResponse } from "@/app/actions/blog-types"
 import { Button } from "@/components/ui/button"
 import {
     Table,

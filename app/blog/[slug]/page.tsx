@@ -2,17 +2,18 @@ import { getBlogPostBySlug } from "@/app/actions/blog"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { BlogPostResponse } from "@/app/actions/blog/types"
+import { BlogPostResponse } from "@/app/actions/blog-types"
 import { Metadata } from "next"
 
 interface BlogPostPageProps {
-    params: {
+    params: Promise<{
         slug: string
-    }
+    }>
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-    const result = await getBlogPostBySlug(params.slug)
+    const { slug } = await params
+    const result = await getBlogPostBySlug(slug)
     const post = result.data
 
     if (!post) {
@@ -29,14 +30,12 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
 export default async function BlogPostPage({
     params,
-}: {
-    params: { slug: string }
-}) {
-    if (!params.slug) {
+}: BlogPostPageProps) {
+    const { slug } = await params
+    if (!slug) {
         notFound()
     }
-
-    const result = await getBlogPostBySlug(params.slug)
+    const result = await getBlogPostBySlug(slug)
 
     if (!result.data || 'error' in result) {
         notFound()

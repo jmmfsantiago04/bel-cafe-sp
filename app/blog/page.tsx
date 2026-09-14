@@ -1,6 +1,6 @@
 import { getPublishedBlogPosts } from "@/app/actions/blog"
 import { BlogCards } from "@/app/blog/components/blog-cards"
-import { BlogPostResponse } from "@/app/actions/blog/types"
+import { BlogPostResponse } from "@/app/actions/blog-types"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Metadata } from "next"
 

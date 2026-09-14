@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { BlogPostResponse } from '@/app/actions/blog/types'
+import { BlogPostResponse } from '@/app/actions/blog-types'
 
 interface BlogCardsProps {
     posts: BlogPostResponse[]

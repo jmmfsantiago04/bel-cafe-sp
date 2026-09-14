@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { updateBlogPost } from "@/app/actions/blog"
-import { BlogPostFormData, blogPostFormSchema, BlogPostResponse } from "@/app/actions/blog/types"
+import { BlogPostFormData, blogPostFormSchema, BlogPostResponse } from "@/app/actions/blog-types"
 import { Button } from "@/components/ui/button"
 import {
     Form,
