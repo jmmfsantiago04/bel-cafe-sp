@@ -27,4 +27,4 @@ export function AboutSection() {
             </article>
         </section>
     );
-} 
+}

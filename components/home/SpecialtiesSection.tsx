@@ -4,18 +4,18 @@ const specialties = [
     {
         title: "Pratos Típicos",
         description: "O melhor da culinária nordestina",
-        image: "/typical-dishes.jpg"
+        image: "/typical-dishes.jpg",
     },
     {
         title: "Bebidas Regionais",
         description: "Sabores únicos do Nordeste",
-        image: "/drinks.jpg"
+        image: "/drinks.jpg",
     },
     {
         title: "Sobremesas Caseiras",
         description: "Doces que abraçam a alma",
-        image: "/desserts.jpg"
-    }
+        image: "/desserts.jpg",
+    },
 ] as const;
 
 export function SpecialtiesSection() {
@@ -53,4 +53,4 @@ export function SpecialtiesSection() {
             </article>
         </section>
     );
-} 
+}

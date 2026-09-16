@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { getCategories } from "@/app/actions/categories"
 import { MenuCategoriesProvider, type MenuCategory } from "@/app/admin/categories/components/menu-categories-context"
@@ -10,7 +10,6 @@ export function GlobalMenuCategoriesProvider({
     children: React.ReactNode
 }) {
     const [categories, setCategories] = useState<MenuCategory[]>([])
-    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         async function loadCategories() {
@@ -24,21 +23,15 @@ export function GlobalMenuCategoriesProvider({
                 }
             } catch (error) {
                 console.error('Error loading categories:', error)
-            } finally {
-                setIsLoading(false)
             }
         }
 
         loadCategories()
     }, [])
 
-    if (isLoading) {
-        return null // Or a loading spinner
-    }
-
     return (
         <MenuCategoriesProvider initialCategories={categories}>
             {children}
         </MenuCategoriesProvider>
     )
-} 
+}
