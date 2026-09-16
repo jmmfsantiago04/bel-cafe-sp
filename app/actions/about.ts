@@ -1,5 +1,7 @@
 'use server'
 
+import { requireAdmin } from "@/lib/require-admin"
+
 import { db } from "@/lib/db"
 import { aboutContent } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -7,6 +9,7 @@ import { revalidatePath } from "next/cache"
 import { type AboutContentFormData } from "@/app/types/about"
 
 export async function createAboutContent(data: AboutContentFormData) {
+    await requireAdmin()
     try {
         const result = await db.insert(aboutContent).values({
             ...data,
@@ -25,6 +28,7 @@ export async function createAboutContent(data: AboutContentFormData) {
 }
 
 export async function updateAboutContent(id: number, data: AboutContentFormData) {
+    await requireAdmin()
     try {
         const result = await db.update(aboutContent)
             .set({
@@ -45,6 +49,7 @@ export async function updateAboutContent(id: number, data: AboutContentFormData)
 }
 
 export async function deleteAboutContent(id: number) {
+    await requireAdmin()
     try {
         await db.delete(aboutContent)
             .where(eq(aboutContent.id, id))
@@ -60,6 +65,7 @@ export async function deleteAboutContent(id: number) {
 }
 
 export async function getAboutContent(id: number) {
+    await requireAdmin()
     try {
         const result = await db.query.aboutContent.findFirst({
             where: eq(aboutContent.id, id)
@@ -73,6 +79,7 @@ export async function getAboutContent(id: number) {
 }
 
 export async function getAllAboutContent() {
+    await requireAdmin()
     try {
         const result = await db
             .select()

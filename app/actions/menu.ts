@@ -1,5 +1,6 @@
 'use server'
 
+import { requireAdmin } from "@/lib/require-admin"
 import { db } from "@/lib/db"
 import { menuItems } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -28,6 +29,7 @@ export type MenuItemFormData = {
 }
 
 export async function createMenuItem(data: MenuItemFormData) {
+    await requireAdmin()
     try {
         const result = await db.insert(menuItems).values({
             name: data.name,
@@ -62,6 +64,7 @@ export async function createMenuItem(data: MenuItemFormData) {
 }
 
 export async function updateMenuItem(id: number, data: MenuItemFormData) {
+    await requireAdmin()
     try {
         const result = await db
             .update(menuItems)
@@ -98,6 +101,7 @@ export async function updateMenuItem(id: number, data: MenuItemFormData) {
 }
 
 export async function deleteMenuItem(id: number) {
+    await requireAdmin()
     try {
         await db.delete(menuItems).where(eq(menuItems.id, id))
         revalidatePath('/admin/menu')

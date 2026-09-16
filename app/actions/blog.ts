@@ -1,4 +1,6 @@
-﻿'use server'
+'use server'
+
+import { requireAdmin } from "@/lib/require-admin"
 
 import { db } from "@/lib/db"
 import { blogPosts } from "@/db/schema"
@@ -17,6 +19,7 @@ function slugify(text: string): string {
 }
 
 export async function createBlogPost(data: BlogPostFormData) {
+    await requireAdmin()
     try {
         const slug = slugify(data.title)
         const now = new Date()
@@ -40,6 +43,7 @@ export async function createBlogPost(data: BlogPostFormData) {
 }
 
 export async function updateBlogPost(id: number, data: BlogPostFormData) {
+    await requireAdmin()
     try {
         const now = new Date()
         const result = await db.update(blogPosts)
@@ -62,6 +66,7 @@ export async function updateBlogPost(id: number, data: BlogPostFormData) {
 }
 
 export async function deleteBlogPost(id: number) {
+    await requireAdmin()
     try {
         await db.delete(blogPosts)
             .where(eq(blogPosts.id, id))
@@ -77,6 +82,7 @@ export async function deleteBlogPost(id: number) {
 }
 
 export async function getBlogPost(id: number) {
+    await requireAdmin()
     try {
         const result = await db.query.blogPosts.findFirst({
             where: eq(blogPosts.id, id)
@@ -90,6 +96,7 @@ export async function getBlogPost(id: number) {
 }
 
 export async function getAllBlogPosts() {
+    await requireAdmin()
     try {
         const result = await db
             .select()

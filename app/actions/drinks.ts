@@ -1,5 +1,6 @@
 'use server'
 
+import { requireAdmin } from "@/lib/require-admin"
 import { db } from "@/lib/db"
 import { drinks } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -23,6 +24,7 @@ export type DrinkFormData = {
 }
 
 export async function createDrink(data: DrinkFormData) {
+    await requireAdmin()
     try {
         const drinkData = {
             ...data,
@@ -48,6 +50,7 @@ export async function createDrink(data: DrinkFormData) {
 }
 
 export async function updateDrink(id: number, data: Partial<DrinkFormData>) {
+    await requireAdmin()
     try {
         const updateData = {
             ...data,
@@ -75,6 +78,7 @@ export async function updateDrink(id: number, data: Partial<DrinkFormData>) {
 }
 
 export async function deleteDrink(id: number) {
+    await requireAdmin()
     try {
         await db.delete(drinks).where(eq(drinks.id, id))
 

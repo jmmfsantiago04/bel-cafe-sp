@@ -1,5 +1,7 @@
 'use server'
 
+import { requireAdmin } from "@/lib/require-admin"
+
 import { db } from "@/lib/db"
 import { faqs } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -7,6 +9,7 @@ import { revalidatePath } from "next/cache"
 import { type FaqFormData } from "@/app/types/faqs"
 
 export async function createFaq(data: FaqFormData) {
+    await requireAdmin()
     try {
         const result = await db.insert(faqs).values({
             ...data,
@@ -25,6 +28,7 @@ export async function createFaq(data: FaqFormData) {
 }
 
 export async function updateFaq(id: number, data: FaqFormData) {
+    await requireAdmin()
     try {
         const result = await db.update(faqs)
             .set({
@@ -45,6 +49,7 @@ export async function updateFaq(id: number, data: FaqFormData) {
 }
 
 export async function deleteFaq(id: number) {
+    await requireAdmin()
     try {
         await db.delete(faqs)
             .where(eq(faqs.id, id))
@@ -60,6 +65,7 @@ export async function deleteFaq(id: number) {
 }
 
 export async function getFaq(id: number) {
+    await requireAdmin()
     try {
         const result = await db.query.faqs.findFirst({
             where: eq(faqs.id, id)
@@ -73,6 +79,7 @@ export async function getFaq(id: number) {
 }
 
 export async function getAllFaqs() {
+    await requireAdmin()
     try {
         const result = await db
             .select()

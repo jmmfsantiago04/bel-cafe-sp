@@ -1,5 +1,7 @@
 'use server'
 
+import { requireAdmin } from "@/lib/require-admin"
+
 import { db } from "@/lib/db"
 import { menuCategories, menuItems, drinks } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -83,6 +85,7 @@ const defaultCategories = [
 ]
 
 export async function initializeCategories() {
+    await requireAdmin()
     try {
         for (const category of defaultCategories) {
             await db.insert(menuCategories).values(category)
@@ -149,6 +152,7 @@ function updateDrinksAvailability(flag: string, isActive: boolean) {
 }
 
 export async function updateCategory(data: MenuCategoryFormData) {
+    await requireAdmin()
     try {
         if (data.id) {
             // Get the current category to compare changes
@@ -199,6 +203,7 @@ export async function updateCategory(data: MenuCategoryFormData) {
 }
 
 export async function deleteCategory(id: number) {
+    await requireAdmin()
     try {
         // Get the category before deleting
         const category = await db.query.menuCategories.findFirst({

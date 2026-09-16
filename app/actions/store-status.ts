@@ -1,5 +1,7 @@
 'use server'
 
+import { requireAdmin } from "@/lib/require-admin"
+
 import { db } from "@/lib/db"
 import { storeStatus, businessHours } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -12,6 +14,7 @@ export type StoreStatusData = {
 }
 
 export async function updateStoreStatus(data: StoreStatusData) {
+    await requireAdmin()
     try {
         const currentStatus = await db.query.storeStatus.findFirst()
 

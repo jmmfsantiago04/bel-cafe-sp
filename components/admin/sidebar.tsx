@@ -1,9 +1,11 @@
-'use client'
+﻿'use client'
 
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Building2, Clock, Home, Menu, Settings, Users, BookOpen, HelpCircle } from "lucide-react"
+import { signOut } from "next-auth/react"
+import { Building2, Clock, Home, LogOut, Menu, Settings, Users, BookOpen, HelpCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 const navigation = [
     {
@@ -56,6 +58,10 @@ const navigation = [
 export function AdminSidebar() {
     const pathname = usePathname()
 
+    async function handleLogout() {
+        await signOut({ redirect: true, callbackUrl: "/admin/login" })
+    }
+
     return (
         <div className="flex h-full min-h-screen w-72 flex-col bg-[#4A2512]">
             <div className="flex h-16 items-center px-6">
@@ -83,6 +89,24 @@ export function AdminSidebar() {
                     )
                 })}
             </div>
+
+            <div className="border-t border-white/10 p-3 space-y-2">
+                <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full justify-start gap-3 text-white/80 hover:bg-[#8B4513] hover:text-white"
+                    onClick={handleLogout}
+                >
+                    <LogOut className="h-5 w-5" />
+                    Sair
+                </Button>
+                <Link
+                    href="/admin/logout"
+                    className="block text-center text-xs text-white/50 hover:text-white/80"
+                >
+                    Sair (alternativo)
+                </Link>
+            </div>
         </div>
     )
-} 
+}

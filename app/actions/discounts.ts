@@ -1,5 +1,7 @@
 'use server'
 
+import { requireAdmin } from "@/lib/require-admin"
+
 import { db } from "@/lib/db"
 import { menuItems, drinks } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -21,6 +23,7 @@ function calculateDiscountedPrice(originalPrice: string | null, discountPercenta
 }
 
 export async function applyDiscountByCategory(category: string, discount: number, startDate?: Date, endDate?: Date) {
+    await requireAdmin()
     try {
         // Validar desconto
         if (discount < 0 || discount > 100) {
@@ -108,6 +111,7 @@ export async function applyDiscountByCategory(category: string, discount: number
 }
 
 export async function applyDiscount(data: DiscountFormData) {
+    await requireAdmin()
     try {
         const table = data.itemType === "menu" ? menuItems : drinks;
         const id = parseInt(data.itemId);
@@ -165,6 +169,7 @@ export async function applyDiscount(data: DiscountFormData) {
 }
 
 export async function removeDiscount(itemType: "menu" | "drink", itemId: number) {
+    await requireAdmin()
     try {
         const table = itemType === "menu" ? menuItems : drinks;
 

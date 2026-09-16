@@ -1,10 +1,13 @@
 'use server'
 
+import { requireAdmin } from "@/lib/require-admin"
+
 import { db } from "@/lib/db"
 import { capacity } from "@/db/schema"
 import { eq } from "drizzle-orm"
 
 export async function updateCapacity(data: { date: string, cafe: number, almoco: number, jantar: number }) {
+    await requireAdmin()
     try {
         const existingCapacity = await db.query.capacity.findFirst({
             where: eq(capacity.date, data.date)

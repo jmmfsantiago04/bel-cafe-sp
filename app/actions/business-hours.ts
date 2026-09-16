@@ -1,5 +1,7 @@
 'use server'
 
+import { requireAdmin } from "@/lib/require-admin"
+
 import { db } from "@/lib/db"
 import { businessHours } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -18,6 +20,7 @@ export type BusinessHoursFormData = {
 }
 
 export async function updateBusinessHours(data: BusinessHoursFormData) {
+    await requireAdmin()
     try {
         const existingHours = await db.query.businessHours.findFirst({
             where: eq(businessHours.period, data.period)
@@ -56,6 +59,7 @@ export async function updateBusinessHours(data: BusinessHoursFormData) {
 }
 
 export async function deleteBusinessHours(id: number) {
+    await requireAdmin()
     try {
         await db.delete(businessHours).where(eq(businessHours.id, id))
         revalidatePath("/admin/settings")

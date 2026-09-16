@@ -1,11 +1,14 @@
 'use server'
 
+import { requireAdmin } from "@/lib/require-admin"
+
 import { db } from "@/lib/db"
 import { eq, and, desc, sql } from "drizzle-orm"
 import { reservations } from "@/db/schema"
 import { revalidatePath } from "next/cache"
 
 export async function getAllReservations() {
+    await requireAdmin()
     try {
         const result = await db
             .select()
@@ -20,6 +23,7 @@ export async function getAllReservations() {
 }
 
 export async function getReservationCount(date: string, mealPeriod: string) {
+    await requireAdmin()
     try {
         const result = await db
             .select({
@@ -42,6 +46,7 @@ export async function getReservationCount(date: string, mealPeriod: string) {
 }
 
 export async function createReservation(data: any) {
+    await requireAdmin()
     try {
         const now = new Date().toISOString()
 
@@ -59,6 +64,7 @@ export async function createReservation(data: any) {
 }
 
 export async function updateReservationStatus(id: number, status: string) {
+    await requireAdmin()
     try {
         const result = await db
             .update(reservations)
@@ -78,6 +84,7 @@ export async function updateReservationStatus(id: number, status: string) {
 }
 
 export async function deleteReservation(id: number) {
+    await requireAdmin()
     try {
         const result = await db
             .delete(reservations)
@@ -93,6 +100,7 @@ export async function deleteReservation(id: number) {
 }
 
 export async function updateReservation(id: number, data: any) {
+    await requireAdmin()
     try {
         const result = await db
             .update(reservations)
@@ -112,6 +120,7 @@ export async function updateReservation(id: number, data: any) {
 }
 
 export async function createReservationByAdmin(data: any) {
+    await requireAdmin()
     try {
         const now = new Date().toISOString()
 
@@ -130,6 +139,7 @@ export async function createReservationByAdmin(data: any) {
 }
 
 export async function getTodayReservations() {
+    await requireAdmin()
     try {
         const today = new Date().toISOString().split('T')[0]
 
