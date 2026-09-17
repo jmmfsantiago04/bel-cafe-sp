@@ -13,6 +13,8 @@ export type MenuItem = {
     imageUrl: string | null
     isAvailable: boolean
     isPopular: boolean
+    /** Distinguishes food vs drink rows that can share numeric ids */
+    kind?: "menu" | "drink"
     // Menu item specific
     isSalgado?: boolean
     isDoce?: boolean
@@ -64,7 +66,7 @@ export function MenuItemsTable({ items, onEdit, onDelete }: MenuItemsTableProps)
             </TableHeader>
             <TableBody>
                 {filteredItems.map((item) => (
-                    <TableRow key={item.id} className="hover:bg-[#FDF5E6]/20">
+                    <TableRow key={`${item.kind ?? "item"}-${item.id}`} className="hover:bg-[#FDF5E6]/20">
                         <TableCell className="font-medium">{item.name}</TableCell>
                         <TableCell className="text-muted-foreground">{item.description || '-'}</TableCell>
                         <TableCell className="font-medium text-[#8B4513]">{formatPrice(item.price)}</TableCell>

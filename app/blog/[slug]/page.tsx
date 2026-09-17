@@ -18,12 +18,12 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
     if (!post) {
         return {
-            title: 'Post não encontrado | Bel Café',
+            title: 'Post não encontrado | É de Chão',
         }
     }
 
     return {
-        title: `${post.title} | Bel Café`,
+        title: `${post.title} | É de Chão`,
         description: post.content.slice(0, 160),
     }
 }

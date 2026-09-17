@@ -1,46 +1,36 @@
-'use client'
-
-
-import { Button } from "@/components/ui/button"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import { AddMenuItemForm } from "@/app/admin/menu/components/add-menu-item-form"
-import { DrinkForm } from "@/app/admin/menu/components/drink-form"
-import { EditMenuItemForm } from "@/app/admin/menu/components/edit-menu-item-form"
-import { EditDrinkForm } from "@/app/admin/menu/components/edit-drink-form"
-import { Plus } from "lucide-react"
-import { MenuItemsTable, type MenuItem } from "@/app/admin/menu/components/menu-items-table"
-import { toast } from "sonner"
-import { deleteDrink, updateDrink } from "@/app/actions/drinks"
-import { deleteMenuItem, updateMenuItem } from "@/app/actions/menu"
 import { db } from "@/lib/db"
-import { menuItems, drinks } from "@/db/schema"
+import { MenuAdminClient, type AdminMenuItem } from "@/app/admin/menu/components/menu-admin-client"
+
+function toNumber(value: string | number | null | undefined): number | null {
+    if (value === null || value === undefined || value === "") return null
+    const n = typeof value === "number" ? value : Number(value)
+    return Number.isFinite(n) ? n : null
+}
 
 export default async function MenuPage() {
-    // Fetch menu items and drinks directly from the database
     const [menuItemsData, drinksData] = await Promise.all([
         db.query.menuItems.findMany(),
-        db.query.drinks.findMany()
+        db.query.drinks.findMany(),
     ])
 
-    // Transform drinks to match menu item format
-    const formattedDrinks = drinksData.map(drink => ({
+    const formattedDrinks: AdminMenuItem[] = drinksData.map((drink) => ({
+        kind: "drink" as const,
         id: drink.id,
         name: drink.name,
         description: drink.description,
-        price: drink.price,
+        price: toNumber(drink.price) ?? 0,
         imageUrl: drink.imageUrl,
         isAvailable: drink.isAvailable,
         isPopular: drink.isPopular,
         isHotDrink: drink.isHotDrink,
         isColdDrink: !drink.isHotDrink,
-        // Additional menu item fields set to false for drinks
+        isAlcoholic: drink.isAlcoholic,
+        hasSize: drink.hasSize,
+        mediumSizePrice: toNumber(drink.mediumSizePrice),
+        largeSizePrice: toNumber(drink.largeSizePrice),
+        isGlutenFree: drink.isGlutenFree,
+        isVegetarian: drink.isVegetarian,
+        isVegan: drink.isVegan,
         isSalgado: false,
         isDoce: false,
         isCafeDaManha: false,
@@ -49,12 +39,12 @@ export default async function MenuPage() {
         isSobremesa: false,
     }))
 
-    // Transform menu items to ensure all fields are present
-    const formattedMenuItems = menuItemsData.map(item => ({
+    const formattedMenuItems: AdminMenuItem[] = menuItemsData.map((item) => ({
+        kind: "menu" as const,
         id: item.id,
         name: item.name,
         description: item.description,
-        price: item.price,
+        price: toNumber(item.price) ?? 0,
         imageUrl: item.imageUrl,
         isAvailable: item.isAvailable,
         isPopular: item.isPopular,
@@ -64,69 +54,16 @@ export default async function MenuPage() {
         isAlmoco: item.isAlmoco,
         isJantar: item.isJantar,
         isSobremesa: item.isSobremesa,
+        isSugarFree: item.isSugarFree,
+        hasSize: item.hasSize,
+        mediumSizePrice: toNumber(item.mediumSizePrice),
+        largeSizePrice: toNumber(item.largeSizePrice),
+        isGlutenFree: item.isGlutenFree,
+        isVegetarian: item.isVegetarian,
+        isVegan: item.isVegan,
     }))
 
-    // Combine all items
     const items = [...formattedMenuItems, ...formattedDrinks]
 
-    return (
-        <div className="h-[calc(100vh-4rem)] p-6 flex flex-col bg-[#FDF5E6]/30">
-            <div className="flex items-center justify-between mb-6">
-                <div>
-                    <h1 className="text-3xl font-bold text-[#8B4513] font-serif">Cardápio</h1>
-                    <p className="text-[#D2691E] text-sm mt-1">Gerencie os itens do cardápio</p>
-                </div>
-
-                <div className="flex gap-3">
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button className="bg-[#8B4513] hover:bg-[#654321] text-white shadow-sm">
-                                <Plus className="w-4 h-4 mr-2" />
-                                Novo Item
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-3xl bg-white border-[#D2691E]/20">
-                            <DialogHeader>
-                                <DialogTitle className="text-[#8B4513]">Novo Item do Cardápio</DialogTitle>
-                                <DialogDescription className="text-[#D2691E]">
-                                    Preencha os detalhes do novo item do cardápio abaixo.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <AddMenuItemForm />
-                        </DialogContent>
-                    </Dialog>
-
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button className="bg-[#8B4513] hover:bg-[#654321] text-white shadow-sm">
-                                <Plus className="w-4 h-4 mr-2" />
-                                Nova Bebida
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-3xl bg-white border-[#D2691E]/20">
-                            <DialogHeader>
-                                <DialogTitle className="text-[#8B4513]">Nova Bebida</DialogTitle>
-                                <DialogDescription className="text-[#D2691E]">
-                                    Preencha os detalhes da nova bebida abaixo.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <DrinkForm />
-                        </DialogContent>
-                    </Dialog>
-                </div>
-            </div>
-
-            <div className="flex-1 min-h-0">
-                <MenuItemsTable
-                    items={items}
-                    onEdit={(item) => {
-                        // Handle edit in client component
-                    }}
-                    onDelete={(item) => {
-                        // Handle delete in client component
-                    }}
-                />
-            </div>
-        </div>
-    )
-} 
+    return <MenuAdminClient items={items} />
+}

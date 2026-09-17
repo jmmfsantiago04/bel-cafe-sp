@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-    title: 'Blog | Bel Café',
+    title: 'Blog | É de Chão',
     description: 'Descubra histórias, receitas e curiosidades sobre café em nosso blog.',
 }
 
@@ -20,7 +20,7 @@ export default async function BlogPage() {
         <div className="min-h-screen bg-[#F5E6D3]">
             <div className="container mx-auto px-4 py-12">
                 <header className="max-w-2xl mx-auto text-center mb-12">
-                    <h1 className="text-3xl font-bold text-[#4A2512] mb-4">Blog do Bel Café</h1>
+                    <h1 className="text-3xl font-bold text-[#4A2512] mb-4">Blog do É de Chão</h1>
                     <p className="text-[#8B4513]/80">
                         Descubra histórias fascinantes, receitas exclusivas e curiosidades sobre o mundo do café.
                     </p>
