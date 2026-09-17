@@ -148,6 +148,13 @@ function updateDrinksAvailability(flag: string, isActive: boolean) {
             .set({ isAvailable: isActive })
             .where(eq(drinks.isHotDrink, true))
     }
+
+    if (flag === "isColdDrink") {
+        return db.update(drinks)
+            .set({ isAvailable: isActive })
+            .where(eq(drinks.isHotDrink, false))
+    }
+
     return Promise.resolve()
 }
 

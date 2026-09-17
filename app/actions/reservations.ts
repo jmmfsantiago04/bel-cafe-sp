@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/require-admin"
 import { db } from "@/lib/db"
 import { eq, and, desc, sql } from "drizzle-orm"
 import { reservations } from "@/db/schema"
+import { reservationFormSchema, type ReservationFormData } from "@/app/actions/reservation-types"
 import { revalidatePath } from "next/cache"
 
 export async function getAllReservations() {
@@ -45,13 +46,14 @@ export async function getReservationCount(date: string, mealPeriod: string) {
     }
 }
 
-export async function createReservation(data: any) {
+export async function createReservation(data: ReservationFormData) {
     await requireAdmin()
     try {
+        const parsed = reservationFormSchema.parse(data)
         const now = new Date().toISOString()
 
         const result = await db.insert(reservations).values({
-            ...data,
+            ...parsed,
             createdAt: now,
             updatedAt: now,
         }).returning()
@@ -99,13 +101,14 @@ export async function deleteReservation(id: number) {
     }
 }
 
-export async function updateReservation(id: number, data: any) {
+export async function updateReservation(id: number, data: ReservationFormData) {
     await requireAdmin()
     try {
+        const parsed = reservationFormSchema.parse(data)
         const result = await db
             .update(reservations)
             .set({
-                ...data,
+                ...parsed,
                 updatedAt: new Date().toISOString(),
             })
             .where(eq(reservations.id, id))
@@ -119,13 +122,14 @@ export async function updateReservation(id: number, data: any) {
     }
 }
 
-export async function createReservationByAdmin(data: any) {
+export async function createReservationByAdmin(data: ReservationFormData) {
     await requireAdmin()
     try {
+        const parsed = reservationFormSchema.parse(data)
         const now = new Date().toISOString()
 
         const result = await db.insert(reservations).values({
-            ...data,
+            ...parsed,
             createdAt: now,
             updatedAt: now,
         }).returning()
@@ -175,4 +179,4 @@ export async function getTodayReservations() {
             jantar: 0,
         }
     }
-} 
+}

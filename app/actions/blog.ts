@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/require-admin"
 
 import { db } from "@/lib/db"
 import { blogPosts } from "@/db/schema"
-import { eq, desc } from "drizzle-orm"
+import { eq, desc, and } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { type BlogPostFormData } from "@/app/actions/blog-types"
 
@@ -130,7 +130,12 @@ export async function getBlogPostBySlug(slug: string) {
         const result = await db
             .select()
             .from(blogPosts)
-            .where(eq(blogPosts.slug, slug))
+            .where(
+                and(
+                    eq(blogPosts.slug, slug),
+                    eq(blogPosts.isPublished, true),
+                ),
+            )
             .limit(1)
 
         return { data: result[0] }

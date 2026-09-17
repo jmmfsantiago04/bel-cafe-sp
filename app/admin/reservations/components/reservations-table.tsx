@@ -43,10 +43,7 @@ import { ptBR } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 import { AddReservationForm } from "./add-reservation-form"
 import { Input } from "@/components/ui/input"
-import { updateCapacity } from "@/app/actions/capacity"
-import { db } from "@/lib/db"
-import { capacity } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { updateCapacity, getCapacityForDate } from "@/app/actions/capacity"
 
 function formatDate(dateStr: string) {
     const date = new Date(dateStr + 'T12:00:00');
@@ -220,14 +217,16 @@ export function ReservationsTable() {
     const loadCapacityValues = async (date: Date) => {
         const formattedDate = format(date, 'yyyy-MM-dd');
         try {
-            const result = await db.query.capacity.findFirst({
-                where: eq(capacity.date, formattedDate)
-            });
+            const result = await getCapacityForDate(formattedDate);
+
+            if ('error' in result || !result.data) {
+                throw new Error(result.error ?? 'Failed to load capacity');
+            }
 
             setCapacityValues({
-                cafe: result?.cafe ?? 30,
-                almoco: result?.almoco ?? 30,
-                jantar: result?.jantar ?? 30
+                cafe: result.data.cafe ?? 30,
+                almoco: result.data.almoco ?? 30,
+                jantar: result.data.jantar ?? 30
             });
         } catch (error) {
             console.error('Error loading capacity:', error);

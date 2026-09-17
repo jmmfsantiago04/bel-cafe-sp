@@ -44,14 +44,41 @@ export async function updateStoreStatus(data: StoreStatusData) {
     }
 }
 
+/** Clock parts in America/Sao_Paulo (independent of server TZ). */
+function getSaoPauloClock(now = new Date()) {
+    const parts = Object.fromEntries(
+        new Intl.DateTimeFormat("en-GB", {
+            timeZone: "America/Sao_Paulo",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+            weekday: "short",
+        })
+            .formatToParts(now)
+            .filter((p) => p.type !== "literal")
+            .map((p) => [p.type, p.value]),
+    ) as Record<string, string>
+
+    const weekdayMap: Record<string, number> = {
+        Sun: 0,
+        Mon: 1,
+        Tue: 2,
+        Wed: 3,
+        Thu: 4,
+        Fri: 5,
+        Sat: 6,
+    }
+
+    return {
+        currentTime: `${parts.hour}:${parts.minute}`,
+        currentDay: weekdayMap[parts.weekday] ?? 0,
+    }
+}
+
 export async function getStoreStatus() {
     try {
-        // Get current time
-        const now = new Date()
-        const currentHour = now.getHours().toString().padStart(2, '0')
-        const currentMinute = now.getMinutes().toString().padStart(2, '0')
-        const currentTime = `${currentHour}:${currentMinute}`
-        const currentDay = now.getDay() // 0 = Sunday, 1 = Monday, etc.
+        // Get current time in São Paulo (not the server's local TZ)
+        const { currentTime, currentDay } = getSaoPauloClock()
 
         // Get store status from database
         const status = await db.query.storeStatus.findFirst()
@@ -106,4 +133,4 @@ export async function getStoreStatus() {
         console.error("Error getting store status:", error)
         return { error: "Failed to get store status" }
     }
-} 
+}

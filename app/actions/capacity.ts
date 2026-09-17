@@ -6,6 +6,21 @@ import { db } from "@/lib/db"
 import { capacity } from "@/db/schema"
 import { eq } from "drizzle-orm"
 
+export async function getCapacityForDate(date: string) {
+    await requireAdmin()
+    try {
+        const result = await db.query.capacity.findFirst({
+            where: eq(capacity.date, date),
+        })
+        return {
+            data: result ?? { cafe: 30, almoco: 30, jantar: 30 },
+        }
+    } catch (error) {
+        console.error("Error loading capacity:", error)
+        return { error: "Failed to load capacity" }
+    }
+}
+
 export async function updateCapacity(data: { date: string, cafe: number, almoco: number, jantar: number }) {
     await requireAdmin()
     try {
@@ -38,4 +53,4 @@ export async function updateCapacity(data: { date: string, cafe: number, almoco:
         console.error('Error updating capacity:', error);
         return { error: 'Failed to update capacity' };
     }
-} 
+}
