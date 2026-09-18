@@ -259,7 +259,7 @@ export function ReservationsTable() {
             if (!('error' in result)) {
                 setReservations(result.data);
             }
-        } catch (error) {
+        } catch {
             toast.error("Erro ao atualizar lista de reservas");
         }
     };
