@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -75,10 +76,12 @@ export function Menu({ initialItems }: MenuProps) {
                                             </div>
                                             {item.imageUrl && (
                                                 <div className="relative w-24 h-24 rounded-lg overflow-hidden border-2 border-[#DEB887]">
-                                                    <img
+                                                    <Image
                                                         src={item.imageUrl}
                                                         alt={item.name}
-                                                        className="w-full h-full object-cover"
+                                                        fill
+                                                        className="object-cover"
+                                                        sizes="96px"
                                                     />
                                                 </div>
                                             )}

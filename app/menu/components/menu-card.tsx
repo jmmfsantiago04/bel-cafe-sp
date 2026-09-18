@@ -1,5 +1,6 @@
 'use client'
 
+import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Leaf, Wheat, Carrot, ImageOff } from "lucide-react"
@@ -68,10 +69,12 @@ export function MenuCard({ item }: MenuCardProps) {
             <figure className="relative h-40 sm:h-48 md:h-56">
                 {item.imageUrl ? (
                     <>
-                        <img
+                        <Image
                             src={item.imageUrl}
                             alt={`Foto do prato ${item.name}`}
-                            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                            fill
+                            className="object-cover transform group-hover:scale-105 transition-transform duration-300"
+                            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                         />
                         {item.isDiscounted && (
                             <div
