@@ -169,7 +169,7 @@ export function ReservationsTable() {
 
             // Clear selection
             setSelectedRows([]);
-        } catch {
+        } catch (error) {
             toast.error(
                 "Erro ao excluir reservas",
                 { description: error instanceof Error ? error.message : "Não foi possível excluir algumas reservas." }
@@ -193,7 +193,7 @@ export function ReservationsTable() {
             toast.success("Status atualizado", {
                 description: `Reserva ${newStatus === 'confirmed' ? 'confirmada' : newStatus === 'cancelled' ? 'cancelada' : 'pendente'} com sucesso.`,
             });
-        } catch {
+        } catch (error) {
             toast.error("Erro ao atualizar status", {
                 description: error instanceof Error ? error.message : "Tente novamente mais tarde.",
             });
@@ -216,7 +216,7 @@ export function ReservationsTable() {
                 almoco: result.data.almoco ?? 30,
                 jantar: result.data.jantar ?? 30
             });
-        } catch {
+        } catch (error) {
             console.error('Error loading capacity:', error);
             // Set default values if there's an error
             setCapacityValues({
@@ -259,7 +259,7 @@ export function ReservationsTable() {
             if (!('error' in result)) {
                 setReservations(result.data);
             }
-        } catch {
+        } catch (error) {
             toast.error("Erro ao atualizar lista de reservas");
         }
     };
@@ -285,7 +285,7 @@ export function ReservationsTable() {
                 almoco: 'error' in almocoCount ? 0 : almocoCount.totalGuests || 0,
                 jantar: 'error' in jantarCount ? 0 : jantarCount.totalGuests || 0
             });
-        } catch {
+        } catch (error) {
             console.error("Erro ao buscar contagem de reservas:", error);
         }
     };
@@ -317,7 +317,7 @@ export function ReservationsTable() {
             await loadCapacityValues(selectedDate);
             updatePeriodCounts(selectedDate);
             setIsCapacityDialogOpen(false);
-        } catch {
+        } catch (error) {
             toast.error("Erro ao atualizar capacidade", {
                 description: error instanceof Error ? error.message : "Tente novamente mais tarde.",
             });
