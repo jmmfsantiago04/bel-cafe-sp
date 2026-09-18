@@ -1,5 +1,4 @@
 import { db } from "@/lib/db"
-import { businessHours } from "@/db/schema"
 import { BusinessHoursTable } from "@/app/admin/hours/components/business-hours-table"
 import { BusinessHoursForm } from "@/app/admin/hours/components/business-hours-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"

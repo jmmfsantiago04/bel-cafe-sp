@@ -1,13 +1,5 @@
 'use client'
 
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
 import { Calendar as CalendarIcon, Clock, Pencil, Trash2, Plus, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -33,7 +25,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { Suspense, useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { updateReservationStatus, getAllReservations, deleteReservation, getReservationCount } from "@/app/actions/reservations"
 import { toast } from "sonner"
 import { EditReservationForm } from "./edit-reservation-form"
@@ -97,8 +89,6 @@ export function ReservationsTable() {
     const [selectedRows, setSelectedRows] = useState<number[]>([]);
     const [reservations, setReservations] = useState<Reservation[]>([]);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [isUpdating, setIsUpdating] = useState<number | null>(null);
-    const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
     const [isFiltering, setIsFiltering] = useState(false);
     const [selectedPeriods, setSelectedPeriods] = useState<string[]>([]);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -179,7 +169,7 @@ export function ReservationsTable() {
 
             // Clear selection
             setSelectedRows([]);
-        } catch (error) {
+        } catch {
             toast.error(
                 "Erro ao excluir reservas",
                 { description: error instanceof Error ? error.message : "Não foi possível excluir algumas reservas." }
@@ -189,7 +179,6 @@ export function ReservationsTable() {
 
     async function handleStatusUpdate(id: number, newStatus: string) {
         try {
-            setIsUpdating(id);
             const result = await updateReservationStatus(id, newStatus);
 
             if ('error' in result) {
@@ -204,12 +193,11 @@ export function ReservationsTable() {
             toast.success("Status atualizado", {
                 description: `Reserva ${newStatus === 'confirmed' ? 'confirmada' : newStatus === 'cancelled' ? 'cancelada' : 'pendente'} com sucesso.`,
             });
-        } catch (error) {
+        } catch {
             toast.error("Erro ao atualizar status", {
                 description: error instanceof Error ? error.message : "Tente novamente mais tarde.",
             });
         } finally {
-            setIsUpdating(null);
         }
     }
 
@@ -228,7 +216,7 @@ export function ReservationsTable() {
                 almoco: result.data.almoco ?? 30,
                 jantar: result.data.jantar ?? 30
             });
-        } catch (error) {
+        } catch {
             console.error('Error loading capacity:', error);
             // Set default values if there's an error
             setCapacityValues({
@@ -271,7 +259,7 @@ export function ReservationsTable() {
             if (!('error' in result)) {
                 setReservations(result.data);
             }
-        } catch (error) {
+        } catch {
             toast.error("Erro ao atualizar lista de reservas");
         }
     };
@@ -297,7 +285,7 @@ export function ReservationsTable() {
                 almoco: 'error' in almocoCount ? 0 : almocoCount.totalGuests || 0,
                 jantar: 'error' in jantarCount ? 0 : jantarCount.totalGuests || 0
             });
-        } catch (error) {
+        } catch {
             console.error("Erro ao buscar contagem de reservas:", error);
         }
     };
@@ -329,7 +317,7 @@ export function ReservationsTable() {
             await loadCapacityValues(selectedDate);
             updatePeriodCounts(selectedDate);
             setIsCapacityDialogOpen(false);
-        } catch (error) {
+        } catch {
             toast.error("Erro ao atualizar capacidade", {
                 description: error instanceof Error ? error.message : "Tente novamente mais tarde.",
             });
@@ -838,7 +826,6 @@ export function ReservationsTable() {
                                                         capacityValues={capacityValues}
                                                         onDateChange={async (date) => {
                                                             // Update period counts and capacity values for the new date
-                                                            const formattedDate = format(date, 'yyyy-MM-dd');
                                                             await loadCapacityValues(date);
                                                             await updatePeriodCounts(date);
                                                         }}

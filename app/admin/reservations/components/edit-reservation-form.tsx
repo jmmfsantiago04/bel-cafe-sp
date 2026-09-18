@@ -23,7 +23,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { updateReservation } from "@/app/actions/reservations"
 import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
 import { useState } from "react"
 import { toast } from "sonner"
 import * as z from "zod"
@@ -96,11 +95,6 @@ export function EditReservationForm({
     onDateChange
 }: EditReservationFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [date, setDate] = useState<Date>(() => {
-        const date = new Date(reservation.date + 'T12:00:00');
-        return date;
-    });
-
     // Função para verificar se há vagas disponíveis
     const checkAvailability = (period: string, guests: number) => {
         const currentCount = periodCounts[period as keyof typeof periodCounts];

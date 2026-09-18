@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Coffee, UtensilsCrossed, Utensils, Beer, Sandwich, Cookie, Cake, ChefHat, IceCream, Candy } from "lucide-react"
+import { Coffee, UtensilsCrossed, Utensils, Beer, Sandwich, ChefHat, IceCream, Candy } from "lucide-react"
 import { useMenuCategories } from "../../admin/categories/components/menu-categories-context"
 
 // Mapa de ícones para cada tipo de categoria baseado na flag
@@ -15,7 +15,7 @@ const categoryIcons = {
     'isBebidasFrias': Beer,
     'isSalgado': Sandwich,
     'isDoce': Candy,
-    'isSobremesa': IceCream, // Outras opções: IceCream, Cookie, Candy
+    'isSobremesa': IceCream, // Outras opções: IceCream, Candy
 } as const
 
 export function SidebarMenu() {

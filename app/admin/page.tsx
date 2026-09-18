@@ -9,7 +9,6 @@ import {
     UtensilsCrossed,
     Moon,
     Calendar,
-    Users,
     ShoppingBag,
     Star,
     Tag

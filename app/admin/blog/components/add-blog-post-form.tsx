@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { createBlogPost } from "@/app/actions/blog"
-import { BlogPostFormData, blogPostFormSchema } from "@/app/actions/blog-types"
+import { blogPostFormSchema } from "@/app/actions/blog-types"
 import { Button } from "@/components/ui/button"
 import {
     Form,

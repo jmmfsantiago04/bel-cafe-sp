@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { menuItems } from "@/db/schema";
 import { type InferSelectModel } from "drizzle-orm";
-import { Coffee, UtensilsCrossed } from "lucide-react";
 
 type MenuItem = InferSelectModel<typeof menuItems>;
 

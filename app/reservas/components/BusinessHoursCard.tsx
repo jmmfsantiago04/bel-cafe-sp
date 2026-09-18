@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card"
 import { Clock } from "lucide-react"
 import { db } from "@/lib/db"
-import { businessHours } from "@/db/schema"
 
 type Period = "cafe" | "almoco" | "jantar" | "geral"
 

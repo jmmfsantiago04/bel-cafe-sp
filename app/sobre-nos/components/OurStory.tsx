@@ -21,7 +21,7 @@ export function OurStory() {
                     uma antiga casa em um lugar onde as pessoas pudessem se sentir verdadeiramente em casa.
                 </p>
                 <p>
-                    O nome "É de Chão" vem da expressão nordestina que representa algo autêntico, genuíno, feito com
+                    O nome {"\"É de Chão\""} vem da expressão nordestina que representa algo autêntico, genuíno, feito com
                     amor e dedicação. Assim como o café que é cultivado e colhido da terra, nossa comida é preparada
                     com ingredientes frescos e receitas que passam de geração em geração.
                 </p>

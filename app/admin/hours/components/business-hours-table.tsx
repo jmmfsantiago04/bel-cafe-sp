@@ -28,7 +28,7 @@ interface BusinessHoursTableProps {
 }
 
 export function BusinessHoursTable({ initialHours }: BusinessHoursTableProps) {
-    const [hours, setHours] = useState<BusinessHoursFormData[]>(initialHours)
+    const [hours] = useState<BusinessHoursFormData[]>(initialHours)
 
     // Ordem definida dos períodos
     const periodOrder = {

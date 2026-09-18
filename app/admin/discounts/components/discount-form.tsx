@@ -22,10 +22,15 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+type DiscountSelectableItem = {
+    id: number
+    name: string
+}
+
 interface DiscountFormProps {
-    onSuccess?: () => void;
-    menuItems: any[];
-    drinks: any[];
+    onSuccess?: () => void
+    menuItems: DiscountSelectableItem[]
+    drinks: DiscountSelectableItem[]
 }
 
 export function DiscountForm({
