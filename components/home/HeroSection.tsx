@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export function HeroSection() {
     return (
-        <section className="relative min-h-[500px] h-screen flex items-center justify-center bg-gradient-to-b from-[#8B4513] to-[#654321]">
+        <section className="relative flex min-h-[70svh] items-center justify-center md:min-h-[80svh] bg-gradient-to-b from-[#8B4513] to-[#654321]">
             <div
                 className="absolute inset-0 opacity-20"
                 style={{

@@ -68,11 +68,12 @@ export default async function BlogPostPage({
 
                     <article className="bg-white rounded-xl shadow-lg overflow-hidden">
                         {post.imageUrl && (
-                            <div className="relative h-[400px] w-full">
+                            <div className="relative h-48 w-full sm:h-64 md:h-[400px]">
                                 <Image
                                     src={post.imageUrl}
                                     alt={post.title}
                                     fill
+                                    sizes="100vw"
                                     className="object-cover"
                                     priority
                                 />

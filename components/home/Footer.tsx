@@ -7,7 +7,7 @@ const navigationLinks = [
     { href: "/menu/jantar", label: "Jantar" },
     { href: "/menu/bebidas-quentes", label: "Bebidas" },
     { href: "/reservas", label: "Reservas" },
-    { href: "/sobre", label: "Sobre Nós" },
+    { href: "/sobre-nos", label: "Sobre Nós" },
     { href: "/duvidas", label: "Dúvidas" },
     { href: "/blog", label: "Blog" },
 ]

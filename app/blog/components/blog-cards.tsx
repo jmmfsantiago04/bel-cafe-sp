@@ -30,6 +30,7 @@ export function BlogCards({ posts }: BlogCardsProps) {
                                 src={post.imageUrl}
                                 alt={post.title}
                                 fill
+                                sizes="(max-width: 768px) 100vw, 33vw"
                                 className="object-cover"
                             />
                         ) : (

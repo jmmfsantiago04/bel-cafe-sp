@@ -119,7 +119,7 @@ export function Navbar() {
                     {/* Mobile Navigation */}
                     <div className="flex items-center space-x-4 md:hidden">
                         {/* Store Status for Mobile */}
-                        <StoreStatus />
+                        <StoreStatus compact />
 
                         <Sheet>
                             <SheetTrigger
