@@ -45,7 +45,8 @@ export function BusinessHoursTable({ initialHours }: BusinessHoursTableProps) {
 
     return (
         <div className="rounded-md border border-[#DEB887]">
-            <Table>
+            <div className="w-full overflow-x-auto">
+<Table>
                 <TableHeader className="bg-[#FDF5E6]">
                     <TableRow>
                         <TableHead className="text-[#8B4513]">Período</TableHead>
@@ -113,6 +114,7 @@ export function BusinessHoursTable({ initialHours }: BusinessHoursTableProps) {
                     )}
                 </TableBody>
             </Table>
+</div>
         </div>
     )
 } 

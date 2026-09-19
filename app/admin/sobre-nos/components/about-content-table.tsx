@@ -26,7 +26,8 @@ export function AboutContentTable({ content, onEdit, onDelete }: AboutContentTab
             </CardHeader>
             <CardContent>
                 <div className="rounded-md border">
-                    <Table>
+                    <div className="w-full overflow-x-auto">
+<Table>
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="text-xs sm:text-sm">Seção</TableHead>
@@ -90,6 +91,7 @@ export function AboutContentTable({ content, onEdit, onDelete }: AboutContentTab
                             )}
                         </TableBody>
                     </Table>
+</div>
                 </div>
             </CardContent>
         </Card>

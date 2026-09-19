@@ -114,7 +114,8 @@ export function MenuCategoriesTable({ initialCategories }: MenuCategoriesTablePr
                     </DialogContent>
                 </Dialog>
 
-                <Table>
+                <div className="w-full overflow-x-auto">
+<Table>
                     <TableHeader>
                         <TableRow>
                             <TableHead className="w-[50px]"></TableHead>
@@ -180,6 +181,7 @@ export function MenuCategoriesTable({ initialCategories }: MenuCategoriesTablePr
                         )}
                     </TableBody>
                 </Table>
+</div>
             </CardContent>
         </Card>
     )

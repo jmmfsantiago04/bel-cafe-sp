@@ -27,7 +27,8 @@ export function BlogPostTable({ posts, onEdit }: BlogPostTableProps) {
 
     return (
         <div className="rounded-md border">
-            <Table>
+            <div className="w-full overflow-x-auto">
+<Table>
                 <TableHeader>
                     <TableRow>
                         <TableHead>Título</TableHead>
@@ -72,6 +73,7 @@ export function BlogPostTable({ posts, onEdit }: BlogPostTableProps) {
                     ))}
                 </TableBody>
             </Table>
+</div>
         </div>
     )
 } 

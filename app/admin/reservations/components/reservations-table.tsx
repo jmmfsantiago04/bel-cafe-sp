@@ -590,7 +590,7 @@ export function ReservationsTable() {
                     Capacidade por Período
                 </h3>
 
-                <div className="grid grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
                     {/* Café da Manhã */}
                     <div className="bg-white p-4 rounded-lg border border-[#DEB887]">
                         <div className="flex items-center gap-2 mb-3">

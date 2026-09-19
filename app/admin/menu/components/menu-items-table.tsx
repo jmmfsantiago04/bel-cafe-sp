@@ -54,7 +54,8 @@ export function MenuItemsTable({ items, onEdit, onDelete }: MenuItemsTableProps)
     }
 
     const renderTable = (filteredItems: MenuItem[]) => (
-        <Table>
+        <div className="w-full overflow-x-auto">
+<Table>
             <TableHeader>
                 <TableRow className="bg-[#FDF5E6]/50 hover:bg-[#FDF5E6]/50">
                     <TableHead className="font-semibold text-[#8B4513]">Nome</TableHead>
@@ -109,20 +110,21 @@ export function MenuItemsTable({ items, onEdit, onDelete }: MenuItemsTableProps)
                 )}
             </TableBody>
         </Table>
+</div>
     )
 
     return (
         <Tabs defaultValue="cafe-da-manha" className="w-full h-full flex flex-col">
-            <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 p-1 mx-auto w-full max-w-screen-2xl bg-[#FDF5E6]/50 rounded-lg">
-                <TabsTrigger value="cafe-da-manha" className="text-sm">Café da Manhã</TabsTrigger>
-                <TabsTrigger value="almoco" className="text-sm">Almoço</TabsTrigger>
-                <TabsTrigger value="jantar" className="text-sm">Jantar</TabsTrigger>
-                <TabsTrigger value="salgados" className="text-sm">Salgados</TabsTrigger>
-                <TabsTrigger value="doces" className="text-sm">Doces</TabsTrigger>
-                <TabsTrigger value="bebidas-quentes" className="text-sm">Bebidas Quentes</TabsTrigger>
-                <TabsTrigger value="bebidas-geladas" className="text-sm">Bebidas Geladas</TabsTrigger>
-                <TabsTrigger value="sobremesas" className="text-sm">Sobremesas</TabsTrigger>
-                <TabsTrigger value="pratos-especiais" className="text-sm">Pratos Especiais</TabsTrigger>
+            <TabsList className="flex h-auto w-full max-w-full flex-nowrap justify-start gap-2 overflow-x-auto rounded-lg bg-[#FDF5E6]/50 p-1">
+                <TabsTrigger value="cafe-da-manha" className="shrink-0 text-sm">Café da Manhã</TabsTrigger>
+                <TabsTrigger value="almoco" className="shrink-0 text-sm">Almoço</TabsTrigger>
+                <TabsTrigger value="jantar" className="shrink-0 text-sm">Jantar</TabsTrigger>
+                <TabsTrigger value="salgados" className="shrink-0 text-sm">Salgados</TabsTrigger>
+                <TabsTrigger value="doces" className="shrink-0 text-sm">Doces</TabsTrigger>
+                <TabsTrigger value="bebidas-quentes" className="shrink-0 text-sm">Bebidas Quentes</TabsTrigger>
+                <TabsTrigger value="bebidas-geladas" className="shrink-0 text-sm">Bebidas Geladas</TabsTrigger>
+                <TabsTrigger value="sobremesas" className="shrink-0 text-sm">Sobremesas</TabsTrigger>
+                <TabsTrigger value="pratos-especiais" className="shrink-0 text-sm">Pratos Especiais</TabsTrigger>
             </TabsList>
 
             <div className="flex-1 mt-6 overflow-hidden">

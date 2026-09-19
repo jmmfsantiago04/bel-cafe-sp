@@ -15,7 +15,7 @@ import { Suspense } from "react"
 export default function ReservationsPage() {
     return (
         <div className="h-full flex flex-col">
-            <div className="flex items-center justify-between mb-6">
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-[#8B4513] font-serif">Reservas</h1>
                     <p className="text-[#D2691E] text-sm">Gerencie as reservas do café</p>
@@ -28,7 +28,7 @@ export default function ReservationsPage() {
                             Nova Reserva
                         </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent className="w-[600px] p-0">
+                    <AlertDialogContent className="w-[calc(100%-2rem)] max-w-lg p-0 sm:max-w-xl">
                         <AlertDialogHeader className="p-4 pb-2">
                             <AlertDialogTitle className="text-center text-xl font-bold text-[#8B4513] font-serif">
                                 Nova Reserva

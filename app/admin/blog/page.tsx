@@ -76,7 +76,7 @@ export default function AdminBlogPage() {
                     <DialogTrigger asChild>
                         <Button>Novo Post</Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                    <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-auto">
                         <DialogHeader>
                             <DialogTitle>Criar Novo Post</DialogTitle>
                             <DialogDescription>
@@ -104,7 +104,7 @@ export default function AdminBlogPage() {
 
             {/* Edit Dialog */}
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-auto">
                     <DialogHeader>
                         <DialogTitle>Editar Post</DialogTitle>
                         <DialogDescription>
