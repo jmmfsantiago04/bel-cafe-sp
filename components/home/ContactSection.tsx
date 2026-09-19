@@ -3,9 +3,16 @@ import { businessHours } from "@/db/schema"
 import { eq } from "drizzle-orm"
 
 export async function ContactSection() {
-    const generalHours = await db.query.businessHours.findFirst({
-        where: eq(businessHours.isGeneralHours, true)
-    })
+    let generalHours: typeof businessHours.$inferSelect | null = null
+
+    try {
+        generalHours =
+            (await db.query.businessHours.findFirst({
+                where: eq(businessHours.isGeneralHours, true),
+            })) ?? null
+    } catch {
+        generalHours = null
+    }
 
     return (
         <section className="py-8 sm:py-12 md:py-16 bg-[#8B4513] text-[#F5DEB3]">
@@ -31,4 +38,4 @@ export async function ContactSection() {
             </article>
         </section>
     )
-} 
+}
