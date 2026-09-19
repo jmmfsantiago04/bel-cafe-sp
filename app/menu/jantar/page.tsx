@@ -12,10 +12,10 @@ export default async function Jantar() {
     });
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-[#F5E6D3] via-[#F5E6D3] to-[#F4861F]/10">
+        <div className="bg-gradient-to-br from-[#F5E6D3] via-[#F5E6D3] to-[#F4861F]/10">
             {/* Hero Banner */}
             <section
-                className="relative h-[40vh] sm:h-[45vh] md:h-[50vh] min-h-[300px] sm:min-h-[350px] md:min-h-[400px] bg-[url('/restaurant-banner.jpg')] bg-cover bg-center"
+                className="relative h-[40vh] sm:h-[45vh] md:h-[50vh] min-h-[240px] sm:min-h-[350px] md:min-h-[400px] bg-[url('/restaurant-banner.jpg')] bg-cover bg-center"
                 aria-labelledby="page-title"
             >
                 <div
@@ -24,10 +24,10 @@ export default async function Jantar() {
                 />
 
                 <header className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 z-10">
-                    <div className="bg-[#F5E6D3]/10 p-8 sm:p-10 md:p-12 rounded-3xl backdrop-blur-md border-2 border-[#FFB800] max-w-2xl sm:max-w-3xl mx-auto shadow-2xl">
+                    <div className="bg-[#F5E6D3]/10 p-4 sm:p-8 md:p-12 rounded-3xl backdrop-blur-md border-2 border-[#FFB800] max-w-2xl sm:max-w-3xl mx-auto shadow-2xl">
                         <h1
                             id="page-title"
-                            className="text-4xl sm:text-5xl md:text-7xl font-bold text-white font-serif mb-4 sm:mb-5 md:mb-6 drop-shadow-lg"
+                            className="text-3xl sm:text-5xl md:text-7xl font-bold text-white font-serif mb-4 sm:mb-5 md:mb-6 drop-shadow-lg"
                         >
                             Jantar
                         </h1>
@@ -78,6 +78,6 @@ export default async function Jantar() {
                     </div>
                 )}
             </section>
-        </main>
+        </div>
     );
 } 

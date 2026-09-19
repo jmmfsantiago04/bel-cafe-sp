@@ -28,7 +28,7 @@ export function SidebarMenu() {
         .sort((a, b) => a.displayOrder - b.displayOrder)
 
     return (
-        <div className="flex h-full min-h-screen w-64 sm:w-72 flex-col bg-[#F5E6D3]/95 backdrop-blur-sm border-r border-[#F4861F]/20 shadow-xl">
+        <div className="flex h-full w-full flex-col bg-[#F5E6D3]/95 backdrop-blur-sm border-r border-[#F4861F]/20 shadow-xl">
             <div className="p-6 sm:p-8 bg-gradient-to-r from-[#2B4C5C] to-[#2B4C5C]/90 text-[#F5E6D3] rounded-b-3xl shadow-lg">
                 <Link href="/menu" className="block group">
                     <h2 className="text-2xl sm:text-3xl font-bold font-serif text-center group-hover:text-[#FFB800] transition-colors">
