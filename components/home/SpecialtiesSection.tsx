@@ -20,31 +20,31 @@ const specialties = [
 
 export function SpecialtiesSection() {
     return (
-        <section className="py-8 sm:py-12 md:py-16 bg-[#DEB887]">
-            <article className="container mx-auto px-4 text-center max-w-6xl">
-                <h2 className="text-[#8B4513] text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 md:mb-12">
+        <section className="bg-[#FDE5B9] py-8 sm:py-12 md:py-16">
+            <article className="container mx-auto max-w-6xl px-4 text-center">
+                <h2 className="mb-8 text-2xl font-bold text-[#B43D16] sm:mb-10 sm:text-3xl md:mb-12 md:text-4xl">
                     Nossas Especialidades
                 </h2>
 
-                <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+                <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 md:grid-cols-3">
                     {specialties.map((item) => (
                         <li
                             key={item.title}
-                            className="bg-[#F5DEB3] p-4 sm:p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300"
+                            className="transform rounded-lg bg-[#FFF8EC] p-4 shadow-lg transition-transform duration-300 hover:scale-105 sm:p-6"
                         >
-                            <figure className="relative h-40 sm:h-48 mb-3 sm:mb-4">
+                            <figure className="relative mb-3 h-40 sm:mb-4 sm:h-48">
                                 <Image
                                     src={item.image}
                                     alt={`${item.title} - ${item.description}`}
                                     fill
-                                    className="object-cover rounded"
+                                    className="rounded object-cover"
                                     sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                                 />
                             </figure>
-                            <h3 className="text-[#8B4513] text-lg sm:text-xl font-bold mb-2">
+                            <h3 className="mb-2 text-lg font-bold text-[#B43D16] sm:text-xl">
                                 {item.title}
                             </h3>
-                            <p className="text-[#654321] text-sm sm:text-base">
+                            <p className="text-sm text-[#7E3117] sm:text-base">
                                 {item.description}
                             </p>
                         </li>

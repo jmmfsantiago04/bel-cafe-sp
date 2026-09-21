@@ -23,25 +23,25 @@ const contactInfo = {
 
 export function Footer() {
     return (
-        <footer className="bg-[#654321] text-[#F5DEB3]">
+        <footer className="bg-[#511707] text-[#FDE5B9]">
             <div className="container mx-auto px-4 py-8 sm:py-10 md:py-12">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
+                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 md:gap-12">
                     <section className="text-center sm:text-left">
-                        <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">É de Chão</h2>
-                        <p className="text-sm sm:text-base opacity-90 mb-4 max-w-sm mx-auto sm:mx-0">
+                        <h2 className="mb-3 text-lg font-bold sm:mb-4 sm:text-xl">É de Chão</h2>
+                        <p className="mx-auto mb-4 max-w-sm text-sm opacity-90 sm:mx-0 sm:text-base">
                             Sabores autênticos do Nordeste brasileiro em cada prato,
                             trazendo o aconchego e o afeto da culinária tradicional.
                         </p>
                     </section>
 
                     <nav className="text-center sm:text-left">
-                        <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Navegação</h2>
-                        <ul className="grid grid-cols-2 gap-x-4 gap-y-2 max-w-sm mx-auto sm:mx-0">
+                        <h2 className="mb-3 text-lg font-bold sm:mb-4 sm:text-xl">Navegação</h2>
+                        <ul className="mx-auto grid max-w-sm grid-cols-2 gap-x-4 gap-y-2 sm:mx-0">
                             {navigationLinks.map((link) => (
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
-                                        className="text-sm sm:text-base hover:text-[#DEB887] transition-colors"
+                                        className="text-sm transition-colors hover:text-[#EE8614] sm:text-base"
                                     >
                                         {link.label}
                                     </Link>
@@ -50,23 +50,23 @@ export function Footer() {
                         </ul>
                     </nav>
 
-                    <address className="text-center sm:text-left not-italic">
-                        <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Contato</h2>
-                        <ul className="space-y-2 text-sm sm:text-base max-w-sm mx-auto sm:mx-0">
+                    <address className="text-center not-italic sm:text-left">
+                        <h2 className="mb-3 text-lg font-bold sm:mb-4 sm:text-xl">Contato</h2>
+                        <ul className="mx-auto max-w-sm space-y-2 text-sm sm:mx-0 sm:text-base">
                             <li>{contactInfo.address}</li>
                             <li>{contactInfo.city}</li>
                             <li>
-                                <a href={`tel:${contactInfo.phone.replace(/\D/g, '')}`} className="hover:text-[#DEB887] transition-colors">
+                                <a href={`tel:${contactInfo.phone.replace(/\D/g, '')}`} className="transition-colors hover:text-[#EE8614]">
                                     Tel: {contactInfo.phone}
                                 </a>
                             </li>
                             <li>
-                                <a href={`https://wa.me/55${contactInfo.whatsapp.replace(/\D/g, '')}`} className="hover:text-[#DEB887] transition-colors">
+                                <a href={`https://wa.me/55${contactInfo.whatsapp.replace(/\D/g, '')}`} className="transition-colors hover:text-[#EE8614]">
                                     WhatsApp: {contactInfo.whatsapp}
                                 </a>
                             </li>
                             <li>
-                                <a href={`mailto:${contactInfo.email}`} className="hover:text-[#DEB887] transition-colors">
+                                <a href={`mailto:${contactInfo.email}`} className="transition-colors hover:text-[#EE8614]">
                                     Email: {contactInfo.email}
                                 </a>
                             </li>
@@ -75,10 +75,10 @@ export function Footer() {
                     </address>
                 </div>
 
-                <small className="block border-t border-[#8B4513] mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-xs sm:text-sm">
+                <small className="mt-6 block border-t border-[#B43D16] pt-6 text-center text-xs sm:mt-8 sm:pt-8 sm:text-sm">
                     © {new Date().getFullYear()} É de Chão - Comida de Afeto. Todos os direitos reservados.
                 </small>
             </div>
         </footer>
     )
-} 
+}
