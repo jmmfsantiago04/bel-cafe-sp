@@ -11,7 +11,7 @@ export default function MenuLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="flex min-h-0 w-full flex-1 bg-gradient-to-br from-[#F5E6D3] via-[#F5E6D3] to-[#F4861F]/10">
+      <div className="flex min-h-0 w-full flex-1 bg-gradient-to-br from-[#FFF8EC] via-[#FFF8EC] to-[#F4861F]/10">
         <div className="fixed left-4 top-20 z-40 md:hidden">
           <SidebarTrigger aria-label="Abrir menu de navegação">
             <div className="rounded-lg bg-white/80 p-2 shadow-md backdrop-blur-sm">

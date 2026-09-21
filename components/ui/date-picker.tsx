@@ -24,8 +24,8 @@ export function DatePicker({ date, setDate }: DatePickerProps) {
                     className={cn(
                         "w-full pl-3 text-left font-normal",
                         !date && "text-muted-foreground",
-                        "border-[#DEB887] hover:bg-[#FAEBD7] hover:text-[#8B4513]",
-                        "focus:ring-2 focus:ring-[#8B4513] focus:ring-offset-2",
+                        "border-[#EE8614] hover:bg-[#FAEBD7] hover:text-[#B43D16]",
+                        "focus:ring-2 focus:ring-[#B43D16] focus:ring-offset-2",
                         "bg-white"
                     )}
                 >

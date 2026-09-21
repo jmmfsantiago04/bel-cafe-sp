@@ -17,25 +17,25 @@ export default async function BlogPage() {
     })) || []) satisfies BlogPostResponse[]
 
     return (
-        <div className="min-h-screen bg-[#F5E6D3]">
+        <div className="min-h-screen bg-[#FFF8EC]">
             <div className="container mx-auto px-4 py-12">
                 <header className="max-w-2xl mx-auto text-center mb-12">
-                    <h1 className="text-3xl font-bold text-[#4A2512] mb-4">Blog do É de Chão</h1>
-                    <p className="text-[#8B4513]/80">
+                    <h1 className="text-3xl font-bold text-[#511707] mb-4">Blog do É de Chão</h1>
+                    <p className="text-[#B43D16]/80">
                         Descubra histórias fascinantes, receitas exclusivas e curiosidades sobre o mundo do café.
                     </p>
                 </header>
 
                 <Card className="bg-white/80 backdrop-blur-sm border-none">
                     <CardHeader>
-                        <CardTitle className="text-[#4A2512]">Posts Recentes</CardTitle>
+                        <CardTitle className="text-[#511707]">Posts Recentes</CardTitle>
                         <CardDescription>
                             Confira nossas últimas publicações
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {posts.length === 0 ? (
-                            <div className="text-center text-[#8B4513]/80 py-8">
+                            <div className="text-center text-[#B43D16]/80 py-8">
                                 <p className="text-lg">Nenhum post publicado ainda.</p>
                                 <p className="text-sm mt-2">Volte em breve para novidades!</p>
                             </div>

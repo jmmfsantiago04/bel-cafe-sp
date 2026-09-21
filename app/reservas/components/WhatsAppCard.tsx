@@ -10,25 +10,25 @@ const requiredInfo = [
 
 export function WhatsAppCard() {
     return (
-        <Card className="p-4 sm:p-6 border-[#DEB887] bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
+        <Card className="p-4 sm:p-6 border-[#EE8614] bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
             <header className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                 <span className="p-1.5 sm:p-2 bg-[#FDF5E6] rounded-lg" aria-hidden="true">
-                    <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-[#8B4513]" />
+                    <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-[#B43D16]" />
                 </span>
-                <h2 className="text-lg sm:text-xl font-bold text-[#8B4513] font-serif">
+                <h2 className="text-lg sm:text-xl font-bold text-[#B43D16] font-[family-name:var(--font-display)]">
                     Reservas via WhatsApp
                 </h2>
             </header>
 
             <section className="space-y-3 sm:space-y-4">
-                <p className="text-[#8B4513] text-sm sm:text-base">
+                <p className="text-[#B43D16] text-sm sm:text-base">
                     Para fazer sua reserva, envie uma mensagem para nosso WhatsApp com as seguintes informações:
                 </p>
 
-                <ul className="space-y-2 sm:space-y-3 text-[#8B4513] ml-2 sm:ml-4">
+                <ul className="space-y-2 sm:space-y-3 text-[#B43D16] ml-2 sm:ml-4">
                     {requiredInfo.map((info) => (
                         <li key={info} className="flex items-center gap-2 sm:gap-3">
-                            <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#D2691E] flex-shrink-0" aria-hidden="true" />
+                            <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#EE8614] flex-shrink-0" aria-hidden="true" />
                             <span className="text-sm sm:text-base">{info}</span>
                         </li>
                     ))}

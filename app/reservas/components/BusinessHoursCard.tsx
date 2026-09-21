@@ -41,15 +41,15 @@ export async function BusinessHoursCard() {
         .sort((a, b) => periodOrder[a.period] - periodOrder[b.period])
 
     return (
-        <Card className="p-4 sm:p-6 border-[#DEB887] bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
+        <Card className="p-4 sm:p-6 border-[#EE8614] bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
             <header className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                 <span
                     className="p-1.5 sm:p-2 bg-[#FDF5E6] rounded-lg"
                     aria-hidden="true"
                 >
-                    <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-[#8B4513]" />
+                    <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-[#B43D16]" />
                 </span>
-                <h2 className="text-lg sm:text-xl font-bold text-[#8B4513] font-serif">
+                <h2 className="text-lg sm:text-xl font-bold text-[#B43D16] font-[family-name:var(--font-display)]">
                     Horário de Funcionamento
                 </h2>
             </header>
@@ -58,12 +58,12 @@ export async function BusinessHoursCard() {
                 <div className="space-y-4 sm:space-y-6">
                     {/* Horário Geral */}
                     {generalHours && (
-                        <div className="pb-3 sm:pb-4 border-b border-[#DEB887]/30">
-                            <p className="text-sm sm:text-base text-[#8B4513]/80 mb-1">
+                        <div className="pb-3 sm:pb-4 border-b border-[#EE8614]/30">
+                            <p className="text-sm sm:text-base text-[#B43D16]/80 mb-1">
                                 {generalHours.weekdays}
                             </p>
                             <time
-                                className="text-base sm:text-lg font-medium text-[#8B4513]"
+                                className="text-base sm:text-lg font-medium text-[#B43D16]"
                                 dateTime={`${generalHours.openTime}-${generalHours.closeTime}`}
                             >
                                 {generalHours.openTime}h às {generalHours.closeTime}h
@@ -77,13 +77,13 @@ export async function BusinessHoursCard() {
                             {specificHours.map((schedule) => (
                                 <li
                                     key={schedule.id}
-                                    className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 border-b border-[#DEB887]/30 last:border-0"
+                                    className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 border-b border-[#EE8614]/30 last:border-0"
                                 >
                                     <div className="space-y-1 mb-2 sm:mb-0">
                                         <h3 className="font-medium text-sm sm:text-base">
                                             {periodLabels[schedule.period]}
                                         </h3>
-                                        <p className="text-xs sm:text-sm text-[#8B4513]/80">
+                                        <p className="text-xs sm:text-sm text-[#B43D16]/80">
                                             {schedule.weekdays}
                                         </p>
                                     </div>
@@ -99,7 +99,7 @@ export async function BusinessHoursCard() {
                     )}
                 </div>
             ) : (
-                <div className="text-center py-4 text-[#8B4513]/70 text-sm">
+                <div className="text-center py-4 text-[#B43D16]/70 text-sm">
                     Horários não disponíveis no momento.
                 </div>
             )}

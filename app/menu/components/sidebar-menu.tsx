@@ -28,10 +28,10 @@ export function SidebarMenu() {
         .sort((a, b) => a.displayOrder - b.displayOrder)
 
     return (
-        <div className="flex h-full w-full flex-col bg-[#F5E6D3]/95 backdrop-blur-sm border-r border-[#F4861F]/20 shadow-xl">
-            <div className="p-6 sm:p-8 bg-gradient-to-r from-[#2B4C5C] to-[#2B4C5C]/90 text-[#F5E6D3] rounded-b-3xl shadow-lg">
+        <div className="flex h-full w-full flex-col bg-[#FFF8EC]/95 backdrop-blur-sm border-r border-[#F4861F]/20 shadow-xl">
+            <div className="p-6 sm:p-8 bg-gradient-to-r from-[#2B4C5C] to-[#2B4C5C]/90 text-[#FFF8EC] rounded-b-3xl shadow-lg">
                 <Link href="/menu" className="block group">
-                    <h2 className="text-2xl sm:text-3xl font-bold font-serif text-center group-hover:text-[#FFB800] transition-colors">
+                    <h2 className="text-2xl sm:text-3xl font-bold font-[family-name:var(--font-display)] text-center group-hover:text-[#FFB800] transition-colors">
                         É de Chão
                     </h2>
                     <div className="flex items-center justify-center space-x-2 mt-2 sm:mt-3">
@@ -57,7 +57,7 @@ export function SidebarMenu() {
                             className={cn(
                                 "flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 mb-1.5 sm:mb-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200",
                                 isActive
-                                    ? "bg-gradient-to-r from-[#C84C28] to-[#F4861F] text-[#F5E6D3] shadow-md transform scale-105"
+                                    ? "bg-gradient-to-r from-[#C84C28] to-[#F4861F] text-[#FFF8EC] shadow-md transform scale-105"
                                     : "text-[#2B4C5C] hover:bg-[#FFB800]/20 hover:text-[#2B4C5C] hover:shadow-sm"
                             )}
                         >

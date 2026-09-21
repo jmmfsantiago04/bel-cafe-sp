@@ -46,7 +46,7 @@ export function ContactSection() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {contactInfo.map((item, index) => (
                         <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-[#2B4C5C]/5">
-                            <item.icon className="w-5 h-5 text-[#8B4513] shrink-0 mt-0.5" />
+                            <item.icon className="w-5 h-5 text-[#B43D16] shrink-0 mt-0.5" />
                             <div>
                                 <h3 className="text-sm font-medium text-[#2B4C5C]">
                                     {item.title}
@@ -69,7 +69,7 @@ export function ContactSection() {
                             href="https://instagram.com"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[#8B4513] hover:text-[#4A2512] transition-colors"
+                            className="text-[#B43D16] hover:text-[#511707] transition-colors"
                         >
                             Instagram
                         </a>
@@ -77,7 +77,7 @@ export function ContactSection() {
                             href="https://facebook.com"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[#8B4513] hover:text-[#4A2512] transition-colors"
+                            className="text-[#B43D16] hover:text-[#511707] transition-colors"
                         >
                             Facebook
                         </a>

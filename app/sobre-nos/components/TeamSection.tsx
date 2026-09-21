@@ -41,7 +41,7 @@ export function TeamSection() {
                             <h3 className="text-lg font-medium text-[#2B4C5C]">
                                 {member.name}
                             </h3>
-                            <p className="text-[#8B4513] font-medium text-sm mb-2">
+                            <p className="text-[#B43D16] font-medium text-sm mb-2">
                                 {member.role}
                             </p>
                             <p className="text-[#2B4C5C]/80 text-sm">

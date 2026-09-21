@@ -12,7 +12,7 @@ export default async function Salgados() {
     })
 
     return (
-        <div className="bg-gradient-to-br from-[#F5E6D3] via-[#F5E6D3] to-[#F4861F]/10">
+        <div className="bg-gradient-to-br from-[#FFF8EC] via-[#FFF8EC] to-[#F4861F]/10">
             {/* Hero Banner */}
             <section
                 className="relative h-[40vh] sm:h-[45vh] md:h-[50vh] min-h-[240px] sm:min-h-[350px] md:min-h-[400px] bg-[url('/salgados-banner.jpg')] bg-cover bg-center"
@@ -24,10 +24,10 @@ export default async function Salgados() {
                 />
 
                 <header className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 z-10">
-                    <div className="bg-[#F5E6D3]/10 p-4 sm:p-8 md:p-12 rounded-3xl backdrop-blur-md border-2 border-[#FFB800] max-w-2xl sm:max-w-3xl mx-auto shadow-2xl">
+                    <div className="bg-[#FFF8EC]/10 p-4 sm:p-8 md:p-12 rounded-3xl backdrop-blur-md border-2 border-[#FFB800] max-w-2xl sm:max-w-3xl mx-auto shadow-2xl">
                         <h1
                             id="page-title"
-                            className="text-3xl sm:text-5xl md:text-7xl font-bold text-white font-serif mb-4 sm:mb-5 md:mb-6 drop-shadow-lg"
+                            className="text-3xl sm:text-5xl md:text-7xl font-bold text-white font-[family-name:var(--font-display)] mb-4 sm:mb-5 md:mb-6 drop-shadow-lg"
                         >
                             Salgados
                         </h1>
@@ -48,7 +48,7 @@ export default async function Salgados() {
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 1440 320"
-                    className="absolute bottom-0 left-0 right-0 w-full h-[10vw] sm:h-[12vw] min-h-[80px] sm:min-h-[100px] fill-[#F5E6D3]"
+                    className="absolute bottom-0 left-0 right-0 w-full h-[10vw] sm:h-[12vw] min-h-[80px] sm:min-h-[100px] fill-[#FFF8EC]"
                     preserveAspectRatio="none"
                     style={{ filter: 'drop-shadow(0 -1px 2px rgba(0,0,0,0.1))' }}
                     aria-hidden="true"

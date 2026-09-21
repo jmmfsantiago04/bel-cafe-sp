@@ -31,7 +31,7 @@ export function OurValues() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {values.map((value, index) => (
                     <div key={index} className="flex flex-col items-center text-center p-4 rounded-xl bg-[#2B4C5C]/5 hover:bg-[#2B4C5C]/10 transition-colors">
-                        <value.icon className="w-8 h-8 text-[#8B4513] mb-3" />
+                        <value.icon className="w-8 h-8 text-[#B43D16] mb-3" />
                         <h3 className="text-lg font-medium text-[#2B4C5C] mb-2">
                             {value.title}
                         </h3>

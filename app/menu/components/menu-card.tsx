@@ -48,7 +48,7 @@ export function MenuCard({ item }: MenuCardProps) {
                         </Badge>
                     </div>
                     <span
-                        className="text-xs sm:text-sm line-through text-[#8B4513]/60"
+                        className="text-xs sm:text-sm line-through text-[#B43D16]/60"
                         aria-label={`Preço original: ${formatPrice(originalPrice)}`}
                     >
                         {formatPrice(originalPrice)}
@@ -58,14 +58,14 @@ export function MenuCard({ item }: MenuCardProps) {
         }
 
         return (
-            <span className="text-base sm:text-lg md:text-xl font-bold text-[#4A2512]">
+            <span className="text-base sm:text-lg md:text-xl font-bold text-[#511707]">
                 {formatPrice(originalPrice)}
             </span>
         );
     };
 
     return (
-        <Card className="group overflow-hidden bg-white shadow-md hover:shadow-lg transition-all duration-300 border-[#DEB887]/20">
+        <Card className="group overflow-hidden bg-white shadow-md hover:shadow-lg transition-all duration-300 border-[#EE8614]/20">
             <figure className="relative h-40 sm:h-48 md:h-56">
                 {item.imageUrl ? (
                     <>
@@ -84,21 +84,21 @@ export function MenuCard({ item }: MenuCardProps) {
                         )}
                     </>
                 ) : (
-                    <div className="h-full bg-[#F5E6D3] flex items-center justify-center" aria-label="Imagem não disponível">
-                        <ImageOff className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-[#8B4513]/40" aria-hidden="true" />
+                    <div className="h-full bg-[#FFF8EC] flex items-center justify-center" aria-label="Imagem não disponível">
+                        <ImageOff className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-[#B43D16]/40" aria-hidden="true" />
                     </div>
                 )}
             </figure>
 
             <CardHeader className="pb-2 space-y-2 sm:space-y-3">
                 <div className="flex justify-between items-start gap-2">
-                    <CardTitle className="text-lg sm:text-xl md:text-2xl text-[#4A2512] group-hover:text-[#C84C28] transition-colors">
+                    <CardTitle className="text-lg sm:text-xl md:text-2xl text-[#511707] group-hover:text-[#C84C28] transition-colors">
                         {item.name}
                     </CardTitle>
                     {item.isPopular && (
                         <Badge
                             variant="outline"
-                            className="text-xs sm:text-sm bg-[#FFB800]/10 text-[#8B4513] border-[#FFB800]"
+                            className="text-xs sm:text-sm bg-[#FFB800]/10 text-[#B43D16] border-[#FFB800]"
                             aria-label="Item popular"
                         >
                             Popular
@@ -106,7 +106,7 @@ export function MenuCard({ item }: MenuCardProps) {
                     )}
                 </div>
                 {item.description && (
-                    <CardDescription className="text-sm sm:text-base text-[#8B4513]/80 line-clamp-2">
+                    <CardDescription className="text-sm sm:text-base text-[#B43D16]/80 line-clamp-2">
                         {item.description}
                     </CardDescription>
                 )}
@@ -123,7 +123,7 @@ export function MenuCard({ item }: MenuCardProps) {
                         {item.isGlutenFree && (
                             <Badge
                                 variant="outline"
-                                className="text-xs sm:text-sm bg-[#4A2512]/5 border-[#4A2512]/20 text-[#4A2512] hover:bg-[#4A2512]/10 transition-colors"
+                                className="text-xs sm:text-sm bg-[#511707]/5 border-[#511707]/20 text-[#511707] hover:bg-[#511707]/10 transition-colors"
                                 role="listitem"
                             >
                                 <Wheat className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1" aria-hidden="true" />
@@ -133,7 +133,7 @@ export function MenuCard({ item }: MenuCardProps) {
                         {item.isVegetarian && (
                             <Badge
                                 variant="outline"
-                                className="text-xs sm:text-sm bg-[#4A2512]/5 border-[#4A2512]/20 text-[#4A2512] hover:bg-[#4A2512]/10 transition-colors"
+                                className="text-xs sm:text-sm bg-[#511707]/5 border-[#511707]/20 text-[#511707] hover:bg-[#511707]/10 transition-colors"
                                 role="listitem"
                             >
                                 <Leaf className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1" aria-hidden="true" />
@@ -143,7 +143,7 @@ export function MenuCard({ item }: MenuCardProps) {
                         {item.isVegan && (
                             <Badge
                                 variant="outline"
-                                className="text-xs sm:text-sm bg-[#4A2512]/5 border-[#4A2512]/20 text-[#4A2512] hover:bg-[#4A2512]/10 transition-colors"
+                                className="text-xs sm:text-sm bg-[#511707]/5 border-[#511707]/20 text-[#511707] hover:bg-[#511707]/10 transition-colors"
                                 role="listitem"
                             >
                                 <Carrot className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1" aria-hidden="true" />
