@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, ReactNode } from "react"
+import { createContext, useContext, useEffect, useState, ReactNode } from "react"
 import { MenuCategoryFormData } from "@/app/actions/categories"
 
 export type MenuCategory = MenuCategoryFormData & {
@@ -18,6 +18,23 @@ interface MenuCategoriesContextType {
 
 const MenuCategoriesContext = createContext<MenuCategoriesContextType | undefined>(undefined)
 
+function sameCategoryList(a: MenuCategory[], b: MenuCategory[]) {
+    if (a === b) return true
+    if (a.length !== b.length) return false
+    return a.every((cat, index) => {
+        const other = b[index]
+        return (
+            cat.id === other.id &&
+            cat.slug === other.slug &&
+            cat.isActive === other.isActive &&
+            cat.displayOrder === other.displayOrder &&
+            cat.name === other.name &&
+            cat.flag === other.flag &&
+            cat.type === other.type
+        )
+    })
+}
+
 export function MenuCategoriesProvider({
     children,
     initialCategories,
@@ -26,6 +43,13 @@ export function MenuCategoriesProvider({
     initialCategories: MenuCategory[]
 }) {
     const [categories, setCategories] = useState<MenuCategory[]>(initialCategories)
+
+    // Sync when parent finishes loading categories — skip if content is unchanged
+    useEffect(() => {
+        setCategories((prev) =>
+            sameCategoryList(prev, initialCategories) ? prev : initialCategories,
+        )
+    }, [initialCategories])
 
     const updateCategory = (updatedCategory: MenuCategory) => {
         setCategories(prevCategories =>
@@ -61,4 +85,4 @@ export function useMenuCategories() {
         throw new Error("useMenuCategories must be used within a MenuCategoriesProvider")
     }
     return context
-} 
+}
