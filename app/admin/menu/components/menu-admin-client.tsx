@@ -98,7 +98,7 @@ export function MenuAdminClient({ items }: MenuAdminClientProps) {
                                 Novo Item
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-3xl bg-white border-[#D2691E]/20 w-[95vw] sm:w-auto max-h-[90vh] overflow-y-auto">
+                        <DialogContent className="w-[95vw] max-h-[90vh] overflow-y-auto border-[#D2691E]/20 bg-white sm:max-w-5xl">
                             <DialogHeader>
                                 <DialogTitle className="text-[#8B4513]">Novo Item do Cardápio</DialogTitle>
                                 <DialogDescription className="text-[#D2691E]">
@@ -116,7 +116,7 @@ export function MenuAdminClient({ items }: MenuAdminClientProps) {
                                 Nova Bebida
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-3xl bg-white border-[#D2691E]/20 w-[95vw] sm:w-auto max-h-[90vh] overflow-y-auto">
+                        <DialogContent className="w-[95vw] max-h-[90vh] overflow-y-auto border-[#D2691E]/20 bg-white sm:max-w-5xl">
                             <DialogHeader>
                                 <DialogTitle className="text-[#8B4513]">Nova Bebida</DialogTitle>
                                 <DialogDescription className="text-[#D2691E]">
@@ -143,7 +143,7 @@ export function MenuAdminClient({ items }: MenuAdminClientProps) {
                     if (!open) setEditingItem(null)
                 }}
             >
-                <DialogContent className="max-w-3xl bg-white border-[#D2691E]/20 max-h-[90vh] overflow-y-auto w-[95vw] sm:w-auto">
+                <DialogContent className="w-[95vw] max-h-[90vh] overflow-y-auto border-[#D2691E]/20 bg-white sm:max-w-5xl">
                     <DialogHeader>
                         <DialogTitle className="text-[#8B4513]">Editar Item</DialogTitle>
                         <DialogDescription className="text-[#D2691E]">
@@ -195,7 +195,7 @@ export function MenuAdminClient({ items }: MenuAdminClientProps) {
                     if (!open) setEditingItem(null)
                 }}
             >
-                <DialogContent className="max-w-3xl bg-white border-[#D2691E]/20 max-h-[90vh] overflow-y-auto w-[95vw] sm:w-auto">
+                <DialogContent className="w-[95vw] max-h-[90vh] overflow-y-auto border-[#D2691E]/20 bg-white sm:max-w-5xl">
                     <DialogHeader>
                         <DialogTitle className="text-[#8B4513]">Editar Bebida</DialogTitle>
                         <DialogDescription className="text-[#D2691E]">
